@@ -1,0 +1,6 @@
+name: HypercraftAuction
+main: fr.florianpal.hypercraftauction.HypercraftAuction
+author: florianpal
+version: 2.0
+api-version: 1.16
+softdepend: [Vault]

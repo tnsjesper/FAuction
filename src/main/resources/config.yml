@@ -1,0 +1,11 @@
+expiration:
+  time: 3600 #In seconds
+  checkEvery: 72000 #In ticks
+limitations:
+  default: 5
+  paysan: 10
+  marchand: 15
+  terrien: 20
+  citoyen: 25
+  commercant: 30
+  citadin: 35

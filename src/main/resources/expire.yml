@@ -1,0 +1,183 @@
+gui:
+  size: 45
+  name: "Liste des items expirés"
+  title: "&eItem : &6{ItemName} &ede &6{ProprietaireName}"
+  description:
+    - "&5Nom de l'item : &6{ItemName}"
+    - "&5auction de : &6{ProprietaireName}"
+    - "&5Prix : &6{Price}"
+    - "&5Lore :"
+    - "{lore}"
+block:
+  '0':
+    utility: barrier
+    material: YELLOW_STAINED_GLASS_PANE
+    title: "&cBarrière"
+    description: {}
+  '1':
+    utility: barrier
+    material: YELLOW_STAINED_GLASS_PANE
+    title: "&cBarrière"
+    description: {}
+  '2':
+    utility: barrier
+    material: MAGENTA_STAINED_GLASS_PANE
+    title: "&cBarrière"
+    description: {}
+  '3':
+    utility: barrier
+    material: MAGENTA_STAINED_GLASS_PANE
+    title: "&cBarrière"
+    description: {}
+  '4':
+    utility: barrier
+    material: MAGENTA_STAINED_GLASS_PANE
+    title: "&cBarrière"
+    description: {}
+  '5':
+    utility: barrier
+    material: MAGENTA_STAINED_GLASS_PANE
+    title: "&cBarrière"
+    description: {}
+  '6':
+    utility: barrier
+    material: MAGENTA_STAINED_GLASS_PANE
+    title: "&cBarrière"
+    description: {}
+  '7':
+    utility: barrier
+    material: YELLOW_STAINED_GLASS_PANE
+    title: "&cBarrière"
+    description: {}
+  '8':
+    utility: barrier
+    material: YELLOW_STAINED_GLASS_PANE
+    title: "&cBarrière"
+    description: {}
+  '9':
+    utility: barrier
+    material: YELLOW_STAINED_GLASS_PANE
+    title: "&cBarrière"
+    description: {}
+  '10':
+    utility: expire
+  '11':
+    utility: expire
+  '12':
+    utility: expire
+  '13':
+    utility: expire
+  '14':
+    utility: expire
+  '15':
+    utility: expire
+  '16':
+    utility: expire
+  '17':
+    utility: barrier
+    material: YELLOW_STAINED_GLASS_PANE
+    title: "&cBarrière"
+    description: {}
+  '18':
+    utility: previous
+    material: GLOWSTONE
+    title: "&5Page précédente"
+    description:
+      - "&eAppuyez dessus pour retourner à la page précédente"
+    replacement:
+      material: MAGENTA_STAINED_GLASS_PANE
+      title: "&cBarrière"
+      description: {}
+  '19':
+    utility: expire
+  '20':
+    utility: expire
+  '21':
+    utility: expire
+  '22':
+    utility: expire
+  '23':
+    utility: expire
+  '24':
+    utility: expire
+  '25':
+    utility: expire
+  '26':
+    utility: next
+    material: GLOWSTONE
+    title: "&5Page suivante"
+    description:
+      - "&eAppuyez dessus pour aller sur la page suivante"
+    replacement:
+      material: MAGENTA_STAINED_GLASS_PANE
+      title: "&cBarrière"
+      description: {}
+  '27':
+    utility: barrier
+    material: YELLOW_STAINED_GLASS_PANE
+    title: "&cBarrière"
+    description: {}
+  '28':
+    utility: expire
+  '29':
+    utility: expire
+  '30':
+    utility: expire
+  '31':
+    utility: expire
+  '32':
+    utility: expire
+  '33':
+    utility: expire
+  '34':
+    utility: expire
+  '35':
+    utility: barrier
+    material: YELLOW_STAINED_GLASS_PANE
+    title: "&cBarrière"
+    description: {}
+  '36':
+    utility: barrier
+    material: YELLOW_STAINED_GLASS_PANE
+    title: "&cBarrière"
+    description: {}
+  '37':
+    utility: barrier
+    material: YELLOW_STAINED_GLASS_PANE
+    title: "&cBarrière"
+    description: {}
+  '38':
+    utility: barrier
+    material: MAGENTA_STAINED_GLASS_PANE
+    title: "&cBarrière"
+    description: {}
+  '39':
+    utility: barrier
+    material: MAGENTA_STAINED_GLASS_PANE
+    title: "&cBarrière"
+    description: {}
+  '40':
+    utility: barrier
+    material: MAGENTA_STAINED_GLASS_PANE
+    title: "&cBarrière"
+    description: {}
+  '41':
+    utility: barrier
+    material: MAGENTA_STAINED_GLASS_PANE
+    title: "&cBarrière"
+    description: {}
+  '42':
+    utility: barrier
+    material: MAGENTA_STAINED_GLASS_PANE
+    title: "&cBarrière"
+    description: {}
+  '43':
+    utility: barrier
+    material: YELLOW_STAINED_GLASS_PANE
+    title: "&cBarrière"
+    description: {}
+  '44':
+    utility: barrier
+    material: YELLOW_STAINED_GLASS_PANE
+    title: "&cBarrière"
+    description: {}

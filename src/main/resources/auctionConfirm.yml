@@ -1,0 +1,142 @@
+gui:
+  name: "Confirmation d'achat d'un item."
+  title-true: "&eAcheté {Item} à {Price}."
+  title-false: "&eNe pas acheté {Item} à {Price}."
+  description:
+    - "&5Nom de l'item : &6{ItemName}"
+    - "&5auction de : &6{ProprietaireName}"
+    - "&5Prix : &6{Price}"
+block:
+  '0':
+    utility: barrier
+    material: MAGENTA_STAINED_GLASS_PANE
+    title: "&cBarrière"
+    description: {}
+  '1':
+    utility: barrier
+    material: MAGENTA_STAINED_GLASS_PANE
+    title: "&cBarrière"
+    description: {}
+  '2':
+    utility: barrier
+    material: MAGENTA_STAINED_GLASS_PANE
+    title: "&cBarrière"
+    description: {}
+  '3':
+    utility: barrier
+    material: MAGENTA_STAINED_GLASS_PANE
+    title: "&cBarrière"
+    description: {}
+  '4':
+    utility: barrier
+    material: MAGENTA_STAINED_GLASS_PANE
+    title: "&cBarrière"
+    description: {}
+  '5':
+    utility: barrier
+    material: MAGENTA_STAINED_GLASS_PANE
+    title: "&cBarrière"
+    description: {}
+  '6':
+    utility: barrier
+    material: MAGENTA_STAINED_GLASS_PANE
+    title: "&cBarrière"
+    description: {}
+  '7':
+    utility: barrier
+    material: MAGENTA_STAINED_GLASS_PANE
+    title: "&cBarrière"
+    description: {}
+  '8':
+    utility: barrier
+    material: MAGENTA_STAINED_GLASS_PANE
+    title: "&cBarrière"
+    description: {}
+  '9':
+    utility: barrier
+    material: MAGENTA_STAINED_GLASS_PANE
+    title: "&cBarrière"
+    description: {}
+  '10':
+    utility: barrier
+    material: MAGENTA_STAINED_GLASS_PANE
+    title: "&cBarrière"
+    description: {}
+  '11':
+    utility: confirm
+    material: RED_WOOL
+    value: false
+  '12':
+    utility: barrier
+    material: MAGENTA_STAINED_GLASS_PANE
+    title: "&cBarrière"
+    description: {}
+  '13':
+    utility: barrier
+    material: MAGENTA_STAINED_GLASS_PANE
+    title: "&cBarrière"
+    description: {}
+  '14':
+    utility: barrier
+    material: MAGENTA_STAINED_GLASS_PANE
+    title: "&cBarrière"
+    description: {}
+  '15':
+    utility: confirm
+    material: GREEN_WOOL
+    value: true
+  '16':
+    utility: barrier
+    material: MAGENTA_STAINED_GLASS_PANE
+    title: "&cBarrière"
+    description: {}
+  '17':
+    utility: barrier
+    material: MAGENTA_STAINED_GLASS_PANE
+    title: "&cBarrière"
+    description: {}
+  '18':
+    utility: barrier
+    material: MAGENTA_STAINED_GLASS_PANE
+    title: "&cBarrière"
+    description: {}
+  '19':
+    utility: barrier
+    material: MAGENTA_STAINED_GLASS_PANE
+    title: "&cBarrière"
+    description: {}
+  '20':
+    utility: barrier
+    material: MAGENTA_STAINED_GLASS_PANE
+    title: "&cBarrière"
+    description: {}
+  '21':
+    utility: barrier
+    material: MAGENTA_STAINED_GLASS_PANE
+    title: "&cBarrière"
+    description: {}
+  '22':
+    utility: barrier
+    material: MAGENTA_STAINED_GLASS_PANE
+    title: "&cBarrière"
+    description: {}
+  '23':
+    utility: barrier
+    material: MAGENTA_STAINED_GLASS_PANE
+    title: "&cBarrière"
+    description: {}
+  '24':
+    utility: barrier
+    material: MAGENTA_STAINED_GLASS_PANE
+    title: "&cBarrière"
+    description: {}
+  '25':
+    utility: barrier
+    material: MAGENTA_STAINED_GLASS_PANE
+    title: "&cBarrière"
+    description: {}
+  '26':
+    utility: barrier
+    material: MAGENTA_STAINED_GLASS_PANE
+    title: "&cBarrière"
+    description: {}
