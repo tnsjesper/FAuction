@@ -5,7 +5,7 @@ import org.bukkit.Material;
 public class Confirm {
     private Auction auction;
     private Material material;
-    private boolean value;
+    private final boolean value;
 
     public Confirm(Auction auction, Material material, boolean value) {
         this.auction = auction;
@@ -31,9 +31,5 @@ public class Confirm {
 
     public boolean isValue() {
         return value;
-    }
-
-    public void setValue(boolean value) {
-        this.value = value;
     }
 }

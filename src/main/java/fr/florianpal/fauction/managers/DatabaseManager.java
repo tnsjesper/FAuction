@@ -9,10 +9,10 @@ import java.sql.*;
 import java.util.ArrayList;
 
 public class DatabaseManager {
-    private HikariConfig config = new HikariConfig();
-    private HikariDataSource ds;
-    private FAuction plugin;
-    private ArrayList<IDatabaseTable> repositories = new ArrayList<>();
+    private final HikariConfig config = new HikariConfig();
+    private final HikariDataSource ds;
+    private final FAuction plugin;
+    private final ArrayList<IDatabaseTable> repositories = new ArrayList<>();
     public DatabaseManager(FAuction plugin) {
         this.plugin = plugin;
         config.setJdbcUrl(  plugin.getConfigurationManager().getDatabase().getUrl() );

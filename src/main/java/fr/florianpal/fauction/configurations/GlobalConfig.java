@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class GlobalConfig {
 
-    private Map<String, Integer> limitations = new HashMap<>();
+    private final Map<String, Integer> limitations = new HashMap<>();
     private int time;
     private int checkEvery;
 

@@ -5,10 +5,10 @@ import org.bukkit.Material;
 import java.util.List;
 
 public class Barrier {
-    private int index;
-    private Material material;
-    private String title;
-    private List<String> description;
+    private final int index;
+    private final Material material;
+    private final String title;
+    private final List<String> description;
     private Barrier remplacement;
     public Barrier(int index, Material material, String title, List<String> description) {
         this.index = index;

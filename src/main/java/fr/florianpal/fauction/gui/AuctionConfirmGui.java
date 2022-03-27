@@ -28,12 +28,12 @@ import java.util.concurrent.ExecutionException;
 public class AuctionConfirmGui implements InventoryHolder, Listener {
     private final Inventory inv;
     private Auction auction;
-    private FAuction plugin;
+    private final FAuction plugin;
     private Player player;
-    private Map<Integer, Confirm> confirmList = new HashMap<>();
-    private AuctionCommandManager auctionCommandManager;
-    private AuctionConfirmGuiConfig auctionConfirmConfig;
-    private CommandManager commandManager;
+    private final Map<Integer, Confirm> confirmList = new HashMap<>();
+    private final AuctionCommandManager auctionCommandManager;
+    private final AuctionConfirmGuiConfig auctionConfirmConfig;
+    private final CommandManager commandManager;
 
     AuctionConfirmGui(FAuction plugin) {
         this.plugin = plugin;

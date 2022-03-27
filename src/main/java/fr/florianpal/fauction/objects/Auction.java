@@ -6,12 +6,12 @@ import java.util.Date;
 import java.util.UUID;
 
 public class Auction {
-    private int id;
-    private UUID playerUuid;
-    private String playerName;
+    private final int id;
+    private final UUID playerUuid;
+    private final String playerName;
     private double price;
-    private ItemStack itemStack;
-    private Date date;
+    private final ItemStack itemStack;
+    private final Date date;
 
     public Auction(int id, UUID playerUuid, String playerName, double price, byte[] item, long date) {
         this.id = id;
@@ -26,16 +26,8 @@ public class Auction {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public UUID getPlayerUuid() {
         return playerUuid;
-    }
-
-    public void setPlayerUuid(UUID playerUuid) {
-        this.playerUuid = playerUuid;
     }
 
     public double getPrice() {
@@ -50,23 +42,11 @@ public class Auction {
         return itemStack;
     }
 
-    public void setItemStack(ItemStack itemStack) {
-        this.itemStack = itemStack;
-    }
-
     public String getPlayerName() {
         return playerName;
     }
 
-    public void setPlayerName(String playerName) {
-        this.playerName = playerName;
-    }
-
     public Date getDate() {
         return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
     }
 }

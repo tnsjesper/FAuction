@@ -103,7 +103,7 @@ public class ExpireQueries implements IDatabaseTable {
                 }
                 chain.setTaskData("auctions", auctions);
             } catch (SQLException e) {
-                System.out.println(e.toString());
+                e.printStackTrace();
             } finally {
                 try {
                     if (result != null) {
@@ -145,7 +145,7 @@ public class ExpireQueries implements IDatabaseTable {
                 }
                 chain.setTaskData("auctions", auctions);
             } catch (SQLException e) {
-                System.out.println(e.toString());
+                e.printStackTrace();
             } finally {
                 try {
                     if (result != null) {

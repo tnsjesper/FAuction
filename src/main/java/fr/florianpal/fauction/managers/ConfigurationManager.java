@@ -12,24 +12,24 @@ public class ConfigurationManager {
     private final FAuction core;
 
     private final DatabaseConfig database = new DatabaseConfig();
-    private File databaseFile;
-    private FileConfiguration databaseConfig;
+    private final File databaseFile;
+    private final FileConfiguration databaseConfig;
 
     private final AuctionConfig auctionConfig = new AuctionConfig();
-    private File auctionFile;
-    private FileConfiguration auctionConfiguration;
+    private final File auctionFile;
+    private final FileConfiguration auctionConfiguration;
 
     private final ExpireGuiConfig expireConfig = new ExpireGuiConfig();
-    private File expireFile;
-    private FileConfiguration expireConfiguration;
+    private final File expireFile;
+    private final FileConfiguration expireConfiguration;
 
     private final AuctionConfirmGuiConfig auctionConfirmConfig = new AuctionConfirmGuiConfig();
-    private File auctionConfirmFile;
-    private FileConfiguration auctionConfirmConfiguration;
+    private final File auctionConfirmFile;
+    private final FileConfiguration auctionConfirmConfiguration;
 
     private final GlobalConfig globalConfig = new GlobalConfig();
-    private File globalFile;
-    private FileConfiguration globalConfiguration;
+    private final File globalFile;
+    private final FileConfiguration globalConfiguration;
 
     private File langFile;
     private FileConfiguration langConfig;

@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class LimitationManager {
 
-    private FAuction plugin;
+    private final FAuction plugin;
     private ArrayList<Auction> auctions;
     private boolean canHaveNewAuction = false;
     public LimitationManager(FAuction plugin) {
