@@ -1,5 +1,5 @@
-name: HypercraftAuction
-main: fr.florianpal.hypercraftauction.HypercraftAuction
+name: FAuction
+main: fr.florianpal.fauction.FAuction
 author: florianpal
 version: 2.0
 api-version: 1.16
