@@ -3,7 +3,7 @@ gui:
   title-true: "&eAcheté {Item} à {Price}."
   title-false: "&eNe pas acheté {Item} à {Price}."
   description:
-    - "&5Nom de l'item : &6{ItemName}"
+    - "&5Nom de l'item : &6{Item}"
     - "&5auction de : &6{ProprietaireName}"
     - "&5Prix : &6{Price}"
 block:
