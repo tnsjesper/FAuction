@@ -9,7 +9,7 @@ import fr.florianpal.fauction.managers.commandManagers.CommandManager;
 import fr.florianpal.fauction.objects.Auction;
 import fr.florianpal.fauction.objects.Barrier;
 import fr.florianpal.fauction.objects.Confirm;
-import net.craftersland.data.bridge.PD;
+import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -156,15 +156,15 @@ public class AuctionConfirmGui implements InventoryHolder, Listener {
                             issuerTarget.sendInfo(MessageKeys.BUY_AUCTION_SUCCESS);
                             auctionCommandManager.deleteAuction(auction.getId());
                             plugin.getVaultIntegrationManager().getEconomy().withdrawPlayer(player, auction.getPrice());
-
-                            double money = PD.api.getDatabaseOfflineMoney(auction.getPlayerUuid());
-                            PD.api.setDatabaseOfflineMoney(auction.getPlayerUuid(), money+auction.getPrice());
-                            if(player.getInventory().firstEmpty() == -1) {
-                                player.getWorld().dropItem(player.getLocation(), auction.getItemStack());
-                            } else  {
-                                player.getInventory().addItem(auction.getItemStack());
+                            EconomyResponse economyResponse4 = plugin.getVaultIntegrationManager().getEconomy().depositPlayer(Bukkit.getOfflinePlayer(auction.getPlayerUuid()), auction.getPrice());
+                            if (economyResponse4.transactionSuccess()) {
+                                if (player.getInventory().firstEmpty() == -1) {
+                                    player.getWorld().dropItem(player.getLocation(), auction.getItemStack());
+                                } else {
+                                    player.getInventory().addItem(auction.getItemStack());
+                                }
+                                Bukkit.getLogger().info("Player : " + player.getName() + " buy " + auction.getItemStack().getI18NDisplayName() + " at " + auction.getPlayerName());
                             }
-                            Bukkit.getLogger().info("Player : " + player.getName() + " buy " + auction.getItemStack().getI18NDisplayName() + " at " + auction.getPlayerName());
                         } else {
                             issuerTarget.sendInfo(MessageKeys.AUCTION_ALREADY_SELL);
                         }

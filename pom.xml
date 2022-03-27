@@ -132,14 +132,6 @@
             <version>1.7</version>
             <scope>provided</scope>
         </dependency>
-        <!--MPDB-->
-        <dependency>
-            <groupId>net.craftersland.data.bridge</groupId>
-            <artifactId>MPDB</artifactId>
-            <version>3.34.3</version>
-            <scope>system</scope>
-            <systemPath>D:/Mes plugins MC/FAuction/lib/MysqlPlayerDataBridge-v3.34.3.jar</systemPath>
-        </dependency>
     </dependencies>
 
 </project>
