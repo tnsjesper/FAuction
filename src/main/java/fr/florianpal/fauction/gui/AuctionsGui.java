@@ -156,7 +156,7 @@ public class AuctionsGui implements InventoryHolder, Listener {
         ItemMeta meta = item.getItemMeta();
         String title = auctionConfig.getTitle();
         if(item.getItemMeta().getDisplayName().equalsIgnoreCase("")) {
-            title = title.replace("{ItemName}", item.getType().toString());
+            title = title.replace("{ItemName}", item.getType().name().replace('_', ' ').toLowerCase());
         } else {
             title = title.replace("{ItemName}", item.getItemMeta().getDisplayName());
         }
@@ -168,7 +168,11 @@ public class AuctionsGui implements InventoryHolder, Listener {
         List<String> listDescription = new ArrayList<>();
 
         for(String desc : auctionConfig.getDescription()) {
-            desc = desc.replace("{ItemName}", item.getItemMeta().getDisplayName());
+            if(item.getItemMeta().getDisplayName().equalsIgnoreCase("")) {
+                desc = desc.replace("{ItemName}", item.getType().name().replace('_', ' ').toLowerCase());
+            } else {
+                desc = desc.replace("{ItemName}", item.getItemMeta().getDisplayName());
+            }
             desc = desc.replace("{ProprietaireName}", playerName);
             desc = desc.replace("{Price}", String.valueOf(auction.getPrice()));
             Date expireDate = new Date((auction.getDate().getTime() + globalConfig.getTime()) - auction.getDate().getTime());
