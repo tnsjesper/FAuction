@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -63,7 +64,7 @@ public class AuctionsGui implements InventoryHolder, Listener {
                             titleInv = titleInv.replace("{Page}", String.valueOf(this.page));
                             titleInv = titleInv.replace("{TotalPage}", String.valueOf((this.auctions.size() / auctionConfig.getAuctionBlocks().size()) + 1));
 
-                            inv = Bukkit.createInventory(this, auctionConfig.getSize(), titleInv);
+                            this.inv = Bukkit.createInventory(this, auctionConfig.getSize(), titleInv);
 
                             if(this.auctions.size() == 0) {
                                 CommandIssuer issuerTarget = plugin.getCommandManager().getCommandIssuer(player);
@@ -215,7 +216,7 @@ public class AuctionsGui implements InventoryHolder, Listener {
     }
 
     private void openInventory(Player p) {
-        p.openInventory(inv);
+        p.openInventory(this.inv);
     }
 
     @EventHandler
@@ -276,7 +277,6 @@ public class AuctionsGui implements InventoryHolder, Listener {
             if (e.getRawSlot() == previous.getIndex() && this.page > 1) {
                 AuctionsGui gui = new AuctionsGui(plugin);
                 gui.initializeItems( p, this.page - 1);
-                gui.openInventory(p);
                 break;
             }
         }
@@ -284,7 +284,6 @@ public class AuctionsGui implements InventoryHolder, Listener {
             if (e.getRawSlot() == next.getIndex() && ((this.auctionConfig.getAuctionBlocks().size() * this.page) - this.auctionConfig.getAuctionBlocks().size() < auctions.size() - this.auctionConfig.getAuctionBlocks().size()) && next.getMaterial() != next.getRemplacement().getMaterial()) {
                 AuctionsGui gui = new AuctionsGui(plugin);
                 gui.initializeItems(p, this.page + 1);
-                gui.openInventory(p);
                 break;
             }
         }
