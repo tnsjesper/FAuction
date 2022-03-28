@@ -1,63 +1,63 @@
 gui:
-  size: 45
-  name: "Hotel des ventes {Page}/{TotalPage}"
-  title: "&eItem : &6{ItemName} &ede &6{ProprietaireName}"
+  size: 54
+  name: "Hôtel des ventes {Page}/{TotalPage}"
+  title: "&eItem : &6{ItemName}"
   description:
-    - "&5Nom de l'item : &6{ItemName}"
-    - "&5auction de : &6{ProprietaireName}"
+    - "&5Vendu par : &6{ProprietaireName}"
     - "&5Prix : &6{Price}"
+    - "&5Expirera le : &6{ExpireTime}"
     - "&5Lore :"
     - "{lore}"
 block:
   '0':
     utility: barrier
-    material: YELLOW_STAINED_GLASS_PANE
-    title: "&cBarrière"
+    material: GRAY_STAINED_GLASS_PANE
+    title: "-"
     description: {}
   '1':
     utility: barrier
-    material: YELLOW_STAINED_GLASS_PANE
-    title: "&cBarrière"
+    material: GRAY_STAINED_GLASS_PANE
+    title: "-"
     description: {}
   '2':
     utility: barrier
-    material: MAGENTA_STAINED_GLASS_PANE
-    title: "&cBarrière"
+    material: GRAY_STAINED_GLASS_PANE
+    title: "-"
     description: {}
   '3':
     utility: barrier
-    material: MAGENTA_STAINED_GLASS_PANE
-    title: "&cBarrière"
+    material: GRAY_STAINED_GLASS_PANE
+    title: "-"
     description: {}
   '4':
     utility: barrier
-    material: MAGENTA_STAINED_GLASS_PANE
-    title: "&cBarrière"
+    material: GRAY_STAINED_GLASS_PANE
+    title: "-"
     description: {}
   '5':
     utility: barrier
-    material: MAGENTA_STAINED_GLASS_PANE
-    title: "&cBarrière"
+    material: GRAY_STAINED_GLASS_PANE
+    title: "-"
     description: {}
   '6':
     utility: barrier
-    material: MAGENTA_STAINED_GLASS_PANE
-    title: "&cBarrière"
+    material: GRAY_STAINED_GLASS_PANE
+    title: "-"
     description: {}
   '7':
     utility: barrier
-    material: YELLOW_STAINED_GLASS_PANE
-    title: "&cBarrière"
+    material: GRAY_STAINED_GLASS_PANE
+    title: "-"
     description: {}
   '8':
     utility: barrier
-    material: YELLOW_STAINED_GLASS_PANE
-    title: "&cBarrière"
+    material: GRAY_STAINED_GLASS_PANE
+    title: "-"
     description: {}
   '9':
     utility: barrier
-    material: YELLOW_STAINED_GLASS_PANE
-    title: "&cBarrière"
+    material: GRAY_STAINED_GLASS_PANE
+    title: "-"
     description: {}
   '10':
     utility: auction
@@ -75,19 +75,14 @@ block:
     utility: auction
   '17':
     utility: barrier
-    material: YELLOW_STAINED_GLASS_PANE
-    title: "&cBarrière"
+    material: GRAY_STAINED_GLASS_PANE
+    title: "-"
     description: {}
   '18':
-    utility: previous
-    material: GLOWSTONE
-    title: "&5Page précédente"
-    description:
-      - "&eAppuyez dessus pour retourner à la page précédente"
-    replacement:
-      material: MAGENTA_STAINED_GLASS_PANE
-      title: "&cBarrière"
-      description: {}
+    utility: barrier
+    material: GRAY_STAINED_GLASS_PANE
+    title: "-"
+    description: {}
   '19':
     utility: auction
   '20':
@@ -103,19 +98,14 @@ block:
   '25':
     utility: auction
   '26':
-    utility: next
-    material: GLOWSTONE
-    title: "&5Page suivante"
-    description:
-      - "&eAppuyez dessus pour aller sur la page suivante"
-    replacement:
-      material: MAGENTA_STAINED_GLASS_PANE
-      title: "&cBarrière"
-      description: {}
+    utility: barrier
+    material: GRAY_STAINED_GLASS_PANE
+    title: "-"
+    description: {}
   '27':
     utility: barrier
-    material: YELLOW_STAINED_GLASS_PANE
-    title: "&cBarrière"
+    material: GRAY_STAINED_GLASS_PANE
+    title: "-"
     description: {}
   '28':
     utility: auction
@@ -133,51 +123,93 @@ block:
     utility: auction
   '35':
     utility: barrier
-    material: YELLOW_STAINED_GLASS_PANE
-    title: "&cBarrière"
+    material: GRAY_STAINED_GLASS_PANE
+    title: "-"
     description: {}
   '36':
-    utility: expire
-    material: CHEST_MINECART
-    title: "&cOuvrir les items expirés"
+    utility: barrier
+    material: GRAY_STAINED_GLASS_PANE
+    title: "-"
     description: {}
   '37':
-    utility: barrier
-    material: YELLOW_STAINED_GLASS_PANE
-    title: "&cBarrière"
-    description: {}
+    utility: auction
   '38':
-    utility: barrier
-    material: MAGENTA_STAINED_GLASS_PANE
-    title: "&cBarrière"
-    description: {}
+    utility: auction
   '39':
-    utility: barrier
-    material: MAGENTA_STAINED_GLASS_PANE
-    title: "&cBarrière"
-    description: {}
+    utility: auction
   '40':
-    utility: barrier
-    material: MAGENTA_STAINED_GLASS_PANE
-    title: "&cBarrière"
-    description: {}
+    utility: auction
   '41':
-    utility: barrier
-    material: MAGENTA_STAINED_GLASS_PANE
-    title: "&cBarrière"
-    description: {}
+    utility: auction
   '42':
-    utility: barrier
-    material: MAGENTA_STAINED_GLASS_PANE
-    title: "&cBarrière"
-    description: {}
+    utility: auction
   '43':
-    utility: barrier
-    material: YELLOW_STAINED_GLASS_PANE
-    title: "&cBarrière"
-    description: {}
+    utility: auction
   '44':
     utility: barrier
-    material: YELLOW_STAINED_GLASS_PANE
-    title: "&cBarrière"
+    material: GRAY_STAINED_GLASS_PANE
+    title: "-"
+    description: {}
+  '45':
+    utility: expire
+    material: CHEST_MINECART
+    title: "&cRécuperer vos items expirés"
+    description: {}
+  '46':
+    utility: barrier
+    material: AIR
+    title: "-"
+    description: {}
+  '47':
+    utility: barrier
+    material: AIR
+    title: "-"
+    description: {}
+  '48':
+    utility: previous
+    material: ARROW
+    title: "&5Page précédente"
+    description:
+      - "&eCliquez ici pour retourner à la page précédente"
+    replacement:
+      material: GRAY_STAINED_GLASS_PANE
+      title: "-"
+      description: {}
+  '49':
+    utility: barrier
+    material: NETHER_STAR
+    title: "Informations"
+    description:
+      - "&7Bienvenue dans l'hôtel des ventes"
+      - "&7Ici, tous les joueurs peuvent vendre"
+      - "&7et acheter des objets."
+      - ""
+      - "&7Pour vendre un objet, vous devez faire:"
+      - "&a/ah sell &7<&aprix&7>"
+      - "test {ItemName}"
+      - "&7Nombre de ventes en cours: &b{TotalVente}"
+  '50':
+    utility: next
+    material: ARROW
+    title: "&5Page suivante"
+    description:
+      - "&eCliquez ici pour aller sur la page suivante"
+    replacement:
+      material: AIR
+      title: "-"
+      description: {}
+  '51':
+    utility: barrier
+    material: AIR
+    title: "-"
+    description: {}
+  '52':
+    utility: barrier
+    material: AIR
+    title: "-"
+    description: {}
+  '53':
+    utility: barrier
+    material: AIR
+    title: "-"
     description: {}
