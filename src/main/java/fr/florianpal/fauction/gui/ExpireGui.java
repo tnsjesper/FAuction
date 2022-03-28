@@ -66,7 +66,9 @@ public class ExpireGui implements InventoryHolder, Listener {
             for (Barrier barrier : expireGuiConfig.getBarrierBlocks()) {
                 inv.setItem(barrier.getIndex(), createGuiItem(barrier.getMaterial(), barrier.getTitle(), barrier.getDescription()));
             }
-
+            for (Barrier barrier : expireGuiConfig.getAuctionGuiBlocks()) {
+                inv.setItem(barrier.getIndex(), createGuiItem(barrier.getMaterial(), barrier.getTitle(), barrier.getDescription()));
+            }
             for (Barrier previous : expireGuiConfig.getPreviousBlocks()) {
                 if (page > 1) {
                     inv.setItem(previous.getIndex(), createGuiItem(previous.getMaterial(), previous.getTitle(), previous.getDescription()));
@@ -84,6 +86,9 @@ public class ExpireGui implements InventoryHolder, Listener {
                 }
             }
 
+
+
+
             int id = (this.expireGuiConfig.getExpireBlocks().size() * this.page) - this.expireGuiConfig.getExpireBlocks().size();
             for (int index : expireGuiConfig.getExpireBlocks()) {
                 String ownerName = this.auctions.get(id).getPlayerName();
@@ -96,45 +101,6 @@ public class ExpireGui implements InventoryHolder, Listener {
 
     }
 
-    public void initializeItems(Player player, int page, List<Auction> auctions) {
-        this.player = player;
-        this.page = page;
-        this.auctions = auctions;
-
-        if (this.auctions.size() == 0) {
-            CommandIssuer issuerTarget = plugin.getCommandManager().getCommandIssuer(player);
-            issuerTarget.sendInfo(MessageKeys.NO_AUCTION);
-            return;
-        }
-        for (Barrier barrier : expireGuiConfig.getBarrierBlocks()) {
-            inv.setItem(barrier.getIndex(), createGuiItem(barrier.getMaterial(), barrier.getTitle(), barrier.getDescription()));
-        }
-
-        for (Barrier previous : expireGuiConfig.getPreviousBlocks()) {
-            if (page > 1) {
-                inv.setItem(previous.getIndex(), createGuiItem(previous.getMaterial(), previous.getTitle(), previous.getDescription()));
-
-            } else {
-                inv.setItem(previous.getRemplacement().getIndex(), createGuiItem(previous.getRemplacement().getMaterial(), previous.getRemplacement().getTitle(), previous.getRemplacement().getDescription()));
-            }
-        }
-
-        for (Barrier next : expireGuiConfig.getNextBlocks()) {
-            if ((this.expireGuiConfig.getExpireBlocks().size() * this.page) - this.expireGuiConfig.getExpireBlocks().size() < auctions.size() - this.expireGuiConfig.getExpireBlocks().size()) {
-                inv.setItem(next.getIndex(), createGuiItem(next.getMaterial(), next.getTitle(), next.getDescription()));
-            } else {
-                inv.setItem(next.getRemplacement().getIndex(), createGuiItem(next.getRemplacement().getMaterial(), next.getRemplacement().getTitle(), next.getRemplacement().getDescription()));
-            }
-        }
-
-        int id = (this.expireGuiConfig.getExpireBlocks().size() * this.page) - this.expireGuiConfig.getExpireBlocks().size();
-        for (int index : expireGuiConfig.getExpireBlocks()) {
-            String ownerName = this.auctions.get(id).getPlayerName();
-            inv.setItem(index, createGuiItem(auctions.get(id), ownerName));
-            id++;
-            if (id >= (auctions.size())) break;
-        }
-    }
 
     private ItemStack createGuiItem(Auction auction, String playerName) {
         ItemStack item = auction.getItemStack().clone();
@@ -250,6 +216,13 @@ public class ExpireGui implements InventoryHolder, Listener {
                 ExpireGui gui = new ExpireGui(plugin);
                 gui.initializeItems(p, this.page + 1);
                 gui.openInventory(p);
+                break;
+            }
+        }
+        for (Barrier auctionGui : expireGuiConfig.getAuctionGuiBlocks()) {
+            if (e.getRawSlot() == auctionGui.getIndex()) {
+                AuctionsGui gui = new AuctionsGui(plugin);
+                gui.initializeItems(p, 1);
                 break;
             }
         }

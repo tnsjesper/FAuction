@@ -12,6 +12,7 @@ public class ExpireGuiConfig {
     private final List<Barrier> previousBlocks = new ArrayList<>();
     private final List<Barrier> nextBlocks = new ArrayList<>();
     private final List<Integer> expireBlocks = new ArrayList<>();
+    private final List<Barrier> auctionGuiBlocks = new ArrayList<>();
     private int size = 27;
     private String title = "";
     private final List<String> description = new ArrayList<>();
@@ -61,7 +62,15 @@ public class ExpireGuiConfig {
                 barrierBlocks.add(barrier);
             } else if (config.getString("block." + index + ".utility").equalsIgnoreCase("expire")) {
                 expireBlocks.add(Integer.valueOf(index));
-            }
+            } else if (config.getString("block." + index + ".utility").equalsIgnoreCase("auctionGui")) {
+                Barrier barrier = new Barrier(
+                        Integer.parseInt(index),
+                        Material.getMaterial(config.getString("block." + index + ".material")),
+                        config.getString("block." + index + ".title"),
+                        config.getStringList("block." + index + ".description")
+                );
+                auctionGuiBlocks.add(barrier);
+         }
         }
         size = config.getInt("gui.size");
         nameGui = config.getString("gui.name");
@@ -100,5 +109,9 @@ public class ExpireGuiConfig {
 
     public List<Integer> getExpireBlocks() {
         return expireBlocks;
+    }
+
+    public List<Barrier> getAuctionGuiBlocks() {
+        return auctionGuiBlocks;
     }
 }
