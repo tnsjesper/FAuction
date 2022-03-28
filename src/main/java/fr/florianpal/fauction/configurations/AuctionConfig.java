@@ -57,14 +57,7 @@ public class AuctionConfig {
                         Integer.parseInt(index),
                         Material.getMaterial(config.getString("block." + index + ".material")),
                         config.getString("block." + index + ".title"),
-                        config.getStringList("block." + index + ".description"),
-                        new Barrier(
-                                Integer.parseInt(index),
-                                Material.getMaterial(config.getString("block." + index + ".replacement.material")),
-                                config.getString("block." + index + ".replacement.title"),
-                                config.getStringList("block." + index + ".replacement.description")
-                        )
-
+                        config.getStringList("block." + index + ".description")
                 );
                 expireBlocks.add(barrier);
             } else if (config.getString("block." + index + ".utility").equalsIgnoreCase("barrier")) {

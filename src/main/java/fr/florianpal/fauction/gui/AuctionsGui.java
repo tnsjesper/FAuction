@@ -29,7 +29,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class AuctionsGui implements InventoryHolder, Listener {
-    private final Inventory inv;
+    private Inventory inv;
     private List<Auction> auctions = new ArrayList<>();
     private int page;
     private Player player;
@@ -43,8 +43,6 @@ public class AuctionsGui implements InventoryHolder, Listener {
         this.auctionConfig = plugin.getConfigurationManager().getAuctionConfig();
         this.auctionCommandManager = plugin.getAuctionCommandManager();
         this.globalConfig = plugin.getConfigurationManager().getGlobalConfig();
-
-        inv = Bukkit.createInventory(this, auctionConfig.getSize(), auctionConfig.getNameGui());
         Bukkit.getPluginManager().registerEvents(this, Bukkit.getPluginManager().getPlugins()[0]);
     }
 
@@ -58,16 +56,25 @@ public class AuctionsGui implements InventoryHolder, Listener {
         this.player = player;
         this.page = page;
         TaskChain<ArrayList<Auction>> chain = auctionCommandManager.getAuctions();
-
-
         chain.sync(() -> {
                             this.auctions = chain.getTaskData("auctions");
+
+                            String titleInv = auctionConfig.getNameGui();
+                            titleInv = titleInv.replace("{Page}", String.valueOf(this.page));
+                            titleInv = titleInv.replace("{TotalPage}", String.valueOf((this.auctions.size() / auctionConfig.getAuctionBlocks().size()) + 1));
+
+                            inv = Bukkit.createInventory(this, auctionConfig.getSize(), titleInv);
+
                             if(this.auctions.size() == 0) {
                                 CommandIssuer issuerTarget = plugin.getCommandManager().getCommandIssuer(player);
                                 issuerTarget.sendInfo(MessageKeys.NO_AUCTION);
                                 return;
                             }
                             for (Barrier barrier : auctionConfig.getBarrierBlocks()) {
+                                inv.setItem(barrier.getIndex(), createGuiItem(barrier.getMaterial(), barrier.getTitle(), barrier.getDescription()));
+                            }
+
+                            for (Barrier barrier : auctionConfig.getExpireBlocks()) {
                                 inv.setItem(barrier.getIndex(), createGuiItem(barrier.getMaterial(), barrier.getTitle(), barrier.getDescription()));
                             }
 
@@ -98,7 +105,6 @@ public class AuctionsGui implements InventoryHolder, Listener {
                             openInventory(player);
                         }
                 ).execute();
-
     }
 
     public void initializeItems(Player player, int page, List<Auction> auctions) {
@@ -112,6 +118,10 @@ public class AuctionsGui implements InventoryHolder, Listener {
             return;
         }
         for (Barrier barrier : auctionConfig.getBarrierBlocks()) {
+            inv.setItem(barrier.getIndex(), createGuiItem(barrier.getMaterial(), barrier.getTitle(), barrier.getDescription()));
+        }
+
+        for (Barrier barrier : auctionConfig.getExpireBlocks()) {
             inv.setItem(barrier.getIndex(), createGuiItem(barrier.getMaterial(), barrier.getTitle(), barrier.getDescription()));
         }
 

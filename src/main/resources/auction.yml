@@ -1,6 +1,6 @@
 gui:
   size: 45
-  name: "Hotel des ventes"
+  name: "Hotel des ventes {Page}/{TotalPage}"
   title: "&eItem : &6{ItemName} &ede &6{ProprietaireName}"
   description:
     - "&5Nom de l'item : &6{ItemName}"
@@ -137,9 +137,9 @@ block:
     title: "&cBarrière"
     description: {}
   '36':
-    utility: barrier
-    material: YELLOW_STAINED_GLASS_PANE
-    title: "&cBarrière"
+    utility: expire
+    material: CHEST_MINECART
+    title: "&cOuvrir les items expirés"
     description: {}
   '37':
     utility: barrier
