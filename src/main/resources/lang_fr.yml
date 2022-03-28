@@ -1,25 +1,27 @@
 fauction:
+  help_description: "Affiche cette aide."
+  auction_list_help_description: "Pour ouvrir l'hôtel des ventes"
+  auction_sell_help_description: "Pour vendre le stack d'items dans votre main"
+  expire_add_help_description: "Pour voir vos ventes expirées"
+  auction_add_help_description: "Ajouter une nouvelle vente"
+  auction_list_help_description: "Voir la liste des ventes"
 
-  help_description: "Afficher l'aide des différentes commandes"
-  auction_add_help_description: "Pour ajouter une nouvelle auction"
-  auction_list_help_description: "Pour avoir la list des auctions"
-
-  buy_auction_success: "Vous venez d'acheté un item."
-  no_auction: "Il n'y a actuellement aucune vente."
+  buy_auction_success: "Vous venez d'acheter un item."
+  no_auction: "Il n'y a actuellement aucune vente active."
   auction_open: "Vous avez ouvert l'hotel des ventes."
-  auction_add_success: "Vous venez d'ajouté une nouvelle enchère."
-  remove_auction_success: "Vous avez bien enlever votre enchère de la vente."
-  buy_your_item: "Vous ne pouvez pas acheté votre propre item."
-  item_air: "Vous avez actuellement aucun item dans votre main."
-  no_have_money: "Vous n'avez pas assez d'argent pour cet achat."
-  auction_expire: "Un de vos item mis en vente dans le ah vient d'expiré."
-  auction_already_sell: "L'item que vous voulez acheté est déjà vendu."
+  auction_add_success: "Vous venez d'ajouter une nouvelle vente."
+  remove_auction_success: "Vous avez bien annulé votre vente."
+  buy_your_item: "Vous ne pouvez pas acheter votre propre item."
+  item_air: "Vous n'avez actuellement aucun item dans votre main."
+  no_have_money: "Vous n'avez pas assez d'argent pour effectuer cet achat."
+  auction_expire: "Un de vos item mis en vente dans le ah vient d'expirer."
+  auction_already_sell: "L'item que vous voulez acheter est déjà vendu."
   negative_price: "Vous ne pouvez pas vendre un item avec un prix négatif."
-  max_auction: "Vous avez atteint le maximum d'auction possible par votre grade."
-  auction_expire_drop: "Une de vos auctions a expiré et vous n'avez pas d'espace dans votre inventaire. Donc elle a été poser au sol."
+  max_auction: "Vous avez atteint le maximum de ventes possible pour votre grade."
+  auction_expire_drop: "Une de vos vente a expiré et vous n'avez pas d'espace dans votre inventaire. Donc elle a été déposé au sol."
   buy_auction_cancelled: "Vous avez annulé votre achat."
 
-  remove_expire_success: "Vous avez récupéré un de vos items expirer."
+  remove_expire_success: "Vous avez récupéré un de vos items expiré."
 acf-minecraft:
   invalid_world: "Ce monde n'existe pas !"
   you_must_be_holding_item: "Vous devez avoir un item dans votre main !"
@@ -35,6 +37,8 @@ acf-minecraft:
   location_please_specify_world: "Veuillez spécifier le monde. Exemple: <c2>world:x,y,z</c2> !"
   location_please_specify_xyz: "Merci d'indiquer au format x,y,z. Exemple: <c2>world:x,y,z</c2> !"
   location_console_not_relative: "La console ne peut pas utiliser des coordonnées relatives pour la location !"
+
+
 acf-core:
   permission_denied: "Vous n'avez pas la permission d'exécuter cette commande !"
   error_generic_logged: "Une erreur est survenue ! Ce problème a été enregistré. Désolé pour le dérangement."
