@@ -34,7 +34,7 @@ public class AuctionCommand extends BaseCommand {
     @Default
     @Subcommand("list")
     @CommandPermission("hc.auction.list")
-    @Description("{@@hypercraft.auction_list_help_description}")
+    @Description("{@@fauction.auction_list_help_description}")
     public void onList(Player playerSender){
         CommandIssuer issuerTarget = commandManager.getCommandIssuer(playerSender);
         AuctionsGui gui = new AuctionsGui(plugin);
@@ -46,7 +46,7 @@ public class AuctionCommand extends BaseCommand {
 
     @Subcommand("sell")
     @CommandPermission("hc.auction.sell")
-    @Description("{@@hypercraft.auction_add_help_description}")
+    @Description("{@@fauction.auction_add_help_description}")
     public void onAdd(Player playerSender, double price) {
         CommandIssuer issuerTarget = commandManager.getCommandIssuer(playerSender);
         TaskChain<ArrayList<Auction>> chain = plugin.getAuctionCommandManager().getAuctions(playerSender.getUniqueId());
@@ -68,7 +68,7 @@ public class AuctionCommand extends BaseCommand {
 
     @Subcommand("expire")
     @CommandPermission("hc.auction.expire")
-    @Description("{@@hypercraft.expire_add_help_description}")
+    @Description("{@@fauction.expire_add_help_description}")
     public void onExpire(Player playerSender) {
         CommandIssuer issuerTarget = commandManager.getCommandIssuer(playerSender);
         ExpireGui gui = new ExpireGui(plugin);
@@ -77,7 +77,7 @@ public class AuctionCommand extends BaseCommand {
     }
 
     @HelpCommand
-    @Description("{@@hypercraft.help_description}")
+    @Description("{@@fauction.help_description}")
     public void doHelp(CommandSender sender, CommandHelp help) {
         help.showHelp();
     }
