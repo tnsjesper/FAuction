@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import static java.lang.Math.ceil;
 
 public class AuctionsGui implements InventoryHolder, Listener {
@@ -180,8 +179,8 @@ public class AuctionsGui implements InventoryHolder, Listener {
             desc = desc.replace("{TotalVente}", String.valueOf(this.auctions.size()));
             desc = desc.replace("{ProprietaireName}", playerName);
             desc = desc.replace("{Price}", String.valueOf(auction.getPrice()));
-            Date expireDate = new Date((auction.getDate().getTime() + globalConfig.getTime()) - auction.getDate().getTime());
-            SimpleDateFormat formater = new SimpleDateFormat("hh:mm:ss");
+            Date expireDate = new Date((auction.getDate().getTime() + globalConfig.getTime()*1000));
+            SimpleDateFormat formater = new SimpleDateFormat("dd/MM/yyyy 'a' HH:mm");
             desc = desc.replace("{ExpireTime}", formater.format(expireDate));
             if(desc.contains("lore")) {
                 if(item.getLore() != null) {

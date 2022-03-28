@@ -4,6 +4,7 @@ import co.aikar.commands.CommandIssuer;
 import co.aikar.taskchain.TaskChain;
 import fr.florianpal.fauction.FAuction;
 import fr.florianpal.fauction.configurations.ExpireGuiConfig;
+import fr.florianpal.fauction.configurations.GlobalConfig;
 import fr.florianpal.fauction.languages.MessageKeys;
 import fr.florianpal.fauction.managers.commandManagers.ExpireCommandManager;
 import fr.florianpal.fauction.objects.Auction;
@@ -20,7 +21,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
@@ -34,12 +37,12 @@ public class ExpireGui implements InventoryHolder, Listener {
     private final FAuction plugin;
     private final ExpireGuiConfig expireGuiConfig;
     private final ExpireCommandManager expireCommandManager;
-
+    private final GlobalConfig globalConfig;
     public ExpireGui(FAuction plugin) {
         this.plugin = plugin;
         this.expireGuiConfig = plugin.getConfigurationManager().getExpireConfig();
         this.expireCommandManager = plugin.getExpireCommandManager();
-
+        this.globalConfig = plugin.getConfigurationManager().getGlobalConfig();
 
         inv = Bukkit.createInventory(this, expireGuiConfig.getSize(), expireGuiConfig.getNameGui());
         Bukkit.getPluginManager().registerEvents(this, Bukkit.getPluginManager().getPlugins()[0]);
@@ -107,7 +110,7 @@ public class ExpireGui implements InventoryHolder, Listener {
         ItemMeta meta = item.getItemMeta();
         String title = expireGuiConfig.getTitle();
         if(item.getItemMeta().getDisplayName().equalsIgnoreCase("")) {
-            title = title.replace("{ItemName}", item.getType().toString());
+            title = title.replace("{ItemName}", item.getType().name().replace('_', ' ').toLowerCase());
         } else {
             title = title.replace("{ItemName}", item.getItemMeta().getDisplayName());
         }
@@ -119,7 +122,14 @@ public class ExpireGui implements InventoryHolder, Listener {
         List<String> listDescription = new ArrayList<>();
 
         for(String desc : expireGuiConfig.getDescription()) {
-            desc = desc.replace("{ItemName}", item.getItemMeta().getDisplayName());
+            if(item.getItemMeta().getDisplayName().equalsIgnoreCase("")) {
+                desc = desc.replace("{ItemName}", item.getType().name().replace('_', ' ').toLowerCase());
+            } else {
+                desc = desc.replace("{ItemName}", item.getItemMeta().getDisplayName());
+            }
+            Date expireDate = new Date((auction.getDate().getTime() + globalConfig.getTime()*1000));
+            SimpleDateFormat formater = new SimpleDateFormat("dd/MM/yyyy 'a' HH:mm");
+            desc = desc.replace("{ExpireTime}", formater.format(expireDate));
             desc = desc.replace("{ProprietaireName}", playerName);
             desc = desc.replace("{Price}", String.valueOf(auction.getPrice()));
             if(desc.contains("lore")) {
