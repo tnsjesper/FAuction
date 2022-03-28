@@ -44,8 +44,8 @@ public class AuctionCommand extends BaseCommand {
     }
 
 
-    @Subcommand("add")
-    @CommandPermission("hc.auction.add")
+    @Subcommand("sell")
+    @CommandPermission("hc.auction.sell")
     @Description("{@@hypercraft.auction_add_help_description}")
     public void onAdd(Player playerSender, double price) {
         CommandIssuer issuerTarget = commandManager.getCommandIssuer(playerSender);
