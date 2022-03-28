@@ -25,6 +25,8 @@ import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 
+import static org.bukkit.Bukkit.getServer;
+
 public class AuctionConfirmGui implements InventoryHolder, Listener {
     private final Inventory inv;
     private Auction auction;
@@ -163,6 +165,9 @@ public class AuctionConfirmGui implements InventoryHolder, Listener {
                                 } else {
                                     player.getInventory().addItem(auction.getItemStack());
                                 }
+
+                                getServer().dispatchCommand(getServer().getConsoleSender(), "pxe mail " + auction.getPlayerName() + " &aVous avez vendu &3" + auction.getItemStack().getAmount() + "&ex&3" + auction.getItemStack().displayName() + " &aà &d" + player.getName() + " &apour &e" + auction.getPrice() + " &6Suns &aà l'hôtel des ventes");
+
                                 Bukkit.getLogger().info("Player : " + player.getName() + " buy " + auction.getItemStack().getI18NDisplayName() + " at " + auction.getPlayerName());
                             }
                         } else {

@@ -29,6 +29,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static java.lang.Math.ceil;
+
 public class AuctionsGui implements InventoryHolder, Listener {
     private Inventory inv;
     private List<Auction> auctions = new ArrayList<>();
@@ -62,7 +64,7 @@ public class AuctionsGui implements InventoryHolder, Listener {
 
                             String titleInv = auctionConfig.getNameGui();
                             titleInv = titleInv.replace("{Page}", String.valueOf(this.page));
-                            titleInv = titleInv.replace("{TotalPage}", String.valueOf((this.auctions.size() / auctionConfig.getAuctionBlocks().size()) + 1));
+                            titleInv = titleInv.replace("{TotalPage}", String.valueOf(((this.auctions.size()-1) / auctionConfig.getAuctionBlocks().size()) + 1));
 
                             this.inv = Bukkit.createInventory(this, auctionConfig.getSize(), titleInv);
 
@@ -174,6 +176,8 @@ public class AuctionsGui implements InventoryHolder, Listener {
             } else {
                 desc = desc.replace("{ItemName}", item.getItemMeta().getDisplayName());
             }
+
+            desc = desc.replace("{TotalVente}", String.valueOf(this.auctions.size()));
             desc = desc.replace("{ProprietaireName}", playerName);
             desc = desc.replace("{Price}", String.valueOf(auction.getPrice()));
             Date expireDate = new Date((auction.getDate().getTime() + globalConfig.getTime()) - auction.getDate().getTime());
@@ -204,6 +208,8 @@ public class AuctionsGui implements InventoryHolder, Listener {
         name = format(name);
         List<String> descriptions = new ArrayList<>();
         for (String desc : description) {
+
+            desc = desc.replace("{TotalVente}", String.valueOf(this.auctions.size()));
             desc = format(desc);
             descriptions.add(desc);
         }
@@ -253,7 +259,7 @@ public class AuctionsGui implements InventoryHolder, Listener {
                             CommandIssuer issuerTarget = plugin.getCommandManager().getCommandIssuer(player);
                             issuerTarget.sendInfo(MessageKeys.REMOVE_AUCTION_SUCCESS);
                             AuctionsGui gui = new AuctionsGui(plugin);
-                            gui.initializeItems(player, 1);
+                            gui.initializeItems(player, page);
                         }
                     }
                 } else if(e.isLeftClick()) {
