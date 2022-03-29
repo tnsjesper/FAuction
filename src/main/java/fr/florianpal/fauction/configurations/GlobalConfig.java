@@ -7,11 +7,15 @@ import java.util.Map;
 
 public class GlobalConfig {
 
+    private boolean onBuyCommandUse;
+    private String onBuyCommand;
     private final Map<String, Integer> limitations = new HashMap<>();
     private int time;
     private int checkEvery;
 
     public void load(Configuration config) {
+        onBuyCommandUse = config.getBoolean("onBuy.sendCommand.use");
+        onBuyCommand = config.getString("onBuy.sendCommand.command  ");
         time = config.getInt("expiration.time");
         checkEvery = config.getInt("expiration.checkEvery");
         for (String limitationGroup : config.getConfigurationSection("limitations").getKeys(false)) {
@@ -31,5 +35,13 @@ public class GlobalConfig {
 
     public Map<String, Integer> getLimitations() {
         return limitations;
+    }
+
+    public boolean isOnBuyCommandUse() {
+        return onBuyCommandUse;
+    }
+
+    public String getOnBuyCommand() {
+        return onBuyCommand;
     }
 }

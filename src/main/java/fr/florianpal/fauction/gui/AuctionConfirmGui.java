@@ -166,6 +166,20 @@ public class AuctionConfirmGui implements InventoryHolder, Listener {
                                     player.getInventory().addItem(auction.getItemStack());
                                 }
 
+                                if(plugin.getConfigurationManager().getGlobalConfig().isOnBuyCommandUse()) {
+                                    String command = plugin.getConfigurationManager().getGlobalConfig().getOnBuyCommand();
+                                    command = command.replace("{OwnerName}", auction.getPlayerName());
+                                    command = command.replace("{Amount}", String.valueOf(auction.getItemStack().getAmount()));
+                                    if(!auction.getItemStack().getItemMeta().getDisplayName().equalsIgnoreCase("")) {
+                                        command = command.replace("{ItemName}", auction.getItemStack().getItemMeta().getDisplayName());
+                                    } else {
+                                        command = command.replace("{ItemName}", auction.getItemStack().getType().name().replace('_', ' ').toLowerCase());
+                                    }
+                                    command = command.replace("{BuyerName}", player.getName());
+                                    command = command.replace("{ItemPrice}", String.valueOf(auction.getPrice()));
+                                    getServer().dispatchCommand(getServer().getConsoleSender(), command);
+                                }
+
                                 Bukkit.getLogger().info("Player : " + player.getName() + " buy " + auction.getItemStack().getI18NDisplayName() + " at " + auction.getPlayerName());
                             }
                         } else {
