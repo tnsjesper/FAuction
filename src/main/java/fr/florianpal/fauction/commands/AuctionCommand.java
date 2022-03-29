@@ -43,7 +43,6 @@ public class AuctionCommand extends BaseCommand {
 
     }
 
-
     @Subcommand("sell")
     @CommandPermission("hc.auction.sell")
     @Description("{@@fauction.auction_add_help_description}")

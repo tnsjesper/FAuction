@@ -14,7 +14,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -107,50 +106,6 @@ public class AuctionsGui implements InventoryHolder, Listener {
                             openInventory(player);
                         }
                 ).execute();
-    }
-
-    public void initializeItems(Player player, int page, List<Auction> auctions) {
-        this.player = player;
-        this.page = page;
-        this.auctions = auctions;
-
-        if (this.auctions.size() == 0) {
-            CommandIssuer issuerTarget = plugin.getCommandManager().getCommandIssuer(player);
-            issuerTarget.sendInfo(MessageKeys.NO_AUCTION);
-            return;
-        }
-        for (Barrier barrier : auctionConfig.getBarrierBlocks()) {
-            inv.setItem(barrier.getIndex(), createGuiItem(barrier.getMaterial(), barrier.getTitle(), barrier.getDescription()));
-        }
-
-        for (Barrier barrier : auctionConfig.getExpireBlocks()) {
-            inv.setItem(barrier.getIndex(), createGuiItem(barrier.getMaterial(), barrier.getTitle(), barrier.getDescription()));
-        }
-
-        for (Barrier previous : auctionConfig.getPreviousBlocks()) {
-            if (page > 1) {
-                inv.setItem(previous.getIndex(), createGuiItem(previous.getMaterial(), previous.getTitle(), previous.getDescription()));
-
-            } else {
-                inv.setItem(previous.getRemplacement().getIndex(), createGuiItem(previous.getRemplacement().getMaterial(), previous.getRemplacement().getTitle(), previous.getRemplacement().getDescription()));
-            }
-        }
-
-        for (Barrier next : auctionConfig.getNextBlocks()) {
-            if ((this.auctionConfig.getAuctionBlocks().size() * this.page) - this.auctionConfig.getAuctionBlocks().size() < auctions.size() - this.auctionConfig.getAuctionBlocks().size()) {
-                inv.setItem(next.getIndex(), createGuiItem(next.getMaterial(), next.getTitle(), next.getDescription()));
-            } else {
-                inv.setItem(next.getRemplacement().getIndex(), createGuiItem(next.getRemplacement().getMaterial(), next.getRemplacement().getTitle(), next.getRemplacement().getDescription()));
-            }
-        }
-
-        int id = (this.auctionConfig.getAuctionBlocks().size() * this.page) - this.auctionConfig.getAuctionBlocks().size();
-        for (int index : auctionConfig.getAuctionBlocks()) {
-            String ownerName = this.auctions.get(id).getPlayerName();
-            inv.setItem(index, createGuiItem(auctions.get(id), ownerName));
-            id++;
-            if (id >= (auctions.size())) break;
-        }
     }
 
     private ItemStack createGuiItem(Auction auction, String playerName) {
