@@ -15,7 +15,7 @@ public class GlobalConfig {
 
     public void load(Configuration config) {
         onBuyCommandUse = config.getBoolean("onBuy.sendCommand.use");
-        onBuyCommand = config.getString("onBuy.sendCommand.command  ");
+        onBuyCommand = config.getString("onBuy.sendCommand.command");
         time = config.getInt("expiration.time");
         checkEvery = config.getInt("expiration.checkEvery");
         for (String limitationGroup : config.getConfigurationSection("limitations").getKeys(false)) {
