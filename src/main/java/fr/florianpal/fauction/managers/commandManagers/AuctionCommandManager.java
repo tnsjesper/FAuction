@@ -37,7 +37,7 @@ public class AuctionCommandManager {
         auctionQueries.deleteAuctions(id);
     }
 
-    public boolean auctionExist(int id) throws ExecutionException, InterruptedException {
-        return auctionQueries.getAuction(id).get() != null;
+    public TaskChain<Auction> auctionExist(int id) {
+        return auctionQueries.getAuction(id);
     }
 }

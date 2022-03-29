@@ -1,6 +1,7 @@
 package fr.florianpal.fauction.gui;
 
 import co.aikar.commands.CommandIssuer;
+import co.aikar.taskchain.TaskChain;
 import fr.florianpal.fauction.FAuction;
 import fr.florianpal.fauction.configurations.AuctionConfirmGuiConfig;
 import fr.florianpal.fauction.languages.MessageKeys;
@@ -149,54 +150,59 @@ public class AuctionConfirmGui implements InventoryHolder, Listener {
         for (Map.Entry<Integer, Confirm> entry : auctionConfirmConfig.getConfirmBlocks().entrySet()) {
             if (entry.getKey() == e.getRawSlot()) {
                 CommandIssuer issuerTarget = commandManager.getCommandIssuer(player);
-                if (!auctionCommandManager.auctionExist(this.auction.getId())) {
-                    issuerTarget.sendInfo(MessageKeys.NO_AUCTION);
-                } else {
-                    Confirm confirm = confirmList.get(e.getRawSlot());
-                    if(confirm.isValue()) {
-                        if (auctionCommandManager.auctionExist(auction.getId())) {
-                            issuerTarget.sendInfo(MessageKeys.BUY_AUCTION_SUCCESS);
-                            auctionCommandManager.deleteAuction(auction.getId());
-                            plugin.getVaultIntegrationManager().getEconomy().withdrawPlayer(player, auction.getPrice());
-                            EconomyResponse economyResponse4 = plugin.getVaultIntegrationManager().getEconomy().depositPlayer(Bukkit.getOfflinePlayer(auction.getPlayerUuid()), auction.getPrice());
-                            if (economyResponse4.transactionSuccess()) {
-                                if (player.getInventory().firstEmpty() == -1) {
-                                    player.getWorld().dropItem(player.getLocation(), auction.getItemStack());
-                                } else {
-                                    player.getInventory().addItem(auction.getItemStack());
-                                }
+                Confirm confirm = confirmList.get(e.getRawSlot());
+                if (confirm.isValue()) {
 
-                                if(plugin.getConfigurationManager().getGlobalConfig().isOnBuyCommandUse()) {
-                                    String command = plugin.getConfigurationManager().getGlobalConfig().getOnBuyCommand();
-                                    command = command.replace("{OwnerName}", auction.getPlayerName());
-                                    command = command.replace("{Amount}", String.valueOf(auction.getItemStack().getAmount()));
-                                    if(!auction.getItemStack().getItemMeta().getDisplayName().equalsIgnoreCase("")) {
-                                        command = command.replace("{ItemName}", auction.getItemStack().getItemMeta().getDisplayName());
-                                    } else {
-                                        command = command.replace("{ItemName}", auction.getItemStack().getType().name().replace('_', ' ').toLowerCase());
-                                    }
-                                    command = command.replace("{BuyerName}", player.getName());
-                                    command = command.replace("{ItemPrice}", String.valueOf(auction.getPrice()));
-                                    getServer().dispatchCommand(getServer().getConsoleSender(), command);
-                                }
-
-                                Bukkit.getLogger().info("Player : " + player.getName() + " buy " + auction.getItemStack().getI18NDisplayName() + " at " + auction.getPlayerName());
-                            }
+                    TaskChain<Auction> chainAuction = auctionCommandManager.auctionExist(this.auction.getId());
+                    chainAuction.sync(() -> {
+                        if (chainAuction.getTaskData("auction") == null) {
+                            issuerTarget.sendInfo(MessageKeys.NO_AUCTION);
                         } else {
-                            issuerTarget.sendInfo(MessageKeys.AUCTION_ALREADY_SELL);
-                        }
-                        player.getOpenInventory().close();
-                        AuctionsGui auctionsGui = new AuctionsGui(plugin);
-                        auctionsGui.initializeItems(player, 1);
-                    } else {
-                        issuerTarget.sendInfo(MessageKeys.BUY_AUCTION_CANCELLED);
-                        player.getOpenInventory().close();
-                        AuctionsGui auctionsGui = new AuctionsGui(plugin);
-                        auctionsGui.initializeItems(player, 1);
-                    }
-                    break;
-                }
+                            TaskChain<Auction> chainAuction2 = auctionCommandManager.auctionExist(this.auction.getId());
+                            chainAuction2.sync(() -> {
+                                if (chainAuction2.getTaskData("auction") != null) {
+                                    issuerTarget.sendInfo(MessageKeys.BUY_AUCTION_SUCCESS);
+                                    auctionCommandManager.deleteAuction(auction.getId());
+                                    plugin.getVaultIntegrationManager().getEconomy().withdrawPlayer(player, auction.getPrice());
+                                    EconomyResponse economyResponse4 = plugin.getVaultIntegrationManager().getEconomy().depositPlayer(Bukkit.getOfflinePlayer(auction.getPlayerUuid()), auction.getPrice());
+                                    if (economyResponse4.transactionSuccess()) {
+                                        if (player.getInventory().firstEmpty() == -1) {
+                                            player.getWorld().dropItem(player.getLocation(), auction.getItemStack());
+                                        } else {
+                                            player.getInventory().addItem(auction.getItemStack());
+                                        }
 
+                                        if (plugin.getConfigurationManager().getGlobalConfig().isOnBuyCommandUse()) {
+                                            String command = plugin.getConfigurationManager().getGlobalConfig().getOnBuyCommand();
+                                            command = command.replace("{OwnerName}", auction.getPlayerName());
+                                            command = command.replace("{Amount}", String.valueOf(auction.getItemStack().getAmount()));
+                                            if (!auction.getItemStack().getItemMeta().getDisplayName().equalsIgnoreCase("")) {
+                                                command = command.replace("{ItemName}", auction.getItemStack().getItemMeta().getDisplayName());
+                                            } else {
+                                                command = command.replace("{ItemName}", auction.getItemStack().getType().name().replace('_', ' ').toLowerCase());
+                                            }
+                                            command = command.replace("{BuyerName}", player.getName());
+                                            command = command.replace("{ItemPrice}", String.valueOf(auction.getPrice()));
+                                            getServer().dispatchCommand(getServer().getConsoleSender(), command);
+                                        }
+
+                                        Bukkit.getLogger().info("Player : " + player.getName() + " buy " + auction.getItemStack().getI18NDisplayName() + " at " + auction.getPlayerName());
+                                    }
+                                } else {
+                                    issuerTarget.sendInfo(MessageKeys.AUCTION_ALREADY_SELL);
+                                }
+                                player.getOpenInventory().close();
+                                AuctionsGui auctionsGui = new AuctionsGui(plugin);
+                                auctionsGui.initializeItems(player, 1);
+                            }).execute();
+                        }
+                    }).execute();
+                } else {
+                    issuerTarget.sendInfo(MessageKeys.BUY_AUCTION_CANCELLED);
+                    player.getOpenInventory().close();
+                    AuctionsGui auctionsGui = new AuctionsGui(plugin);
+                    auctionsGui.initializeItems(player, 1);
+                }
             }
         }
     }

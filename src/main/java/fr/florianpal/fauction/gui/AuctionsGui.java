@@ -201,21 +201,24 @@ public class AuctionsGui implements InventoryHolder, Listener {
                 Auction auction = auctions.get((e.getRawSlot() - nb0) + ((this.auctionConfig.getAuctionBlocks().size() * this.page) - this.auctionConfig.getAuctionBlocks().size()) - nb*2);
 
                 if(e.isRightClick()) {
-                    if (plugin.getAuctionCommandManager().auctionExist(auction.getId())) {
-                        if (auction.getPlayerUuid().equals(player.getUniqueId())) {
-                            if(player.getInventory().firstEmpty() == -1) {
-                                player.getWorld().dropItem(player.getLocation(), auction.getItemStack());
-                            } else  {
-                                player.getInventory().addItem(auction.getItemStack());
+                    TaskChain<Auction> chainAuction = auctionCommandManager.auctionExist(auction.getId());
+                    chainAuction.sync(() -> {
+                        if (chainAuction.getTaskData("auction") != null) {
+                            if (auction.getPlayerUuid().equals(player.getUniqueId())) {
+                                if (player.getInventory().firstEmpty() == -1) {
+                                    player.getWorld().dropItem(player.getLocation(), auction.getItemStack());
+                                } else {
+                                    player.getInventory().addItem(auction.getItemStack());
+                                }
+                                auctionCommandManager.deleteAuction(auction.getId());
+                                auctions.remove(auction);
+                                CommandIssuer issuerTarget = plugin.getCommandManager().getCommandIssuer(player);
+                                issuerTarget.sendInfo(MessageKeys.REMOVE_AUCTION_SUCCESS);
+                                AuctionsGui gui = new AuctionsGui(plugin);
+                                gui.initializeItems(player, page);
                             }
-                            auctionCommandManager.deleteAuction(auction.getId());
-                            auctions.remove(auction);
-                            CommandIssuer issuerTarget = plugin.getCommandManager().getCommandIssuer(player);
-                            issuerTarget.sendInfo(MessageKeys.REMOVE_AUCTION_SUCCESS);
-                            AuctionsGui gui = new AuctionsGui(plugin);
-                            gui.initializeItems(player, page);
                         }
-                    }
+                    }).execute();
                 } else if(e.isLeftClick()) {
                     CommandIssuer issuerTarget = plugin.getCommandManager().getCommandIssuer(player);
                     if(auction.getPlayerUuid().equals(player.getUniqueId())) {
