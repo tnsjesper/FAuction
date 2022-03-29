@@ -166,8 +166,6 @@ public class AuctionConfirmGui implements InventoryHolder, Listener {
                                     player.getInventory().addItem(auction.getItemStack());
                                 }
 
-                                getServer().dispatchCommand(getServer().getConsoleSender(), "pxe mail " + auction.getPlayerName() + " &aVous avez vendu &3" + auction.getItemStack().getAmount() + "&ex&3" + auction.getItemStack().displayName() + " &aà &d" + player.getName() + " &apour &e" + auction.getPrice() + " &6Suns &aà l'hôtel des ventes");
-
                                 Bukkit.getLogger().info("Player : " + player.getName() + " buy " + auction.getItemStack().getI18NDisplayName() + " at " + auction.getPlayerName());
                             }
                         } else {
