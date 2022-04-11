@@ -4,7 +4,6 @@ fauction:
   auction_sell_help_description: "Pour vendre le stack d'items dans votre main"
   expire_add_help_description: "Pour voir vos ventes expirées"
   auction_add_help_description: "Ajouter une nouvelle vente"
-  auction_list_help_description: "Voir la liste des ventes"
 
   buy_auction_success: "Vous venez d'acheter un item."
   no_auction: "Il n'y a actuellement aucune vente active."
