@@ -33,18 +33,17 @@ public class AuctionCommand extends BaseCommand {
 
     @Default
     @Subcommand("list")
-    @CommandPermission("hc.auction.list")
+    @CommandPermission("fauction.list")
     @Description("{@@fauction.auction_list_help_description}")
     public void onList(Player playerSender){
         CommandIssuer issuerTarget = commandManager.getCommandIssuer(playerSender);
         AuctionsGui gui = new AuctionsGui(plugin);
         gui.initializeItems(playerSender, 1);
         issuerTarget.sendInfo(MessageKeys.AUCTION_OPEN);
-
     }
 
     @Subcommand("sell")
-    @CommandPermission("hc.auction.sell")
+    @CommandPermission("fauction.sell")
     @Description("{@@fauction.auction_add_help_description}")
     public void onAdd(Player playerSender, double price) {
         CommandIssuer issuerTarget = commandManager.getCommandIssuer(playerSender);
@@ -66,7 +65,7 @@ public class AuctionCommand extends BaseCommand {
     }
 
     @Subcommand("expire")
-    @CommandPermission("hc.auction.expire")
+    @CommandPermission("fauction.expire")
     @Description("{@@fauction.expire_add_help_description}")
     public void onExpire(Player playerSender) {
         CommandIssuer issuerTarget = commandManager.getCommandIssuer(playerSender);
