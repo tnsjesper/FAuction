@@ -49,6 +49,7 @@ public class FAuction extends JavaPlugin {
     public static TaskChainFactory getTaskChainFactory() {
         return taskChainFactory;
     }
+
     @Override
     public void onEnable() {
         PaperLib.suggestPaper(this);

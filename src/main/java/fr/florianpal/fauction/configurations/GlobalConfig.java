@@ -1,5 +1,6 @@
 package fr.florianpal.fauction.configurations;
 
+import org.bukkit.Material;
 import org.bukkit.configuration.Configuration;
 
 import java.util.HashMap;
@@ -10,6 +11,7 @@ public class GlobalConfig {
     private boolean onBuyCommandUse;
     private String onBuyCommand;
     private final Map<String, Integer> limitations = new HashMap<>();
+    private final Map<Material, Double> minPrice = new HashMap<>();
     private int time;
     private int checkEvery;
 
@@ -20,6 +22,9 @@ public class GlobalConfig {
         checkEvery = config.getInt("expiration.checkEvery");
         for (String limitationGroup : config.getConfigurationSection("limitations").getKeys(false)) {
             limitations.put(limitationGroup, config.getInt("limitations." + limitationGroup));
+        }
+        for (String material : config.getConfigurationSection("min-price").getKeys(false)) {
+            minPrice.put(Material.valueOf(material), config.getDouble("limitations." + material));
         }
     }
 
@@ -43,5 +48,9 @@ public class GlobalConfig {
 
     public String getOnBuyCommand() {
         return onBuyCommand;
+    }
+
+    public Map<Material, Double> getMinPrice() {
+        return minPrice;
     }
 }

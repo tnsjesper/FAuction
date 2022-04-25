@@ -14,3 +14,5 @@ limitations:
   citoyen: 25
   commercant: 30
   citadin: 35
+min-price:
+  COBBLESTONE: 0.5
