@@ -12,13 +12,16 @@ import fr.florianpal.fauction.languages.MessageKeys;
 import fr.florianpal.fauction.managers.commandManagers.AuctionCommandManager;
 import fr.florianpal.fauction.managers.commandManagers.CommandManager;
 import fr.florianpal.fauction.objects.Auction;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Shulker;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BlockStateMeta;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -29,6 +32,7 @@ public class AuctionCommand extends BaseCommand {
     private final CommandManager commandManager;
     private final AuctionCommandManager auctionCommandManager;
     private final FAuction plugin;
+    private Inventory fakeinv;
 
     public AuctionCommand(FAuction plugin) {
         this.plugin = plugin;
@@ -69,23 +73,44 @@ public class AuctionCommand extends BaseCommand {
             }
             if(plugin.getConfigurationManager().getGlobalConfig().getMinPrice().containsKey(playerSender.getInventory().getItemInMainHand().getType())) {
                 double minPrice = playerSender.getInventory().getItemInMainHand().getAmount() *  plugin.getConfigurationManager().getGlobalConfig().getMinPrice().get(playerSender.getInventory().getItemInMainHand().getType());
+                plugin.getLogger().info("type: "+playerSender.getInventory().getItemInMainHand().getType());
+                plugin.getLogger().info("tarifmini" + plugin.getConfigurationManager().getGlobalConfig().getMinPrice().get(Material.getMaterial("WHEAT")));
+
+                plugin.getLogger().info("minprice: " + minPrice);
+                plugin.getLogger().info("price: " + price);
                 if(minPrice > price) {
                     issuerTarget.sendInfo(MessageKeys.MIN_PRICE);
+                    issuerTarget.sendMessage("&e" +minPrice + "Suns.");
                     return;
                 }
             }
             if(Tag.SHULKER_BOXES.getValues().contains(playerSender.getInventory().getItemInMainHand().getType())) {
-                ShulkerBox shulker = (ShulkerBox) playerSender.getInventory().getItemInMainHand();
+            //uharn proposal
+            //if(playerSender.getInventory().getItemInMainHand().getType().equals(Material.SHULKER_BOX)) {
+                ItemStack shulkerBox = playerSender.getInventory().getItemInMainHand();
+              //  ShulkerBox shulker = (ShulkerBox) shulkerBox;
+                plugin.getLogger().info("c une shulker ");
+
+                    BlockStateMeta im = (BlockStateMeta) shulkerBox.getItemMeta();
+                        ShulkerBox shulker = (ShulkerBox) im.getBlockState();
+                        Inventory fakeinv = Bukkit.createInventory(null, 27, "Shulker Box");
+                        fakeinv.setContents(shulker.getInventory().getContents());
+
+
                 double minPrice = 0;
 
-                for(ItemStack item : shulker.getInventory().getContents()) {
+                for(ItemStack item : fakeinv.getContents()) {
                     if(item != null) {
                         if (item.getType() != Material.AIR && plugin.getConfigurationManager().getGlobalConfig().getMinPrice().containsKey(item.getType())) {
                             minPrice = minPrice + item.getAmount() *  plugin.getConfigurationManager().getGlobalConfig().getMinPrice().get(item.getType());
                         }
                     }
+                    plugin.getLogger().info("minprice: " + minPrice);
+                    plugin.getLogger().info("price: " + price);
+
                     if(minPrice > price) {
                         issuerTarget.sendInfo(MessageKeys.MIN_PRICE);
+                        issuerTarget.sendMessage("&e" +minPrice + "Suns.");
                         return;
                     }
                 }
