@@ -86,9 +86,8 @@ public class AuctionCommand extends BaseCommand {
                                     minPrice = minPrice + itemIn.getAmount() * plugin.getConfigurationManager().getGlobalConfig().getMinPrice().get(itemIn.getType());
                                 }
                             }
-                            System.out.println("Min Price : " + minPrice);
                             if (minPrice > price) {
-                                issuerTarget.sendInfo(MessageKeys.MIN_PRICE);
+                                issuerTarget.sendInfo(MessageKeys.MIN_PRICE, "{minPrice}", String.valueOf(minPrice));
                                 return;
                             }
                         }
