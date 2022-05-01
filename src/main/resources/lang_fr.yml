@@ -19,7 +19,7 @@ fauction:
   max_auction: "Vous avez atteint le maximum de ventes possible pour votre grade."
   auction_expire_drop: "Une de vos vente a expiré et vous n'avez pas d'espace dans votre inventaire. Donc elle a été déposé au sol."
   buy_auction_cancelled: "Vous avez annulé votre achat."
-  min_price: "Votre prix est au-dessus du prix minimum."
+  min_price: "Votre prix est en dessous du prix minimum."
 
   remove_expire_success: "Vous avez récupéré un de vos items expiré."
 acf-minecraft:

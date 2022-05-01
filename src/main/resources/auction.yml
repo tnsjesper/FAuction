@@ -9,7 +9,7 @@ gui:
     - "&5Lore :"
     - "{lore}"
 block:
-  '0o':
+  '0':
     utility: barrier
     material: GRAY_STAINED_GLASS_PANE
     title: "-"

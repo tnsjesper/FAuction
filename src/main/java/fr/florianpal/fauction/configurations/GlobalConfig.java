@@ -24,7 +24,7 @@ public class GlobalConfig {
             limitations.put(limitationGroup, config.getInt("limitations." + limitationGroup));
         }
         for (String material : config.getConfigurationSection("min-price").getKeys(false)) {
-            minPrice.put(Material.valueOf(material), config.getDouble("limitations." + material));
+            minPrice.put(Material.valueOf(material), config.getDouble("min-price." + material));
         }
     }
 
