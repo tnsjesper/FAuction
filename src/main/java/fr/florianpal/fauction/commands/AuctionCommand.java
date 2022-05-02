@@ -22,6 +22,8 @@ import org.bukkit.inventory.meta.BlockStateMeta;
 
 import java.util.ArrayList;
 
+import static java.lang.Math.ceil;
+
 @CommandAlias("ah")
 public class AuctionCommand extends BaseCommand {
 
@@ -88,7 +90,7 @@ public class AuctionCommand extends BaseCommand {
                             }
                         }
                         if (minPrice > price) {
-                            issuerTarget.sendInfo(MessageKeys.MIN_PRICE, "{minPrice}", String.valueOf(minPrice));
+                            issuerTarget.sendInfo(MessageKeys.MIN_PRICE, "{minPrice}", String.valueOf(ceil(minPrice)));
                             return;
                         }
                     }
