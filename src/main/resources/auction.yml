@@ -172,7 +172,7 @@ block:
     description:
       - "&eCliquez ici pour retourner à la page précédente"
     replacement:
-      material: GRAY_STAINED_GLASS_PANE
+      material: AIR
       title: "-"
       description: {}
   '49':

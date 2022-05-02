@@ -6,8 +6,8 @@ import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.annotation.*;
 import co.aikar.taskchain.TaskChain;
 import fr.florianpal.fauction.FAuction;
-import fr.florianpal.fauction.gui.AuctionsGui;
-import fr.florianpal.fauction.gui.ExpireGui;
+import fr.florianpal.fauction.gui.subGui.AuctionsGui;
+import fr.florianpal.fauction.gui.subGui.ExpireGui;
 import fr.florianpal.fauction.languages.MessageKeys;
 import fr.florianpal.fauction.managers.commandManagers.AuctionCommandManager;
 import fr.florianpal.fauction.managers.commandManagers.CommandManager;
@@ -41,8 +41,8 @@ public class AuctionCommand extends BaseCommand {
     @Description("{@@fauction.auction_list_help_description}")
     public void onList(Player playerSender){
         CommandIssuer issuerTarget = commandManager.getCommandIssuer(playerSender);
-        AuctionsGui gui = new AuctionsGui(plugin);
-        gui.initializeItems(playerSender, 1);
+        AuctionsGui gui = new AuctionsGui(plugin, playerSender, 1);
+        gui.initializeItems();
         issuerTarget.sendInfo(MessageKeys.AUCTION_OPEN);
     }
 
@@ -107,8 +107,8 @@ public class AuctionCommand extends BaseCommand {
     @Description("{@@fauction.expire_add_help_description}")
     public void onExpire(Player playerSender) {
         CommandIssuer issuerTarget = commandManager.getCommandIssuer(playerSender);
-        ExpireGui gui = new ExpireGui(plugin);
-        gui.initializeItems(playerSender, 1);
+        ExpireGui gui = new ExpireGui(plugin, playerSender, 1);
+        gui.initializeItems();
         issuerTarget.sendInfo(MessageKeys.AUCTION_OPEN);
     }
 

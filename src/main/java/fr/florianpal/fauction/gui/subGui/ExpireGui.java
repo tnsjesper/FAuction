@@ -1,10 +1,12 @@
-package fr.florianpal.fauction.gui;
+package fr.florianpal.fauction.gui.subGui;
 
 import co.aikar.commands.CommandIssuer;
 import co.aikar.taskchain.TaskChain;
 import fr.florianpal.fauction.FAuction;
 import fr.florianpal.fauction.configurations.ExpireGuiConfig;
 import fr.florianpal.fauction.configurations.GlobalConfig;
+import fr.florianpal.fauction.gui.AbstractGui;
+import fr.florianpal.fauction.gui.GuiInterface;
 import fr.florianpal.fauction.languages.MessageKeys;
 import fr.florianpal.fauction.managers.commandManagers.ExpireCommandManager;
 import fr.florianpal.fauction.objects.Auction;
@@ -29,34 +31,21 @@ import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ExpireGui implements InventoryHolder, Listener {
-    private final Inventory inv;
+public class ExpireGui extends AbstractGui implements GuiInterface {
     private List<Auction> auctions = new ArrayList<>();
-    private int page;
-    private Player player;
-    private final FAuction plugin;
+
     private final ExpireGuiConfig expireGuiConfig;
     private final ExpireCommandManager expireCommandManager;
-    private final GlobalConfig globalConfig;
-    public ExpireGui(FAuction plugin) {
-        this.plugin = plugin;
+
+    public ExpireGui(FAuction plugin, Player player, int page) {
+        super(plugin, player, page);
         this.expireGuiConfig = plugin.getConfigurationManager().getExpireConfig();
         this.expireCommandManager = plugin.getExpireCommandManager();
-        this.globalConfig = plugin.getConfigurationManager().getGlobalConfig();
-
-        inv = Bukkit.createInventory(this, expireGuiConfig.getSize(), expireGuiConfig.getNameGui());
-        Bukkit.getPluginManager().registerEvents(this, Bukkit.getPluginManager().getPlugins()[0]);
-    }
-
-    @Override
-    public Inventory getInventory() {
-        return inv;
+        initGui(expireGuiConfig.getNameGui(), 27);
     }
 
     // You can call this whenever you want to put the items in
-    public void initializeItems(Player player, int page) {
-        this.player = player;
-        this.page = page;
+    public void initializeItems() {
         TaskChain<ArrayList<Auction>> chain = expireCommandManager.getAuctions(player.getUniqueId());
 
         chain.sync(() -> {
@@ -90,8 +79,6 @@ public class ExpireGui implements InventoryHolder, Listener {
             }
 
 
-
-
             int id = (this.expireGuiConfig.getExpireBlocks().size() * this.page) - this.expireGuiConfig.getExpireBlocks().size();
             for (int index : expireGuiConfig.getExpireBlocks()) {
                 String ownerName = this.auctions.get(id).getPlayerName();
@@ -109,7 +96,7 @@ public class ExpireGui implements InventoryHolder, Listener {
         ItemStack item = auction.getItemStack().clone();
         ItemMeta meta = item.getItemMeta();
         String title = expireGuiConfig.getTitle();
-        if(item.getItemMeta().getDisplayName().equalsIgnoreCase("")) {
+        if (item.getItemMeta().getDisplayName().equalsIgnoreCase("")) {
             title = title.replace("{ItemName}", item.getType().name().replace('_', ' ').toLowerCase());
         } else {
             title = title.replace("{ItemName}", item.getItemMeta().getDisplayName());
@@ -117,23 +104,23 @@ public class ExpireGui implements InventoryHolder, Listener {
         title = title.replace("{ProprietaireName}", playerName);
         title = title.replace("{Price}", String.valueOf(auction.getPrice()));
         title = format(title);
-        DecimalFormat df = new DecimalFormat( ) ;
-        df.setMaximumFractionDigits ( 2 );
+        DecimalFormat df = new DecimalFormat();
+        df.setMaximumFractionDigits(2);
         List<String> listDescription = new ArrayList<>();
 
-        for(String desc : expireGuiConfig.getDescription()) {
-            if(item.getItemMeta().getDisplayName().equalsIgnoreCase("")) {
+        for (String desc : expireGuiConfig.getDescription()) {
+            if (item.getItemMeta().getDisplayName().equalsIgnoreCase("")) {
                 desc = desc.replace("{ItemName}", item.getType().name().replace('_', ' ').toLowerCase());
             } else {
                 desc = desc.replace("{ItemName}", item.getItemMeta().getDisplayName());
             }
-            Date expireDate = new Date((auction.getDate().getTime() + globalConfig.getTime()*1000));
+            Date expireDate = new Date((auction.getDate().getTime() + globalConfig.getTime() * 1000L));
             SimpleDateFormat formater = new SimpleDateFormat("dd/MM/yyyy 'a' HH:mm");
             desc = desc.replace("{ExpireTime}", formater.format(expireDate));
             desc = desc.replace("{ProprietaireName}", playerName);
             desc = desc.replace("{Price}", String.valueOf(auction.getPrice()));
-            if(desc.contains("lore")) {
-                if(item.getLore() != null) {
+            if (desc.contains("lore")) {
+                if (item.getLore() != null) {
                     listDescription.addAll(item.getLore());
                 } else {
                     listDescription.add(desc.replace("{lore}", ""));
@@ -151,7 +138,7 @@ public class ExpireGui implements InventoryHolder, Listener {
         return item;
     }
 
-    private ItemStack createGuiItem(Material material, String name, List<String> description) {
+    public ItemStack createGuiItem(Material material, String name, List<String> description) {
         ItemStack item = new ItemStack(material, 1);
         ItemMeta meta = item.getItemMeta();
         name = format(name);
@@ -168,12 +155,8 @@ public class ExpireGui implements InventoryHolder, Listener {
         return item;
     }
 
-    private void openInventory(Player p) {
-        p.openInventory(inv);
-    }
-
     @EventHandler
-    public void onInventoryClick(InventoryClickEvent e) throws ExecutionException, InterruptedException {
+    public void onInventoryClick(InventoryClickEvent e) {
         if (inv.getHolder() != this) {
             return;
         }
@@ -181,7 +164,7 @@ public class ExpireGui implements InventoryHolder, Listener {
         if (!(e.getInventory() == inv)) {
             return;
         }
-        if(player != e.getWhoClicked()) {
+        if (player != e.getWhoClicked()) {
             return;
         }
         e.setCancelled(true);
@@ -191,48 +174,59 @@ public class ExpireGui implements InventoryHolder, Listener {
         for (int index : expireGuiConfig.getExpireBlocks()) {
             if (index == e.getRawSlot()) {
                 int nb0 = expireGuiConfig.getExpireBlocks().get(0);
-                int nb = ((e.getRawSlot() - nb0))/9;
-                Auction auction = auctions.get((e.getRawSlot() - nb0) + ((this.expireGuiConfig.getExpireBlocks().size() * this.page) - this.expireGuiConfig.getExpireBlocks().size()) - nb*2);
+                int nb = ((e.getRawSlot() - nb0)) / 9;
+                Auction auction = auctions.get((e.getRawSlot() - nb0) + ((this.expireGuiConfig.getExpireBlocks().size() * this.page) - this.expireGuiConfig.getExpireBlocks().size()) - nb * 2);
 
-                if(e.isLeftClick()) {
-                    if (plugin.getExpireCommandManager().auctionExist(auction.getId())) {
-                        if (auction.getPlayerUuid().equals(player.getUniqueId())) {
-                            if(player.getInventory().firstEmpty() == -1) {
-                                player.getWorld().dropItem(player.getLocation(), auction.getItemStack());
-                            } else  {
-                                player.getInventory().addItem(auction.getItemStack());
-                            }
-                            expireCommandManager.deleteAuction(auction.getId());
-                            auctions.remove(auction);
-                            CommandIssuer issuerTarget = plugin.getCommandManager().getCommandIssuer(player);
-                            issuerTarget.sendInfo(MessageKeys.REMOVE_EXPIRE_SUCCESS);
-                            ExpireGui gui = new ExpireGui(plugin);
-                            gui.initializeItems(player, 1);
+                if (e.isLeftClick()) {
+                    TaskChain<Auction> chainAuction = expireCommandManager.auctionExist(auction.getId());
+                    chainAuction.sync(() -> {
+
+                        if (chainAuction.getTaskData("auction") == null) {
+                            return;
                         }
-                    }
+
+                        if (!auction.getPlayerUuid().equals(player.getUniqueId())) {
+                            return;
+                        }
+
+                        if (player.getInventory().firstEmpty() == -1) {
+                            player.getWorld().dropItem(player.getLocation(), auction.getItemStack());
+                        } else {
+                            player.getInventory().addItem(auction.getItemStack());
+                        }
+
+                        expireCommandManager.deleteAuction(auction.getId());
+                        auctions.remove(auction);
+                        CommandIssuer issuerTarget = plugin.getCommandManager().getCommandIssuer(player);
+                        issuerTarget.sendInfo(MessageKeys.REMOVE_EXPIRE_SUCCESS);
+                        ExpireGui gui = new ExpireGui(plugin, player, 1);
+                        gui.initializeItems();
+                    }).execute();
                 }
             }
         }
+
+
         for (Barrier previous : expireGuiConfig.getPreviousBlocks()) {
             if (e.getRawSlot() == previous.getIndex() && this.page > 1) {
-                ExpireGui gui = new ExpireGui(plugin);
-                gui.initializeItems( p, this.page - 1);
+                ExpireGui gui = new ExpireGui(plugin, p, this.page - 1);
+                gui.initializeItems();
                 gui.openInventory(p);
                 break;
             }
         }
         for (Barrier next : expireGuiConfig.getNextBlocks()) {
             if (e.getRawSlot() == next.getIndex() && ((this.expireGuiConfig.getExpireBlocks().size() * this.page) - this.expireGuiConfig.getExpireBlocks().size() < auctions.size() - this.expireGuiConfig.getExpireBlocks().size()) && next.getMaterial() != next.getRemplacement().getMaterial()) {
-                ExpireGui gui = new ExpireGui(plugin);
-                gui.initializeItems(p, this.page + 1);
+                ExpireGui gui = new ExpireGui(plugin, p, this.page + 1);
+                gui.initializeItems();
                 gui.openInventory(p);
                 break;
             }
         }
         for (Barrier auctionGui : expireGuiConfig.getAuctionGuiBlocks()) {
             if (e.getRawSlot() == auctionGui.getIndex()) {
-                AuctionsGui gui = new AuctionsGui(plugin);
-                gui.initializeItems(p, 1);
+                AuctionsGui gui = new AuctionsGui(plugin, p, 1);
+                gui.initializeItems();
                 break;
             }
         }

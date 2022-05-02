@@ -163,8 +163,7 @@ public class ExpireQueries implements IDatabaseTable {
         return chain;
     }
 
-    public CompletableFuture<Auction> getAuction(int id) {
-        CompletableFuture<Auction> future = new CompletableFuture<>();
+    public TaskChain<Auction> getAuction(int id) {
         final TaskChain<Auction> chain = FAuction.newChain();
         chain.asyncFirst(() -> {
             PreparedStatement statement = null;
@@ -182,12 +181,12 @@ public class ExpireQueries implements IDatabaseTable {
                     long date = result.getLong(6);
 
 
-                    future.complete(new Auction(id, playerUuid, playerName, price, item, date));
+                    chain.setTaskData("auction", new Auction(id, playerUuid, playerName, price, item, date));
                 } else {
-                    future.complete(null);
+                    chain.setTaskData("auction", null);
                 }
             } catch (SQLException e) {
-                future.completeExceptionally(e);
+                e.printStackTrace();
             } finally {
                 try {
                     if (result != null) {
@@ -197,12 +196,12 @@ public class ExpireQueries implements IDatabaseTable {
                         statement.close();
                     }
                 } catch (SQLException e) {
-                    future.completeExceptionally(e);
+                    e.printStackTrace();
                 }
             }
-            return future;
-        }).execute();
-        return future;
+            return chain;
+        });
+        return chain;
     }
 
     @Override

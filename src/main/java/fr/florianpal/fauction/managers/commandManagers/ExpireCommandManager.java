@@ -40,7 +40,7 @@ public class ExpireCommandManager {
         expireQueries.deleteAuctions(id);
     }
 
-    public boolean auctionExist(int id) throws ExecutionException, InterruptedException {
-        return expireQueries.getAuction(id).get() != null;
+    public TaskChain<Auction> auctionExist(int id) {
+        return expireQueries.getAuction(id);
     }
 }
