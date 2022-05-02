@@ -201,6 +201,7 @@ public class AuctionsGui extends AbstractGui implements GuiInterface {
                         auctions.remove(auction);
                         CommandIssuer issuerTarget = plugin.getCommandManager().getCommandIssuer(player);
                         issuerTarget.sendInfo(MessageKeys.REMOVE_AUCTION_SUCCESS);
+                        inv.close();
                         AuctionsGui gui = new AuctionsGui(plugin, player, page);
                         gui.initializeItems();
 
