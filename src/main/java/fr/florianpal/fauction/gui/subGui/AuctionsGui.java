@@ -37,7 +37,6 @@ public class AuctionsGui extends AbstractGui implements GuiInterface {
         initGui(auctionConfig.getNameGui(), 27);
     }
 
-    // You can call this whenever you want to put the items in
     public void initializeItems() {
         TaskChain<ArrayList<Auction>> chain = auctionCommandManager.getAuctions();
         chain.sync(() -> {

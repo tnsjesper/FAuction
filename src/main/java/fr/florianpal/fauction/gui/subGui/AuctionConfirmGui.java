@@ -12,16 +12,20 @@ import fr.florianpal.fauction.objects.Auction;
 import fr.florianpal.fauction.objects.Barrier;
 import fr.florianpal.fauction.objects.Confirm;
 import net.milkbowl.vault.economy.EconomyResponse;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.bukkit.Bukkit.getServer;
 
@@ -39,11 +43,6 @@ public class AuctionConfirmGui extends AbstractGui implements GuiInterface {
         this.auctionConfirmConfig = plugin.getConfigurationManager().getAuctionConfirmConfig();
         this.auctionCommandManager = new AuctionCommandManager(plugin);
         initGui(auctionConfirmConfig.getNameGui(), 27);
-    }
-
-    @Override
-    public Inventory getInventory() {
-        return inv;
     }
 
     public void initializeItems() {
