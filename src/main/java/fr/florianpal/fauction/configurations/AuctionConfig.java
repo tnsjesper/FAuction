@@ -71,7 +71,6 @@ public class AuctionConfig {
                 barrierBlocks.add(barrier);
             } else if (config.getString("block." + index + ".utility").equalsIgnoreCase("auction")) {
                 auctionBlocks.add(Integer.valueOf(index));
-
             } else if (config.getString("block." + index + ".utility").equalsIgnoreCase("close")) {
                 Barrier barrier = new Barrier(
                         Integer.parseInt(index),

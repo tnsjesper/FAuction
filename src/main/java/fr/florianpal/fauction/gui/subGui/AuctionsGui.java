@@ -172,13 +172,38 @@ public class AuctionsGui extends AbstractGui implements GuiInterface {
         if (!(e.getInventory() == inv)) {
             return;
         }
-        if (player != e.getWhoClicked()) {
-            return;
-        }
         e.setCancelled(true);
-        Player p = (Player) e.getWhoClicked();
         ItemStack clickedItem = e.getCurrentItem();
         if (clickedItem == null || clickedItem.getType() == Material.AIR) return;
+
+        for (Barrier previous : auctionConfig.getPreviousBlocks()) {
+            if (e.getRawSlot() == previous.getIndex() && this.page > 1) {
+                AuctionsGui gui = new AuctionsGui(plugin, player, this.page - 1);
+                gui.initializeItems();
+                return;
+            }
+        }
+        for (Barrier next : auctionConfig.getNextBlocks()) {
+            if (e.getRawSlot() == next.getIndex() && ((this.auctionConfig.getAuctionBlocks().size() * this.page) - this.auctionConfig.getAuctionBlocks().size() < auctions.size() - this.auctionConfig.getAuctionBlocks().size()) && next.getMaterial() != next.getRemplacement().getMaterial()) {
+                AuctionsGui gui = new AuctionsGui(plugin, player, this.page + 1);
+                gui.initializeItems();
+                return;
+            }
+        }
+        for (Barrier expire : auctionConfig.getExpireBlocks()) {
+            if (e.getRawSlot() == expire.getIndex()) {
+                ExpireGui gui = new ExpireGui(plugin, player, 1);
+                gui.initializeItems();
+                return;
+            }
+        }
+        for (Barrier close : auctionConfig.getCloseBlocks()) {
+            if (e.getRawSlot() == close.getIndex()) {
+                inv.close();
+                return;
+            }
+        }
+
         for (int index : auctionConfig.getAuctionBlocks()) {
             if (index == e.getRawSlot()) {
                 int nb0 = auctionConfig.getAuctionBlocks().get(0);
@@ -223,33 +248,6 @@ public class AuctionsGui extends AbstractGui implements GuiInterface {
                     }
                     AuctionConfirmGui auctionConfirmGui = new AuctionConfirmGui(plugin, player, page, auction);
                     auctionConfirmGui.initializeItems();
-                }
-                for (Barrier previous : auctionConfig.getPreviousBlocks()) {
-                    if (e.getRawSlot() == previous.getIndex() && this.page > 1) {
-                        AuctionsGui gui = new AuctionsGui(plugin, p, this.page - 1);
-                        gui.initializeItems();
-                        break;
-                    }
-                }
-                for (Barrier next : auctionConfig.getNextBlocks()) {
-                    if (e.getRawSlot() == next.getIndex() && ((this.auctionConfig.getAuctionBlocks().size() * this.page) - this.auctionConfig.getAuctionBlocks().size() < auctions.size() - this.auctionConfig.getAuctionBlocks().size()) && next.getMaterial() != next.getRemplacement().getMaterial()) {
-                        AuctionsGui gui = new AuctionsGui(plugin, p, this.page + 1);
-                        gui.initializeItems();
-                        break;
-                    }
-                }
-                for (Barrier expire : auctionConfig.getExpireBlocks()) {
-                    if (e.getRawSlot() == expire.getIndex()) {
-                        ExpireGui gui = new ExpireGui(plugin, p, 1);
-                        gui.initializeItems();
-                        break;
-                    }
-                }
-                for (Barrier close : auctionConfig.getCloseBlocks()) {
-                    if (e.getRawSlot() == close.getIndex()) {
-                        inv.close();
-                        break;
-                    }
                 }
                 break;
             }
