@@ -39,7 +39,6 @@ public class ExpireGui extends AbstractGui implements GuiInterface {
         initGui(expireGuiConfig.getNameGui(), 27);
     }
 
-    // You can call this whenever you want to put the items in
     public void initializeItems() {
         TaskChain<ArrayList<Auction>> chain = expireCommandManager.getAuctions(player.getUniqueId());
 
@@ -110,8 +109,8 @@ public class ExpireGui extends AbstractGui implements GuiInterface {
                 desc = desc.replace("{ItemName}", item.getItemMeta().getDisplayName());
             }
             Date expireDate = new Date((auction.getDate().getTime() + globalConfig.getTime() * 1000L));
-            SimpleDateFormat formater = new SimpleDateFormat("dd/MM/yyyy 'a' HH:mm");
-            desc = desc.replace("{ExpireTime}", formater.format(expireDate));
+            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy 'a' HH:mm");
+            desc = desc.replace("{ExpireTime}", formatter.format(expireDate));
             desc = desc.replace("{ProprietaireName}", playerName);
             desc = desc.replace("{Price}", String.valueOf(auction.getPrice()));
             if (desc.contains("lore")) {
