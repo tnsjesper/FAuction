@@ -13,6 +13,7 @@ public class AuctionConfig {
     private final List<Barrier> nextBlocks = new ArrayList<>();
     private final List<Barrier> expireBlocks = new ArrayList<>();
     private final List<Integer> auctionBlocks = new ArrayList<>();
+    private final List<Barrier> closeBlocks = new ArrayList<>();
     private int size = 27;
     private String title = "";
     private final List<String> description = new ArrayList<>();
@@ -70,6 +71,15 @@ public class AuctionConfig {
                 barrierBlocks.add(barrier);
             } else if (config.getString("block." + index + ".utility").equalsIgnoreCase("auction")) {
                 auctionBlocks.add(Integer.valueOf(index));
+
+            } else if (config.getString("block." + index + ".utility").equalsIgnoreCase("close")) {
+                Barrier barrier = new Barrier(
+                        Integer.parseInt(index),
+                        Material.getMaterial(config.getString("block." + index + ".material")),
+                        config.getString("block." + index + ".title"),
+                        config.getStringList("block." + index + ".description")
+                );
+                closeBlocks.add(barrier);
             }
         }
         size = config.getInt("gui.size");
@@ -109,6 +119,10 @@ public class AuctionConfig {
 
     public List<Integer> getAuctionBlocks() {
         return auctionBlocks;
+    }
+
+    public List<Barrier> getCloseBlocks() {
+        return closeBlocks;
     }
 
     public int getSize() {

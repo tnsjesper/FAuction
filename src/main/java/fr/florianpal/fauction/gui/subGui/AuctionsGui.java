@@ -77,6 +77,12 @@ public class AuctionsGui extends AbstractGui implements GuiInterface {
                             inv.setItem(next.getRemplacement().getIndex(), createGuiItem(next.getRemplacement().getMaterial(), next.getRemplacement().getTitle(), next.getRemplacement().getDescription()));
                         }
                     }
+                     for (Barrier close : auctionConfig.getCloseBlocks()) {
+                         inv.setItem(close.getIndex(), createGuiItem(close.getMaterial(), close.getTitle(), close.getDescription()));
+                    }
+
+
+
 
                     int id = (this.auctionConfig.getAuctionBlocks().size() * this.page) - this.auctionConfig.getAuctionBlocks().size();
                     for (int index : auctionConfig.getAuctionBlocks()) {
@@ -236,6 +242,12 @@ public class AuctionsGui extends AbstractGui implements GuiInterface {
                     if (e.getRawSlot() == expire.getIndex()) {
                         ExpireGui gui = new ExpireGui(plugin, p, 1);
                         gui.initializeItems();
+                        break;
+                    }
+                }
+                for (Barrier close : auctionConfig.getCloseBlocks()) {
+                    if (e.getRawSlot() == close.getIndex()) {
+                        inv.close();
                         break;
                     }
                 }

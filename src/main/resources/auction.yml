@@ -209,7 +209,7 @@ block:
     title: "-"
     description: {}
   '53':
-    utility: barrier
-    material: AIR
-    title: "-"
+    utility: close
+    material: BARRIER
+    title: "Fermer"
     description: {}
