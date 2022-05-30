@@ -36,18 +36,23 @@ public class LimitationManager {
         Permission perms = plugin.getVaultIntegrationManager().getPerms();
         Map<String, Integer> limitations = plugin.getConfigurationManager().getGlobalConfig().getLimitations();
         String[] playerGroup;
+        int limit = limitations.get("default");
         if (perms != null) {
             String primaryGroup = perms.getPrimaryGroup(player);
             if(limitations.containsKey(primaryGroup)) {
-                return limitations.get(primaryGroup);
+                if(limit < limitations.get(primaryGroup)) {
+                    limit = limitations.get(primaryGroup);
+                }
             }
             playerGroup = perms.getPlayerGroups(player);
             for(String s : playerGroup) {
                 if(limitations.containsKey(s)) {
-                    return limitations.get(s);
+                    if(limit < limitations.get(s)) {
+                        limit = limitations.get(s);
+                    }
                 }
             }
         }
-        return limitations.get("default");
+        return limit;
     }
 }
