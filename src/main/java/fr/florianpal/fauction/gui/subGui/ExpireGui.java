@@ -36,7 +36,7 @@ public class ExpireGui extends AbstractGui implements GuiInterface {
         super(plugin, player, page);
         this.expireGuiConfig = plugin.getConfigurationManager().getExpireConfig();
         this.expireCommandManager = plugin.getExpireCommandManager();
-        initGui(expireGuiConfig.getNameGui(), 27);
+        initGui(expireGuiConfig.getNameGui(), expireGuiConfig.getSize());
     }
 
     public void initializeItems() {
