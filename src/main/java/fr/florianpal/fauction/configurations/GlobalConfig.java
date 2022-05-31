@@ -8,6 +8,7 @@ import java.util.Map;
 
 public class GlobalConfig {
 
+    private String orderBy;
     private boolean onBuyCommandUse;
     private String onBuyCommand;
     private final Map<String, Integer> limitations = new HashMap<>();
@@ -16,6 +17,7 @@ public class GlobalConfig {
     private int checkEvery;
 
     public void load(Configuration config) {
+        orderBy = config.getString("orderBy");
         onBuyCommandUse = config.getBoolean("onBuy.sendCommand.use");
         onBuyCommand = config.getString("onBuy.sendCommand.command");
         time = config.getInt("expiration.time");
@@ -52,5 +54,9 @@ public class GlobalConfig {
 
     public Map<Material, Double> getMinPrice() {
         return minPrice;
+    }
+
+    public String getOrderBy() {
+        return orderBy;
     }
 }

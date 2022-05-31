@@ -3,6 +3,7 @@ package fr.florianpal.fauction.queries;
 import co.aikar.taskchain.TaskChain;
 import fr.florianpal.fauction.FAuction;
 import fr.florianpal.fauction.IDatabaseTable;
+import fr.florianpal.fauction.configurations.GlobalConfig;
 import fr.florianpal.fauction.managers.DatabaseManager;
 import fr.florianpal.fauction.objects.Auction;
 import java.sql.Connection;
@@ -16,16 +17,18 @@ import java.util.concurrent.CompletableFuture;
 
 public class AuctionQueries implements IDatabaseTable {
 
-    private static final String GET_AUCTIONS = "SELECT * FROM auctions";
+    private static final String GET_AUCTIONS = "SELECT * FROM auctions ORDER BY id ";
     private static final String GET_AUCTION_WITH_ID = "SELECT * FROM auctions WHERE id=?";
     private static final String GET_AUCTIONS_BY_UUID = "SELECT * FROM auctions WHERE playerUuid=?";
     private static final String ADD_AUCTION = "INSERT INTO auctions (playerUuid, playerName, item, price, date) VALUES(?,?,?,?,?)";
     private static final String DELETE_AUCTION = "DELETE FROM auctions WHERE id=?";
 
     private final DatabaseManager databaseManager;
+    private final GlobalConfig globalConfig;
 
     public AuctionQueries(FAuction plugin) {
         this.databaseManager = plugin.getDatabaseManager();
+        this.globalConfig = plugin.getConfigurationManager().getGlobalConfig();
     }
 
     public void addAuction(UUID playerUUID, String playerName,byte[] item, double price, Date date){
@@ -88,7 +91,7 @@ public class AuctionQueries implements IDatabaseTable {
             ResultSet result = null;
             ArrayList<Auction> auctions = new ArrayList<>();
             try (Connection connection = databaseManager.getConnection()) {
-                statement = connection.prepareStatement(GET_AUCTIONS);
+                statement = connection.prepareStatement(GET_AUCTIONS + this.globalConfig.getOrderBy());
 
                 result = statement.executeQuery();
 
