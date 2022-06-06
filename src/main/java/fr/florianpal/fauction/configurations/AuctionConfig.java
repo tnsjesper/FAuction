@@ -53,7 +53,7 @@ public class AuctionConfig {
 
                 );
                 nextBlocks.add(barrier);
-            }else if (config.getString("block." + index + ".utility").equalsIgnoreCase("expire")) {
+            } else if (config.getString("block." + index + ".utility").equalsIgnoreCase("expire")) {
                 Barrier barrier = new Barrier(
                         Integer.parseInt(index),
                         Material.getMaterial(config.getString("block." + index + ".material")),

@@ -3,7 +3,6 @@ package fr.florianpal.fauction;
 import co.aikar.taskchain.BukkitTaskChainFactory;
 import co.aikar.taskchain.TaskChain;
 import co.aikar.taskchain.TaskChainFactory;
-import com.zaxxer.hikari.HikariDataSource;
 import fr.florianpal.fauction.commands.AuctionCommand;
 import fr.florianpal.fauction.schedules.ExpireSchedule;
 import fr.florianpal.fauction.managers.ConfigurationManager;
@@ -25,14 +24,11 @@ import java.util.zip.ZipEntry;
 
 public class FAuction extends JavaPlugin {
 
-    private HikariDataSource hikari;
     private static TaskChainFactory taskChainFactory;
 
     private ConfigurationManager configurationManager;
     private AuctionQueries auctionQueries;
     private ExpireQueries expireQueries;
-
-    private ExpireSchedule expireListener;
 
     private CommandManager commandManager;
     private VaultIntegrationManager vaultIntegrationManager;
@@ -80,9 +76,8 @@ public class FAuction extends JavaPlugin {
 
         commandManager.registerCommand(new AuctionCommand(this));
 
-        expireListener = new ExpireSchedule(this);
-
-        Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, expireListener, configurationManager.getGlobalConfig().getCheckEvery(), configurationManager.getGlobalConfig().getCheckEvery());
+        ExpireSchedule expireSchedule = new ExpireSchedule(this);
+        Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, expireSchedule, configurationManager.getGlobalConfig().getCheckEvery(), configurationManager.getGlobalConfig().getCheckEvery());
     }
 
     public ConfigurationManager getConfigurationManager() {

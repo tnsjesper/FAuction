@@ -6,54 +6,42 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
-import java.io.IOException;
 
 public class ConfigurationManager {
-    private final FAuction core;
-
     private final DatabaseConfig database = new DatabaseConfig();
-    private final File databaseFile;
     private final FileConfiguration databaseConfig;
 
     private final AuctionConfig auctionConfig = new AuctionConfig();
-    private final File auctionFile;
     private final FileConfiguration auctionConfiguration;
 
     private final ExpireGuiConfig expireConfig = new ExpireGuiConfig();
-    private final File expireFile;
     private final FileConfiguration expireConfiguration;
 
     private final AuctionConfirmGuiConfig auctionConfirmConfig = new AuctionConfirmGuiConfig();
-    private final File auctionConfirmFile;
     private final FileConfiguration auctionConfirmConfiguration;
 
     private final GlobalConfig globalConfig = new GlobalConfig();
-    private final File globalFile;
     private final FileConfiguration globalConfiguration;
 
-    private File langFile;
-    private FileConfiguration langConfig;
-
     public ConfigurationManager(FAuction core) {
-        this.core = core;
 
-        databaseFile = new File(this.core.getDataFolder(), "database.yml");
+        File databaseFile = new File(core.getDataFolder(), "database.yml");
         core.createDefaultConfiguration(databaseFile, "database.yml");
         databaseConfig = YamlConfiguration.loadConfiguration(databaseFile);
 
-        auctionFile = new File(this.core.getDataFolder(), "auction.yml");
+        File auctionFile = new File(core.getDataFolder(), "auction.yml");
         core.createDefaultConfiguration(auctionFile, "auction.yml");
         auctionConfiguration = YamlConfiguration.loadConfiguration(auctionFile);
 
-        expireFile = new File(this.core.getDataFolder(), "expire.yml");
+        File expireFile = new File(core.getDataFolder(), "expire.yml");
         core.createDefaultConfiguration(expireFile, "expire.yml");
         expireConfiguration = YamlConfiguration.loadConfiguration(expireFile);
 
-        auctionConfirmFile = new File(this.core.getDataFolder(), "auctionConfirm.yml");
+        File auctionConfirmFile = new File(core.getDataFolder(), "auctionConfirm.yml");
         core.createDefaultConfiguration(auctionConfirmFile, "auctionConfirm.yml");
         auctionConfirmConfiguration = YamlConfiguration.loadConfiguration(auctionConfirmFile);
 
-        globalFile = new File(this.core.getDataFolder(), "config.yml");
+        File globalFile = new File(core.getDataFolder(), "config.yml");
         core.createDefaultConfiguration(globalFile, "config.yml");
         globalConfiguration = YamlConfiguration.loadConfiguration(globalFile);
 
@@ -64,24 +52,15 @@ public class ConfigurationManager {
         database.load(databaseConfig);
     }
 
-    public void save() {
-        database.save(databaseConfig);
-    }
-
     public void reload() {
+        globalConfig.load(globalConfiguration);
+        auctionConfig.load(auctionConfiguration);
+        auctionConfirmConfig.load(auctionConfirmConfiguration);
+        expireConfig.load(expireConfiguration);
         database.load(databaseConfig);
     }
 
-    public void saveDatabaseConfig() {
-        try {
-            databaseConfig.save(databaseFile);
-        } catch (IOException e) {
-            core.getLogger().severe("Failed to save database config");
-            e.printStackTrace();
-        }
-    }
-
-    DatabaseConfig getDatabase() {
+    public DatabaseConfig getDatabase() {
         return database;
     }
 
