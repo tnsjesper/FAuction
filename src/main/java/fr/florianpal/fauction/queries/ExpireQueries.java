@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 public class ExpireQueries implements IDatabaseTable {
     private static final String GET_AUCTIONS = "SELECT * FROM expires";

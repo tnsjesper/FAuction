@@ -6,6 +6,7 @@ import fr.florianpal.fauction.IDatabaseTable;
 import fr.florianpal.fauction.configurations.GlobalConfig;
 import fr.florianpal.fauction.managers.DatabaseManager;
 import fr.florianpal.fauction.objects.Auction;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,7 +14,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 public class AuctionQueries implements IDatabaseTable {
 
@@ -59,7 +59,6 @@ public class AuctionQueries implements IDatabaseTable {
     }
 
     public void deleteAuctions(int id) {
-        CompletableFuture<Void> future = new CompletableFuture<>();
         final TaskChain<Void> chain = FAuction.newChain();
         chain.asyncFirst(() -> {
             PreparedStatement statement = null;
@@ -67,19 +66,18 @@ public class AuctionQueries implements IDatabaseTable {
                 statement = connection.prepareStatement(DELETE_AUCTION);
                 statement.setInt(1, id);
                 statement.executeUpdate();
-                future.complete(null);
             } catch (SQLException e) {
-                future.completeExceptionally(e);
+                e.printStackTrace();
             } finally {
                 if (statement != null) {
                     try {
                         statement.close();
                     } catch (SQLException e) {
-                        future.completeExceptionally(e);
+                        e.printStackTrace();
                     }
                 }
             }
-            return future;
+            return null;
         }).execute();
     }
 
@@ -108,7 +106,7 @@ public class AuctionQueries implements IDatabaseTable {
                 }
                 chain.setTaskData("auctions", auctions);
             } catch (SQLException e) {
-                System.out.println(e.toString());
+                e.printStackTrace();
             } finally {
                 try {
                     if (result != null) {
@@ -117,7 +115,9 @@ public class AuctionQueries implements IDatabaseTable {
                     if (statement != null) {
                         statement.close();
                     }
-                } catch (SQLException ignored) {}
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
             return chain;
         });
