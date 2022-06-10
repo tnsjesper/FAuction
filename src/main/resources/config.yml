@@ -2,17 +2,11 @@ orderBy: "ASC" # ASC or DESC / ASC : More recent to older / DESC : Older to more
 onBuy:
   sendCommand: # Command sends if item is buying
     use: false
-    command: "pxe mail {OwnerName} &aVous avez vendu &3 {Amount} &ex&3{ItemName} &aà &d{BuyerName} &apour &e{ItemPrice} &6Suns &aà l'hôtel des ventes"
+    command: ""
 expiration:
   time: 3600 #In seconds
   checkEvery: 72000 #In ticks
 limitations: # Number of auction per rank
   default: 5
-  paysan: 10
-  marchand: 15
-  terrien: 20
-  citoyen: 25
-  commercant: 30
-  citadin: 35
 min-price: # Min price per item. Ex : 1 CobbleStone at 0.5. Set {} to disable it
   COBBLESTONE: 0.5
