@@ -8,19 +8,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AuctionConfig {
-    private final List<Barrier> barrierBlocks = new ArrayList<>();
-    private final List<Barrier> previousBlocks = new ArrayList<>();
-    private final List<Barrier> nextBlocks = new ArrayList<>();
-    private final List<Barrier> expireBlocks = new ArrayList<>();
-    private final List<Integer> auctionBlocks = new ArrayList<>();
-    private final List<Barrier> closeBlocks = new ArrayList<>();
+    private List<Barrier> barrierBlocks = new ArrayList<>();
+    private List<Barrier> previousBlocks = new ArrayList<>();
+    private List<Barrier> nextBlocks = new ArrayList<>();
+    private List<Barrier> expireBlocks = new ArrayList<>();
+    private  List<Integer> auctionBlocks = new ArrayList<>();
+    private List<Barrier> closeBlocks = new ArrayList<>();
     private int size = 27;
     private String title = "";
-    private final List<String> description = new ArrayList<>();
+    private List<String> description = new ArrayList<>();
     private String nameGui = "";
 
 
     public void load(Configuration config) {
+        barrierBlocks = new ArrayList<>();
+        previousBlocks = new ArrayList<>();
+        nextBlocks = new ArrayList<>();
+        expireBlocks = new ArrayList<>();
+        auctionBlocks = new ArrayList<>();
+        closeBlocks = new ArrayList<>();
+        description = new ArrayList<>();
 
         for (String index : config.getConfigurationSection("block").getKeys(false)) {
             if (config.getString("block." + index + ".utility").equalsIgnoreCase("previous")) {
@@ -127,5 +134,4 @@ public class AuctionConfig {
     public int getSize() {
         return size;
     }
-
 }

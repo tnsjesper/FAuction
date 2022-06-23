@@ -114,6 +114,15 @@ public class AuctionCommand extends BaseCommand {
         issuerTarget.sendInfo(MessageKeys.AUCTION_OPEN);
     }
 
+    @Subcommand("reload")
+    @CommandPermission("fauction.reload")
+    @Description("{@@fauction.reload_help_description}")
+    public void onReload(Player playerSender) {
+        CommandIssuer issuerTarget = commandManager.getCommandIssuer(playerSender);
+        plugin.reloadConfig();
+        issuerTarget.sendInfo(MessageKeys.AUCTION_RELOAD);
+    }
+
     @HelpCommand
     @Description("{@@fauction.help_description}")
     public void doHelp(CommandSender sender, CommandHelp help) {

@@ -4,6 +4,7 @@ fauction:
   auction_sell_help_description: "Pour vendre le stack d'items dans votre main"
   expire_add_help_description: "Pour voir vos ventes expirées"
   auction_add_help_description: "Ajouter une nouvelle vente"
+  reload_help_description: "Permet de recharger la configuration du plugin."
 
   buy_auction_success: "Vous venez d'acheter un item."
   no_auction: "Il n'y a actuellement aucune vente active."
@@ -20,6 +21,7 @@ fauction:
   auction_expire_drop: "Une de vos vente a expiré et vous n'avez pas d'espace dans votre inventaire. Donc elle a été déposé au sol."
   buy_auction_cancelled: "Vous avez annulé votre achat."
   min_price: "Votre prix est en dessous du prix minimum de {minPrice}."
+  auction_reload: "La configuration du plugin a été recharger."
 
   remove_expire_success: "Vous avez récupéré un de vos items expiré."
 acf-minecraft:

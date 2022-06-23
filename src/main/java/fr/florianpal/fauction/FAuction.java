@@ -151,6 +151,11 @@ public class FAuction extends JavaPlugin {
         }
     }
 
+    @Override
+    public void reloadConfig() {
+        configurationManager.reload();
+    }
+
     public AuctionCommandManager getAuctionCommandManager() {
         return auctionCommandManager;
     }

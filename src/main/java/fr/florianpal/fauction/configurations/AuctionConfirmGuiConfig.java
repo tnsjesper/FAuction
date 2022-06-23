@@ -16,8 +16,8 @@ public class AuctionConfirmGuiConfig {
     private List<String> description = new ArrayList<>();
     private String nameGui = "";
     private Integer size = 27;
-    private final List<Barrier> barrierBlocks = new ArrayList<>();
-    private final Map<Integer, Confirm> confirmBlocks = new HashMap<>();
+    private List<Barrier> barrierBlocks = new ArrayList<>();
+    private Map<Integer, Confirm> confirmBlocks = new HashMap<>();
 
     public void load(Configuration config) {
         title_true = config.getString("gui.title-true");
@@ -25,6 +25,9 @@ public class AuctionConfirmGuiConfig {
         nameGui = config.getString("gui.name");
         description = config.getStringList("gui.description");
         size = config.getInt("gui.size");
+
+        barrierBlocks = new ArrayList<>();
+        confirmBlocks = new HashMap<>();
 
         for (String index : config.getConfigurationSection("block").getKeys(false)) {
             if (config.getString("block." + index + ".utility").equalsIgnoreCase("barrier")) {

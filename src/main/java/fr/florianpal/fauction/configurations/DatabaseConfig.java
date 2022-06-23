@@ -15,12 +15,6 @@ public class DatabaseConfig {
         password = config.getString("database.password");
     }
 
-    public void save(Configuration config) {
-        config.set("database.url", url);
-        config.set("database.user", user);
-        config.set("database.password", password);
-    }
-
     public String getUrl() {
         return url;
     }
