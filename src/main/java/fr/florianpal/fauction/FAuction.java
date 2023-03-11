@@ -52,12 +52,12 @@ public class FAuction extends JavaPlugin {
 
         taskChainFactory = BukkitTaskChainFactory.create(this);
 
-        File languageFile = new File(getDataFolder(), "lang_fr.yml");
-        createDefaultConfiguration(languageFile, "lang_fr.yml");
-
         configurationManager = new ConfigurationManager(this);
         commandManager = new CommandManager(this);
         commandManager.registerDependency(ConfigurationManager.class, configurationManager);
+
+        File languageFile = new File(getDataFolder(), "lang_" + configurationManager.getGlobalConfig().getLang() + ".yml");
+        createDefaultConfiguration(languageFile, "lang_" + configurationManager.getGlobalConfig().getLang() + ".yml");
 
         limitationManager = new LimitationManager(this);
 

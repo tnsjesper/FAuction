@@ -8,6 +8,7 @@ import java.util.Map;
 
 public class GlobalConfig {
 
+    private String lang = "en";
     private String orderBy;
     private boolean onBuyCommandUse;
     private String onBuyCommand;
@@ -17,6 +18,7 @@ public class GlobalConfig {
     private int checkEvery;
 
     public void load(Configuration config) {
+        lang = config.getString("lang");
         orderBy = config.getString("orderBy");
         onBuyCommandUse = config.getBoolean("onBuy.sendCommand.use");
         onBuyCommand = config.getString("onBuy.sendCommand.command");
@@ -33,8 +35,6 @@ public class GlobalConfig {
             minPrice.put(Material.valueOf(material), config.getDouble("min-price." + material));
         }
     }
-
-    public void save(Configuration config) {}
 
     public int getTime() {
         return time;
@@ -62,5 +62,9 @@ public class GlobalConfig {
 
     public String getOrderBy() {
         return orderBy;
+    }
+
+    public String getLang() {
+        return lang;
     }
 }
