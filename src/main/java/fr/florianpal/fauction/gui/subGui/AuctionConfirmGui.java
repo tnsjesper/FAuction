@@ -4,6 +4,7 @@ import co.aikar.commands.CommandIssuer;
 import co.aikar.taskchain.TaskChain;
 import fr.florianpal.fauction.FAuction;
 import fr.florianpal.fauction.configurations.AuctionConfirmGuiConfig;
+import fr.florianpal.fauction.enums.ViewType;
 import fr.florianpal.fauction.gui.AbstractGui;
 import fr.florianpal.fauction.gui.GuiInterface;
 import fr.florianpal.fauction.languages.MessageKeys;
@@ -141,7 +142,7 @@ public class AuctionConfirmGui extends AbstractGui implements GuiInterface {
                 if (!confirm.isValue()) {
                     issuerTarget.sendInfo(MessageKeys.BUY_AUCTION_CANCELLED);
                     player.getOpenInventory().close();
-                    AuctionsGui auctionsGui = new AuctionsGui(plugin, player, 1);
+                    AuctionsGui auctionsGui = new AuctionsGui(plugin, player, ViewType.ALL, 1);
                     auctionsGui.initializeItems();
                     return;
                 }
@@ -189,7 +190,7 @@ public class AuctionConfirmGui extends AbstractGui implements GuiInterface {
                         Bukkit.getLogger().info("Player : " + player.getName() + " buy " + auction.getItemStack().getI18NDisplayName() + " at " + auction.getPlayerName());
 
                         player.getOpenInventory().close();
-                        AuctionsGui auctionsGui = new AuctionsGui(plugin, player, 1);
+                        AuctionsGui auctionsGui = new AuctionsGui(plugin, player, ViewType.ALL, 1);
                         auctionsGui.initializeItems();
                     }).execute();
 

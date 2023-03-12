@@ -6,6 +6,7 @@ import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.annotation.*;
 import co.aikar.taskchain.TaskChain;
 import fr.florianpal.fauction.FAuction;
+import fr.florianpal.fauction.enums.ViewType;
 import fr.florianpal.fauction.gui.subGui.AuctionsGui;
 import fr.florianpal.fauction.gui.subGui.ExpireGui;
 import fr.florianpal.fauction.languages.MessageKeys;
@@ -43,7 +44,7 @@ public class AuctionCommand extends BaseCommand {
     @Description("{@@fauction.auction_list_help_description}")
     public void onList(Player playerSender){
         CommandIssuer issuerTarget = commandManager.getCommandIssuer(playerSender);
-        AuctionsGui gui = new AuctionsGui(plugin, playerSender, 1);
+        AuctionsGui gui = new AuctionsGui(plugin, playerSender, ViewType.ALL,1);
         gui.initializeItems();
         issuerTarget.sendInfo(MessageKeys.AUCTION_OPEN);
     }
