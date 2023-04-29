@@ -11,6 +11,8 @@ import fr.florianpal.fauction.languages.MessageKeys;
 import fr.florianpal.fauction.managers.commandManagers.AuctionCommandManager;
 import fr.florianpal.fauction.objects.Auction;
 import fr.florianpal.fauction.objects.Barrier;
+import fr.florianpal.fauction.utils.FormatUtil;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -128,7 +130,7 @@ public class AuctionsGui extends AbstractGui implements GuiInterface {
         }
         title = title.replace("{ProprietaireName}", auction.getPlayerName());
         title = title.replace("{Price}", String.valueOf(auction.getPrice()));
-        title = format(title);
+        title = FormatUtil.format(title);
         DecimalFormat df = new DecimalFormat();
         df.setMaximumFractionDigits(2);
         List<String> listDescription = new ArrayList<>();
@@ -153,7 +155,7 @@ public class AuctionsGui extends AbstractGui implements GuiInterface {
                     listDescription.add(desc.replace("{lore}", ""));
                 }
             } else {
-                desc = format(desc);
+                desc = FormatUtil.format(desc);
                 listDescription.add(desc);
             }
         }
@@ -168,12 +170,12 @@ public class AuctionsGui extends AbstractGui implements GuiInterface {
     public ItemStack createGuiItem(Material material, String name, List<String> description) {
         ItemStack item = new ItemStack(material, 1);
         ItemMeta meta = item.getItemMeta();
-        name = format(name);
+        name = FormatUtil.format(name);
         List<String> descriptions = new ArrayList<>();
         for (String desc : description) {
 
             desc = desc.replace("{TotalVente}", String.valueOf(this.auctions.size()));
-            desc = format(desc);
+            desc = FormatUtil.format(desc);
             descriptions.add(desc);
         }
         if (meta != null) {
@@ -286,22 +288,5 @@ public class AuctionsGui extends AbstractGui implements GuiInterface {
                 break;
             }
         }
-    }
-
-    private String format(String msg) {
-        Pattern pattern = Pattern.compile("[{]#[a-fA-F0-9]{6}[}]");
-        if (Bukkit.getVersion().contains("1.16")) {
-
-            Matcher match = pattern.matcher(msg);
-            while (match.find()) {
-                String color = msg.substring(match.start(), match.end());
-                String replace = color;
-                color = color.replace("{", "");
-                color = color.replace("}", "");
-                msg = msg.replace(replace, net.md_5.bungee.api.ChatColor.of(color) + "");
-                match = pattern.matcher(msg);
-            }
-        }
-        return net.md_5.bungee.api.ChatColor.translateAlternateColorCodes('&', msg);
     }
 }
