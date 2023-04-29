@@ -11,6 +11,9 @@ public class GlobalConfig {
     private String lang = "en";
     private String orderBy;
     private boolean onBuyCommandUse;
+
+    private String dateFormat;
+
     private String onBuyCommand;
     private Map<String, Integer> limitations = new HashMap<>();
     private Map<Material, Double> minPrice = new HashMap<>();
@@ -20,6 +23,7 @@ public class GlobalConfig {
     public void load(Configuration config) {
         lang = config.getString("lang");
         orderBy = config.getString("orderBy");
+        dateFormat = config.getString("dateFormat");
         onBuyCommandUse = config.getBoolean("onBuy.sendCommand.use");
         onBuyCommand = config.getString("onBuy.sendCommand.command");
         time = config.getInt("expiration.time");
@@ -66,5 +70,9 @@ public class GlobalConfig {
 
     public String getLang() {
         return lang;
+    }
+
+    public String getDateFormat() {
+        return dateFormat;
     }
 }

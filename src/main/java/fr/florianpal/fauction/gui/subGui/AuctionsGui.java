@@ -146,7 +146,7 @@ public class AuctionsGui extends AbstractGui implements GuiInterface {
             desc = desc.replace("{ProprietaireName}", auction.getPlayerName());
             desc = desc.replace("{Price}", String.valueOf(auction.getPrice()));
             Date expireDate = new Date((auction.getDate().getTime() + globalConfig.getTime() * 1000L));
-            SimpleDateFormat formater = new SimpleDateFormat("dd/MM/yyyy 'a' HH:mm");
+            SimpleDateFormat formater = new SimpleDateFormat(globalConfig.getDateFormat());
             desc = desc.replace("{ExpireTime}", formater.format(expireDate));
             if (desc.contains("lore")) {
                 if (item.getLore() != null) {
