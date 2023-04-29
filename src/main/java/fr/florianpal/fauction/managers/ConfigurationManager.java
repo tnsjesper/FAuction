@@ -12,23 +12,30 @@ public class ConfigurationManager {
     private final FileConfiguration databaseConfig;
 
     private final AuctionConfig auctionConfig = new AuctionConfig();
-    private final FileConfiguration auctionConfiguration;
+    private FileConfiguration auctionConfiguration;
 
     private final ExpireGuiConfig expireConfig = new ExpireGuiConfig();
-    private final FileConfiguration expireConfiguration;
+    private FileConfiguration expireConfiguration;
 
     private final AuctionConfirmGuiConfig auctionConfirmConfig = new AuctionConfirmGuiConfig();
-    private final FileConfiguration auctionConfirmConfiguration;
+    private FileConfiguration auctionConfirmConfiguration;
 
     private final GlobalConfig globalConfig = new GlobalConfig();
-    private final FileConfiguration globalConfiguration;
+    private FileConfiguration globalConfiguration;
 
     public ConfigurationManager(FAuction core) {
-
         File databaseFile = new File(core.getDataFolder(), "database.yml");
         core.createDefaultConfiguration(databaseFile, "database.yml");
         databaseConfig = YamlConfiguration.loadConfiguration(databaseFile);
+        database.load(databaseConfig);
+        loadAllConfiguration(core);
+    }
 
+    public void reload(FAuction core) {
+        loadAllConfiguration(core);
+    }
+
+    private void loadAllConfiguration(FAuction core) {
         File auctionFile = new File(core.getDataFolder(), "auction.yml");
         core.createDefaultConfiguration(auctionFile, "auction.yml");
         auctionConfiguration = YamlConfiguration.loadConfiguration(auctionFile);
@@ -49,15 +56,6 @@ public class ConfigurationManager {
         auctionConfig.load(auctionConfiguration);
         auctionConfirmConfig.load(auctionConfirmConfiguration);
         expireConfig.load(expireConfiguration);
-        database.load(databaseConfig);
-    }
-
-    public void reload() {
-        globalConfig.load(globalConfiguration);
-        auctionConfig.load(auctionConfiguration);
-        auctionConfirmConfig.load(auctionConfirmConfiguration);
-        expireConfig.load(expireConfiguration);
-        database.load(databaseConfig);
     }
 
     public DatabaseConfig getDatabase() {
