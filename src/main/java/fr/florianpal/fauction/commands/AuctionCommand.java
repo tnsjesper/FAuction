@@ -21,7 +21,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 import static java.lang.Math.ceil;
 
@@ -31,6 +33,8 @@ public class AuctionCommand extends BaseCommand {
     private final CommandManager commandManager;
     private final AuctionCommandManager auctionCommandManager;
     private final FAuction plugin;
+
+    private final List<LocalDateTime> spamTest = new ArrayList<>();
 
     public AuctionCommand(FAuction plugin) {
         this.plugin = plugin;
@@ -43,6 +47,15 @@ public class AuctionCommand extends BaseCommand {
     @CommandPermission("fauction.list")
     @Description("{@@fauction.auction_list_help_description}")
     public void onList(Player playerSender){
+        LocalDateTime clickTest = LocalDateTime.now();
+        boolean isSpamming = spamTest.stream().anyMatch(d -> d.getHour() == clickTest.getHour() && d.getMinute() == clickTest.getMinute() && (d.getSecond() == clickTest.getSecond() || d.getSecond() == clickTest.getSecond() + 1 || d.getSecond() == clickTest.getSecond() - 1));
+        if(isSpamming) {
+            plugin.getLogger().warning("Warning : Spam command list");
+            return;
+        } else {
+            spamTest.add(clickTest);
+        }
+
         CommandIssuer issuerTarget = commandManager.getCommandIssuer(playerSender);
         AuctionsGui gui = new AuctionsGui(plugin, playerSender, ViewType.ALL,1);
         gui.initializeItems();
@@ -53,6 +66,15 @@ public class AuctionCommand extends BaseCommand {
     @CommandPermission("fauction.sell")
     @Description("{@@fauction.auction_add_help_description}")
     public void onAdd(Player playerSender, double price) {
+        LocalDateTime clickTest = LocalDateTime.now();
+        boolean isSpamming = spamTest.stream().anyMatch(d -> d.getHour() == clickTest.getHour() && d.getMinute() == clickTest.getMinute() && (d.getSecond() == clickTest.getSecond() || d.getSecond() == clickTest.getSecond() + 1 || d.getSecond() == clickTest.getSecond() - 1));
+        if(isSpamming) {
+            plugin.getLogger().warning("Warning : Spam command sell");
+            return;
+        } else {
+            spamTest.add(clickTest);
+        }
+
         CommandIssuer issuerTarget = commandManager.getCommandIssuer(playerSender);
         TaskChain<ArrayList<Auction>> chain = plugin.getAuctionCommandManager().getAuctions(playerSender.getUniqueId());
         chain.sync(() -> {

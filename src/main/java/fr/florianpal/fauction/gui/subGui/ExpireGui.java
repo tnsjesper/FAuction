@@ -22,6 +22,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -33,6 +34,8 @@ public class ExpireGui extends AbstractGui implements GuiInterface {
 
     private final ExpireGuiConfig expireGuiConfig;
     private final ExpireCommandManager expireCommandManager;
+
+    private final List<LocalDateTime> spamTest = new ArrayList<>();
 
     public ExpireGui(FAuction plugin, Player player, int page) {
         super(plugin, player, page);
@@ -153,17 +156,20 @@ public class ExpireGui extends AbstractGui implements GuiInterface {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
-        if (inv.getHolder() != this) {
-            return;
-        }
-
-        if (!(e.getInventory() == inv)) {
-            return;
-        }
-        if (player != e.getWhoClicked()) {
+        if (inv.getHolder() != this || e.getInventory() != inv || player != e.getWhoClicked()) {
             return;
         }
         e.setCancelled(true);
+
+        LocalDateTime clickTest = LocalDateTime.now();
+        boolean isSpamming = spamTest.stream().anyMatch(d -> d.getHour() == clickTest.getHour() && d.getMinute() == clickTest.getMinute() && (d.getSecond() == clickTest.getSecond() || d.getSecond() == clickTest.getSecond() + 1 || d.getSecond() == clickTest.getSecond() - 1));
+        if(isSpamming) {
+            plugin.getLogger().warning("Warning : Spam gui expire");
+            return;
+        } else {
+            spamTest.add(clickTest);
+        }
+
         Player p = (Player) e.getWhoClicked();
         ItemStack clickedItem = e.getCurrentItem();
         if (clickedItem == null || clickedItem.getType() == Material.AIR) return;
@@ -173,15 +179,22 @@ public class ExpireGui extends AbstractGui implements GuiInterface {
                 int nb = ((e.getRawSlot() - nb0)) / 9;
                 Auction auction = auctions.get((e.getRawSlot() - nb0) + ((this.expireGuiConfig.getExpireBlocks().size() * this.page) - this.expireGuiConfig.getExpireBlocks().size()) - nb * 2);
 
+                if(plugin.getAuctionAction().contains(auction.getId())) {
+                    return;
+                }
+                plugin.getAuctionAction().add(auction.getId());
+
                 if (e.isLeftClick()) {
                     TaskChain<Auction> chainAuction = expireCommandManager.auctionExist(auction.getId());
                     chainAuction.sync(() -> {
 
                         if (chainAuction.getTaskData("auction") == null) {
+                            plugin.getAuctionAction().remove(auction.getId());
                             return;
                         }
 
                         if (!auction.getPlayerUuid().equals(player.getUniqueId())) {
+                            plugin.getAuctionAction().remove(auction.getId());
                             return;
                         }
 
@@ -195,6 +208,9 @@ public class ExpireGui extends AbstractGui implements GuiInterface {
                         auctions.remove(auction);
                         CommandIssuer issuerTarget = plugin.getCommandManager().getCommandIssuer(player);
                         issuerTarget.sendInfo(MessageKeys.REMOVE_EXPIRE_SUCCESS);
+
+                        plugin.getAuctionAction().remove(auction.getId());
+
                         ExpireGui gui = new ExpireGui(plugin, player, 1);
                         gui.initializeItems();
                     }).execute();

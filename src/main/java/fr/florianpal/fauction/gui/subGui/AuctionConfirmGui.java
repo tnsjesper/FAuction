@@ -20,10 +20,13 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.text.DecimalFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +41,7 @@ public class AuctionConfirmGui extends AbstractGui implements GuiInterface {
     private final AuctionCommandManager auctionCommandManager;
     private final Map<Integer, Confirm> confirmList = new HashMap<>();
 
+    private final List<LocalDateTime> spamTest = new ArrayList<>();
 
     AuctionConfirmGui(FAuction plugin, Player player, int page, Auction auction) {
         super(plugin, player, page);
@@ -126,16 +130,33 @@ public class AuctionConfirmGui extends AbstractGui implements GuiInterface {
     }
 
     @EventHandler
-    public void onInventoryClick(InventoryClickEvent e) {
-        if (inv.getHolder() != this) {
+    public void onInventoryClose(InventoryCloseEvent e) {
+        if (inv.getHolder() != this || e.getInventory() != inv || player != e.getPlayer()) {
             return;
         }
-        if (!(e.getInventory() == inv)) {
+
+        plugin.getAuctionAction().remove((Integer)auction.getId());
+    }
+
+    @EventHandler
+    public void onInventoryClick(InventoryClickEvent e) {
+        if (inv.getHolder() != this || e.getInventory() != inv || player != e.getWhoClicked()) {
             return;
         }
         e.setCancelled(true);
+
+        LocalDateTime clickTest = LocalDateTime.now();
+        boolean isSpamming = spamTest.stream().anyMatch(d -> d.getHour() == clickTest.getHour() && d.getMinute() == clickTest.getMinute() && (d.getSecond() == clickTest.getSecond() || d.getSecond() == clickTest.getSecond() + 1 || d.getSecond() == clickTest.getSecond() - 1));
+        if(isSpamming) {
+            plugin.getLogger().warning("Warning : Spam gui auction confirm");
+            return;
+        } else {
+            spamTest.add(clickTest);
+        }
+
         ItemStack clickedItem = e.getCurrentItem();
         if (clickedItem == null || clickedItem.getType() == Material.AIR) return;
+
         for (Map.Entry<Integer, Confirm> entry : auctionConfirmConfig.getConfirmBlocks().entrySet()) {
             if (entry.getKey() == e.getRawSlot()) {
                 CommandIssuer issuerTarget = commandManager.getCommandIssuer(player);
@@ -152,12 +173,14 @@ public class AuctionConfirmGui extends AbstractGui implements GuiInterface {
                 chainAuction.sync(() -> {
                     if (chainAuction.getTaskData("auction") == null) {
                         issuerTarget.sendInfo(MessageKeys.NO_AUCTION);
+                        plugin.getAuctionAction().remove(auction.getId());
                         return;
                     }
                     TaskChain<Auction> chainAuction2 = auctionCommandManager.auctionExist(this.auction.getId());
                     chainAuction2.sync(() -> {
                         if (chainAuction2.getTaskData("auction") == null) {
                             issuerTarget.sendInfo(MessageKeys.AUCTION_ALREADY_SELL);
+                            plugin.getAuctionAction().remove(auction.getId());
                             return;
                         }
                         issuerTarget.sendInfo(MessageKeys.BUY_AUCTION_SUCCESS);
@@ -165,6 +188,7 @@ public class AuctionConfirmGui extends AbstractGui implements GuiInterface {
                         plugin.getVaultIntegrationManager().getEconomy().withdrawPlayer(player, auction.getPrice());
                         EconomyResponse economyResponse4 = plugin.getVaultIntegrationManager().getEconomy().depositPlayer(Bukkit.getOfflinePlayer(auction.getPlayerUuid()), auction.getPrice());
                         if (!economyResponse4.transactionSuccess()) {
+                            plugin.getAuctionAction().remove(auction.getId());
                             return;
                         }
 
@@ -189,6 +213,8 @@ public class AuctionConfirmGui extends AbstractGui implements GuiInterface {
                         }
 
                         Bukkit.getLogger().info("Player : " + player.getName() + " buy " + auction.getItemStack().getI18NDisplayName() + " at " + auction.getPlayerName());
+
+                        plugin.getAuctionAction().remove(auction.getId());
 
                         player.getOpenInventory().close();
                         AuctionsGui auctionsGui = new AuctionsGui(plugin, player, ViewType.ALL, 1);

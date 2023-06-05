@@ -22,6 +22,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -34,6 +35,8 @@ public class AuctionsGui extends AbstractGui implements GuiInterface {
     private final AuctionConfig auctionConfig;
 
     private final ViewType viewType;
+
+    private final List<LocalDateTime> spamTest = new ArrayList<>();
 
     public AuctionsGui(FAuction plugin, Player player, ViewType viewType, int page) {
         super(plugin, player, page);
@@ -189,13 +192,20 @@ public class AuctionsGui extends AbstractGui implements GuiInterface {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
-        if (inv.getHolder() != this) {
-            return;
-        }
-        if (!(e.getInventory() == inv)) {
+        if (inv.getHolder() != this || e.getInventory() != inv || player != e.getWhoClicked()) {
             return;
         }
         e.setCancelled(true);
+
+        LocalDateTime clickTest = LocalDateTime.now();
+        boolean isSpamming = spamTest.stream().anyMatch(d -> d.getHour() == clickTest.getHour() && d.getMinute() == clickTest.getMinute() && (d.getSecond() == clickTest.getSecond() || d.getSecond() == clickTest.getSecond() + 1 || d.getSecond() == clickTest.getSecond() - 1));
+        if(isSpamming) {
+            plugin.getLogger().warning("Warning : Spam gui auction");
+            return;
+        } else {
+            spamTest.add(clickTest);
+        }
+
         ItemStack clickedItem = e.getCurrentItem();
         if (clickedItem == null || clickedItem.getType() == Material.AIR) return;
 
@@ -246,14 +256,21 @@ public class AuctionsGui extends AbstractGui implements GuiInterface {
                 int nb = ((e.getRawSlot() - nb0)) / 9;
                 Auction auction = auctions.get((e.getRawSlot() - nb0) + ((this.auctionConfig.getAuctionBlocks().size() * this.page) - this.auctionConfig.getAuctionBlocks().size()) - nb * 2);
 
+                if(plugin.getAuctionAction().contains(auction.getId())) {
+                    return;
+                }
+                plugin.getAuctionAction().add(auction.getId());
+
                 if (e.isRightClick()) {
                     TaskChain<Auction> chainAuction = auctionCommandManager.auctionExist(auction.getId());
                     chainAuction.sync(() -> {
                         if (chainAuction.getTaskData("auction") == null) {
+                            plugin.getAuctionAction().remove(auction.getId());
                             return;
                         }
 
                         if (!auction.getPlayerUuid().equals(player.getUniqueId())) {
+                            plugin.getAuctionAction().remove(auction.getId());
                             return;
                         }
 
@@ -267,6 +284,9 @@ public class AuctionsGui extends AbstractGui implements GuiInterface {
                         auctions.remove(auction);
                         CommandIssuer issuerTarget = plugin.getCommandManager().getCommandIssuer(player);
                         issuerTarget.sendInfo(MessageKeys.REMOVE_AUCTION_SUCCESS);
+
+                        plugin.getAuctionAction().remove(auction.getId());
+
                         inv.close();
                         AuctionsGui gui = new AuctionsGui(plugin, player, viewType, page);
                         gui.initializeItems();
@@ -276,12 +296,15 @@ public class AuctionsGui extends AbstractGui implements GuiInterface {
                     CommandIssuer issuerTarget = plugin.getCommandManager().getCommandIssuer(player);
                     if (auction.getPlayerUuid().equals(player.getUniqueId())) {
                         issuerTarget.sendInfo(MessageKeys.BUY_YOUR_ITEM);
+                        plugin.getAuctionAction().remove(auction.getId());
                         return;
                     }
                     if (!plugin.getVaultIntegrationManager().getEconomy().has(player, auction.getPrice())) {
                         issuerTarget.sendInfo(MessageKeys.NO_HAVE_MONEY);
+                        plugin.getAuctionAction().remove(auction.getId());
                         return;
                     }
+
                     AuctionConfirmGui auctionConfirmGui = new AuctionConfirmGui(plugin, player, page, auction);
                     auctionConfirmGui.initializeItems();
                 }

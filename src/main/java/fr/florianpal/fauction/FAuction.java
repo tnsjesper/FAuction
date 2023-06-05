@@ -19,6 +19,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
@@ -45,6 +47,8 @@ public class FAuction extends JavaPlugin {
     public static TaskChainFactory getTaskChainFactory() {
         return taskChainFactory;
     }
+
+    private final List<Integer> auctionAction = new ArrayList<>();
 
     @Override
     public void onEnable() {
@@ -155,7 +159,7 @@ public class FAuction extends JavaPlugin {
 
     @Override
     public void reloadConfig() {
-        configurationManager.reload();
+        configurationManager.reload(this);
     }
 
     public AuctionCommandManager getAuctionCommandManager() {
@@ -172,5 +176,9 @@ public class FAuction extends JavaPlugin {
 
     public ExpireCommandManager getExpireCommandManager() {
         return expireCommandManager;
+    }
+
+    public List<Integer> getAuctionAction() {
+        return auctionAction;
     }
 }
