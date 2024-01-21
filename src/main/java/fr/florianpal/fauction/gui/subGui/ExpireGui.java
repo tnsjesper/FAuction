@@ -164,7 +164,7 @@ public class ExpireGui extends AbstractGui implements GuiInterface {
         LocalDateTime clickTest = LocalDateTime.now();
         boolean isSpamming = spamTest.stream().anyMatch(d -> d.getHour() == clickTest.getHour() && d.getMinute() == clickTest.getMinute() && (d.getSecond() == clickTest.getSecond() || d.getSecond() == clickTest.getSecond() + 1 || d.getSecond() == clickTest.getSecond() - 1));
         if(isSpamming) {
-            plugin.getLogger().warning("Warning : Spam gui expire");
+            plugin.getLogger().warning("Warning : Spam gui expire Pseudo : " + player.getName());
             return;
         } else {
             spamTest.add(clickTest);
@@ -173,28 +173,35 @@ public class ExpireGui extends AbstractGui implements GuiInterface {
         Player p = (Player) e.getWhoClicked();
         ItemStack clickedItem = e.getCurrentItem();
         if (clickedItem == null || clickedItem.getType() == Material.AIR) return;
+
         for (int index : expireGuiConfig.getExpireBlocks()) {
             if (index == e.getRawSlot()) {
+
+                if(auctions.isEmpty()) {
+                    inv.close();
+                    return;
+                }
+
                 int nb0 = expireGuiConfig.getExpireBlocks().get(0);
                 int nb = ((e.getRawSlot() - nb0)) / 9;
                 Auction auction = auctions.get((e.getRawSlot() - nb0) + ((this.expireGuiConfig.getExpireBlocks().size() * this.page) - this.expireGuiConfig.getExpireBlocks().size()) - nb * 2);
 
-                if(plugin.getAuctionAction().contains(auction.getId())) {
+                if(plugin.getExpireAction().contains(auction.getId())) {
                     return;
                 }
-                plugin.getAuctionAction().add(auction.getId());
+                plugin.getExpireAction().add(auction.getId());
 
                 if (e.isLeftClick()) {
                     TaskChain<Auction> chainAuction = expireCommandManager.auctionExist(auction.getId());
                     chainAuction.sync(() -> {
 
                         if (chainAuction.getTaskData("auction") == null) {
-                            plugin.getAuctionAction().remove(auction.getId());
+                            plugin.getExpireAction().remove((Integer)auction.getId());
                             return;
                         }
 
                         if (!auction.getPlayerUuid().equals(player.getUniqueId())) {
-                            plugin.getAuctionAction().remove(auction.getId());
+                            plugin.getExpireAction().remove((Integer)auction.getId());
                             return;
                         }
 
@@ -209,7 +216,7 @@ public class ExpireGui extends AbstractGui implements GuiInterface {
                         CommandIssuer issuerTarget = plugin.getCommandManager().getCommandIssuer(player);
                         issuerTarget.sendInfo(MessageKeys.REMOVE_EXPIRE_SUCCESS);
 
-                        plugin.getAuctionAction().remove(auction.getId());
+                        plugin.getExpireAction().remove((Integer)auction.getId());
 
                         ExpireGui gui = new ExpireGui(plugin, player, 1);
                         gui.initializeItems();

@@ -148,7 +148,7 @@ public class AuctionConfirmGui extends AbstractGui implements GuiInterface {
         LocalDateTime clickTest = LocalDateTime.now();
         boolean isSpamming = spamTest.stream().anyMatch(d -> d.getHour() == clickTest.getHour() && d.getMinute() == clickTest.getMinute() && (d.getSecond() == clickTest.getSecond() || d.getSecond() == clickTest.getSecond() + 1 || d.getSecond() == clickTest.getSecond() - 1));
         if(isSpamming) {
-            plugin.getLogger().warning("Warning : Spam gui auction confirm");
+            plugin.getLogger().warning("Warning : Spam gui auction confirm Pseudo : " + player.getName());
             return;
         } else {
             spamTest.add(clickTest);
@@ -173,14 +173,14 @@ public class AuctionConfirmGui extends AbstractGui implements GuiInterface {
                 chainAuction.sync(() -> {
                     if (chainAuction.getTaskData("auction") == null) {
                         issuerTarget.sendInfo(MessageKeys.NO_AUCTION);
-                        plugin.getAuctionAction().remove(auction.getId());
+                        plugin.getAuctionAction().remove((Integer)auction.getId());
                         return;
                     }
                     TaskChain<Auction> chainAuction2 = auctionCommandManager.auctionExist(this.auction.getId());
                     chainAuction2.sync(() -> {
                         if (chainAuction2.getTaskData("auction") == null) {
                             issuerTarget.sendInfo(MessageKeys.AUCTION_ALREADY_SELL);
-                            plugin.getAuctionAction().remove(auction.getId());
+                            plugin.getAuctionAction().remove((Integer)auction.getId());
                             return;
                         }
                         issuerTarget.sendInfo(MessageKeys.BUY_AUCTION_SUCCESS);
@@ -188,7 +188,7 @@ public class AuctionConfirmGui extends AbstractGui implements GuiInterface {
                         plugin.getVaultIntegrationManager().getEconomy().withdrawPlayer(player, auction.getPrice());
                         EconomyResponse economyResponse4 = plugin.getVaultIntegrationManager().getEconomy().depositPlayer(Bukkit.getOfflinePlayer(auction.getPlayerUuid()), auction.getPrice());
                         if (!economyResponse4.transactionSuccess()) {
-                            plugin.getAuctionAction().remove(auction.getId());
+                            plugin.getAuctionAction().remove((Integer)auction.getId());
                             return;
                         }
 
@@ -212,9 +212,9 @@ public class AuctionConfirmGui extends AbstractGui implements GuiInterface {
                             getServer().dispatchCommand(getServer().getConsoleSender(), command);
                         }
 
-                        Bukkit.getLogger().info("Player : " + player.getName() + " buy " + auction.getItemStack().getI18NDisplayName() + " at " + auction.getPlayerName());
+                        plugin.getLogger().info("Player : " + player.getName() + " buy " + auction.getItemStack().getItemMeta().getDisplayName() + " at " + auction.getPlayerName());
 
-                        plugin.getAuctionAction().remove(auction.getId());
+                        plugin.getAuctionAction().remove((Integer)auction.getId());
 
                         player.getOpenInventory().close();
                         AuctionsGui auctionsGui = new AuctionsGui(plugin, player, ViewType.ALL, 1);

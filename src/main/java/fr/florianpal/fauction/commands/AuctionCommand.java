@@ -50,7 +50,7 @@ public class AuctionCommand extends BaseCommand {
         LocalDateTime clickTest = LocalDateTime.now();
         boolean isSpamming = spamTest.stream().anyMatch(d -> d.getHour() == clickTest.getHour() && d.getMinute() == clickTest.getMinute() && (d.getSecond() == clickTest.getSecond() || d.getSecond() == clickTest.getSecond() + 1 || d.getSecond() == clickTest.getSecond() - 1));
         if(isSpamming) {
-            plugin.getLogger().warning("Warning : Spam command list");
+            plugin.getLogger().warning("Warning : Spam command list. Pseudo : " + playerSender.getName());
             return;
         } else {
             spamTest.add(clickTest);
@@ -69,7 +69,7 @@ public class AuctionCommand extends BaseCommand {
         LocalDateTime clickTest = LocalDateTime.now();
         boolean isSpamming = spamTest.stream().anyMatch(d -> d.getHour() == clickTest.getHour() && d.getMinute() == clickTest.getMinute() && (d.getSecond() == clickTest.getSecond() || d.getSecond() == clickTest.getSecond() + 1 || d.getSecond() == clickTest.getSecond() - 1));
         if(isSpamming) {
-            plugin.getLogger().warning("Warning : Spam command sell");
+            plugin.getLogger().warning("Warning : Spam command sell Pseudo : " + playerSender.getName());
             return;
         } else {
             spamTest.add(clickTest);
@@ -94,7 +94,7 @@ public class AuctionCommand extends BaseCommand {
             if(plugin.getConfigurationManager().getGlobalConfig().getMinPrice().containsKey(playerSender.getInventory().getItemInMainHand().getType())) {
                 double minPrice = playerSender.getInventory().getItemInMainHand().getAmount() *  plugin.getConfigurationManager().getGlobalConfig().getMinPrice().get(playerSender.getInventory().getItemInMainHand().getType());
                 if(minPrice > price) {
-                    issuerTarget.sendInfo(MessageKeys.MIN_PRICE);
+                    issuerTarget.sendInfo(MessageKeys.MIN_PRICE, "{minPrice}", String.valueOf(ceil(minPrice)));
                     return;
                 }
             }
@@ -120,6 +120,8 @@ public class AuctionCommand extends BaseCommand {
                 }
 
             }
+
+            plugin.getLogger().info("Player " + playerSender.getName() + " add item to ah Item : " + playerSender.getInventory().getItemInMainHand().getItemMeta().getDisplayName() + ", At Price : " + price);
             auctionCommandManager.addAuction(playerSender, playerSender.getInventory().getItemInMainHand(), price);
             playerSender.getInventory().getItemInMainHand().subtract(playerSender.getInventory().getItemInMainHand().getAmount());
             issuerTarget.sendInfo(MessageKeys.AUCTION_ADD_SUCCESS);

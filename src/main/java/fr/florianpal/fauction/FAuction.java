@@ -181,4 +181,8 @@ public class FAuction extends JavaPlugin {
     public List<Integer> getAuctionAction() {
         return auctionAction;
     }
+
+    public List<Integer> getExpireAction() {
+        return auctionAction;
+    }
 }

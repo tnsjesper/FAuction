@@ -200,7 +200,7 @@ public class AuctionsGui extends AbstractGui implements GuiInterface {
         LocalDateTime clickTest = LocalDateTime.now();
         boolean isSpamming = spamTest.stream().anyMatch(d -> d.getHour() == clickTest.getHour() && d.getMinute() == clickTest.getMinute() && (d.getSecond() == clickTest.getSecond() || d.getSecond() == clickTest.getSecond() + 1 || d.getSecond() == clickTest.getSecond() - 1));
         if(isSpamming) {
-            plugin.getLogger().warning("Warning : Spam gui auction");
+            plugin.getLogger().warning("Warning : Spam gui auction Pseudo : " + player.getName());
             return;
         } else {
             spamTest.add(clickTest);
@@ -256,36 +256,45 @@ public class AuctionsGui extends AbstractGui implements GuiInterface {
                 int nb = ((e.getRawSlot() - nb0)) / 9;
                 Auction auction = auctions.get((e.getRawSlot() - nb0) + ((this.auctionConfig.getAuctionBlocks().size() * this.page) - this.auctionConfig.getAuctionBlocks().size()) - nb * 2);
 
-                if(plugin.getAuctionAction().contains(auction.getId())) {
+                if(plugin.getAuctionAction().contains((Integer)auction.getId())) {
                     return;
                 }
-                plugin.getAuctionAction().add(auction.getId());
+                plugin.getAuctionAction().add((Integer)auction.getId());
 
                 if (e.isRightClick()) {
                     TaskChain<Auction> chainAuction = auctionCommandManager.auctionExist(auction.getId());
                     chainAuction.sync(() -> {
                         if (chainAuction.getTaskData("auction") == null) {
-                            plugin.getAuctionAction().remove(auction.getId());
+                            plugin.getAuctionAction().remove((Integer)auction.getId());
                             return;
                         }
 
-                        if (!auction.getPlayerUuid().equals(player.getUniqueId())) {
-                            plugin.getAuctionAction().remove(auction.getId());
+                        boolean isModCanCancel = (e.isShiftClick() && player.hasPermission("fauction.mod.cancel"));
+                        if (!auction.getPlayerUuid().equals(player.getUniqueId()) && !isModCanCancel) {
+                            plugin.getAuctionAction().remove((Integer)auction.getId());
                             return;
                         }
 
-                        if (player.getInventory().firstEmpty() == -1) {
-                            player.getWorld().dropItem(player.getLocation(), auction.getItemStack());
-                        } else {
-                            player.getInventory().addItem(auction.getItemStack());
+                        if (!isModCanCancel) {
+                            if (player.getInventory().firstEmpty() == -1) {
+                                player.getWorld().dropItem(player.getLocation(), auction.getItemStack());
+                            } else {
+                                player.getInventory().addItem(auction.getItemStack());
+                            }
                         }
 
                         auctionCommandManager.deleteAuction(auction.getId());
+                        if (isModCanCancel) {
+                            plugin.getExpireCommandManager().addAuction(auction);
+                            plugin.getLogger().info("Modo delete from ah auction : " + auction.getId() + ", Item : " + auction.getItemStack().getItemMeta().getDisplayName() + " of " + auction.getPlayerName() + ", by" + player.getName());
+                        } else {
+                            plugin.getLogger().info("Player delete from ah auction : " + auction.getId() + ", Item : " + auction.getItemStack().getItemMeta().getDisplayName() + " of " + auction.getPlayerName() + ", by" + player.getName());
+                        }
                         auctions.remove(auction);
                         CommandIssuer issuerTarget = plugin.getCommandManager().getCommandIssuer(player);
                         issuerTarget.sendInfo(MessageKeys.REMOVE_AUCTION_SUCCESS);
 
-                        plugin.getAuctionAction().remove(auction.getId());
+                        plugin.getAuctionAction().remove((Integer)auction.getId());
 
                         inv.close();
                         AuctionsGui gui = new AuctionsGui(plugin, player, viewType, page);
@@ -296,12 +305,12 @@ public class AuctionsGui extends AbstractGui implements GuiInterface {
                     CommandIssuer issuerTarget = plugin.getCommandManager().getCommandIssuer(player);
                     if (auction.getPlayerUuid().equals(player.getUniqueId())) {
                         issuerTarget.sendInfo(MessageKeys.BUY_YOUR_ITEM);
-                        plugin.getAuctionAction().remove(auction.getId());
+                        plugin.getAuctionAction().remove((Integer)auction.getId());
                         return;
                     }
                     if (!plugin.getVaultIntegrationManager().getEconomy().has(player, auction.getPrice())) {
                         issuerTarget.sendInfo(MessageKeys.NO_HAVE_MONEY);
-                        plugin.getAuctionAction().remove(auction.getId());
+                        plugin.getAuctionAction().remove((Integer)auction.getId());
                         return;
                     }
 
