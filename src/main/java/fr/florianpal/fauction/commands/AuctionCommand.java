@@ -27,7 +27,7 @@ import java.util.List;
 
 import static java.lang.Math.ceil;
 
-@CommandAlias("ah")
+@CommandAlias("ah|hdv")
 public class AuctionCommand extends BaseCommand {
 
     private final CommandManager commandManager;
@@ -51,6 +51,8 @@ public class AuctionCommand extends BaseCommand {
         boolean isSpamming = spamTest.stream().anyMatch(d -> d.getHour() == clickTest.getHour() && d.getMinute() == clickTest.getMinute() && (d.getSecond() == clickTest.getSecond() || d.getSecond() == clickTest.getSecond() + 1 || d.getSecond() == clickTest.getSecond() - 1));
         if(isSpamming) {
             plugin.getLogger().warning("Warning : Spam command list. Pseudo : " + playerSender.getName());
+            CommandIssuer issuerTarget = plugin.getCommandManager().getCommandIssuer(playerSender);
+            issuerTarget.sendInfo(MessageKeys.SPAM);
             return;
         } else {
             spamTest.add(clickTest);
@@ -70,6 +72,8 @@ public class AuctionCommand extends BaseCommand {
         boolean isSpamming = spamTest.stream().anyMatch(d -> d.getHour() == clickTest.getHour() && d.getMinute() == clickTest.getMinute() && (d.getSecond() == clickTest.getSecond() || d.getSecond() == clickTest.getSecond() + 1 || d.getSecond() == clickTest.getSecond() - 1));
         if(isSpamming) {
             plugin.getLogger().warning("Warning : Spam command sell Pseudo : " + playerSender.getName());
+            CommandIssuer issuerTarget = plugin.getCommandManager().getCommandIssuer(playerSender);
+            issuerTarget.sendInfo(MessageKeys.SPAM);
             return;
         } else {
             spamTest.add(clickTest);

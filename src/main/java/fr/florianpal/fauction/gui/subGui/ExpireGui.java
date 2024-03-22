@@ -100,7 +100,7 @@ public class ExpireGui extends AbstractGui implements GuiInterface {
         } else {
             title = title.replace("{ItemName}", item.getItemMeta().getDisplayName());
         }
-        title = title.replace("{ProprietaireName}", playerName);
+        title = title.replace("{OwnerName}", playerName);
         title = title.replace("{Price}", String.valueOf(auction.getPrice()));
         title = FormatUtil.format(title);
         DecimalFormat df = new DecimalFormat();
@@ -116,7 +116,7 @@ public class ExpireGui extends AbstractGui implements GuiInterface {
             Date expireDate = new Date((auction.getDate().getTime() + globalConfig.getTime() * 1000L));
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy 'a' HH:mm");
             desc = desc.replace("{ExpireTime}", formatter.format(expireDate));
-            desc = desc.replace("{ProprietaireName}", playerName);
+            desc = desc.replace("{OwnerName}", playerName);
             desc = desc.replace("{Price}", String.valueOf(auction.getPrice()));
             if (desc.contains("lore")) {
                 if (item.getLore() != null) {
@@ -165,6 +165,8 @@ public class ExpireGui extends AbstractGui implements GuiInterface {
         boolean isSpamming = spamTest.stream().anyMatch(d -> d.getHour() == clickTest.getHour() && d.getMinute() == clickTest.getMinute() && (d.getSecond() == clickTest.getSecond() || d.getSecond() == clickTest.getSecond() + 1 || d.getSecond() == clickTest.getSecond() - 1));
         if(isSpamming) {
             plugin.getLogger().warning("Warning : Spam gui expire Pseudo : " + player.getName());
+            CommandIssuer issuerTarget = plugin.getCommandManager().getCommandIssuer(player);
+            issuerTarget.sendInfo(MessageKeys.SPAM);
             return;
         } else {
             spamTest.add(clickTest);
@@ -189,7 +191,7 @@ public class ExpireGui extends AbstractGui implements GuiInterface {
                 if(plugin.getExpireAction().contains(auction.getId())) {
                     return;
                 }
-                plugin.getExpireAction().add(auction.getId());
+                plugin.getExpireAction().add((Integer)auction.getId());
 
                 if (e.isLeftClick()) {
                     TaskChain<Auction> chainAuction = expireCommandManager.auctionExist(auction.getId());

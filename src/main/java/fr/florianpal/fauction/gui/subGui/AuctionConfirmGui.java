@@ -17,6 +17,7 @@ import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -87,7 +88,7 @@ public class AuctionConfirmGui extends AbstractGui implements GuiInterface {
             title = title.replace("{Item}", itemStack.getItemMeta().getDisplayName());
         }
         title = title.replace("{Price}", df.format(confirm.getAuction().getPrice()));
-        title = title.replace("{ProprietaireName}", confirm.getAuction().getPlayerName());
+        title = title.replace("{OwnerName}", confirm.getAuction().getPlayerName());
 
         title = FormatUtil.format(title);
         List<String> listDescription = new ArrayList<>();
@@ -98,7 +99,7 @@ public class AuctionConfirmGui extends AbstractGui implements GuiInterface {
             } else {
                 desc = desc.replace("{Item}", confirm.getAuction().getItemStack().getItemMeta().getDisplayName());
             }
-            desc = desc.replace("{ProprietaireName}", confirm.getAuction().getPlayerName());
+            desc = desc.replace("{OwnerName}", confirm.getAuction().getPlayerName());
 
             desc = FormatUtil.format(desc);
             listDescription.add(desc);
@@ -149,6 +150,8 @@ public class AuctionConfirmGui extends AbstractGui implements GuiInterface {
         boolean isSpamming = spamTest.stream().anyMatch(d -> d.getHour() == clickTest.getHour() && d.getMinute() == clickTest.getMinute() && (d.getSecond() == clickTest.getSecond() || d.getSecond() == clickTest.getSecond() + 1 || d.getSecond() == clickTest.getSecond() - 1));
         if(isSpamming) {
             plugin.getLogger().warning("Warning : Spam gui auction confirm Pseudo : " + player.getName());
+            CommandIssuer issuerTarget = plugin.getCommandManager().getCommandIssuer(player);
+            issuerTarget.sendInfo(MessageKeys.SPAM);
             return;
         } else {
             spamTest.add(clickTest);
@@ -183,14 +186,26 @@ public class AuctionConfirmGui extends AbstractGui implements GuiInterface {
                             plugin.getAuctionAction().remove((Integer)auction.getId());
                             return;
                         }
-                        issuerTarget.sendInfo(MessageKeys.BUY_AUCTION_SUCCESS);
-                        auctionCommandManager.deleteAuction(auction.getId());
-                        plugin.getVaultIntegrationManager().getEconomy().withdrawPlayer(player, auction.getPrice());
-                        EconomyResponse economyResponse4 = plugin.getVaultIntegrationManager().getEconomy().depositPlayer(Bukkit.getOfflinePlayer(auction.getPlayerUuid()), auction.getPrice());
+
+                        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(auction.getPlayerUuid());
+                        if (offlinePlayer == null) {
+                            return;
+                        }
+
+                        EconomyResponse economyResponse4 = plugin.getVaultIntegrationManager().getEconomy().depositPlayer(offlinePlayer, auction.getPrice());
                         if (!economyResponse4.transactionSuccess()) {
                             plugin.getAuctionAction().remove((Integer)auction.getId());
                             return;
                         }
+
+                        EconomyResponse economyResponse5 = plugin.getVaultIntegrationManager().getEconomy().withdrawPlayer(player, auction.getPrice());
+                        if (!economyResponse5.transactionSuccess()) {
+                            plugin.getAuctionAction().remove((Integer)auction.getId());
+                            return;
+                        }
+
+                        issuerTarget.sendInfo(MessageKeys.BUY_AUCTION_SUCCESS);
+                        auctionCommandManager.deleteAuction(auction.getId());
 
                         if (player.getInventory().firstEmpty() == -1) {
                             player.getWorld().dropItem(player.getLocation(), auction.getItemStack());

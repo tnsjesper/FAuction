@@ -20,6 +20,9 @@ public enum MessageKeys implements MessageKeyProvider {
     AUCTION_EXPIRE_DROP,
     BUY_AUCTION_CANCELLED,
     MIN_PRICE,
+
+    SPAM,
+
     AUCTION_RELOAD,
 
     REMOVE_EXPIRE_SUCCESS,

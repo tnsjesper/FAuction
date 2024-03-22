@@ -1,11 +1,11 @@
 gui:
   size: 54
-  name: "Hôtel des ventes {Page}/{TotalPage}"
+  name: "Auction house {Page}/{TotalPage}"
   title: "&eItem : &6{ItemName}"
   description:
-    - "&5Vendu par : &6{ProprietaireName}"
-    - "&5Prix : &6{Price}"
-    - "&5Expirera le : &6{ExpireTime}"
+    - "&5Sold by : &6{OwnerName}"
+    - "&5Price : &6{Price}"
+    - "&5Expires on : &6{ExpireTime}"
     - "&5Lore :"
     - "{lore}"
 block:
@@ -153,7 +153,7 @@ block:
   '45':
     utility: expire
     material: CHEST_MINECART
-    title: "&cRécuperer vos items expirés"
+    title: "&cCollect your expired items"
     description: {}
   '46':
     utility: barrier
@@ -168,9 +168,9 @@ block:
   '48':
     utility: previous
     material: ARROW
-    title: "&5Page précédente"
+    title: "&5Previous Page"
     description:
-      - "&eCliquez ici pour retourner à la page précédente"
+      - "&eClick here to return to previous page"
     replacement:
       material: AIR
       title: "-"
@@ -180,20 +180,19 @@ block:
     material: NETHER_STAR
     title: "Informations"
     description:
-      - "&7Bienvenue dans l'hôtel des ventes"
-      - "&7Ici, tous les joueurs peuvent vendre"
-      - "&7et acheter des objets."
+      - "&7Welcome to the auction house"
+      - "&7Here, all players can sell"
+      - "&7and buy things."
       - ""
-      - "&7Pour vendre un objet, vous devez faire:"
-      - "&a/ah sell &7<&aprix&7>"
-      - "test {ItemName}"
-      - "&7Nombre de ventes en cours: &b{TotalVente}"
+      - "&7To sell an item, you must:"
+      - "&a/ah sell &7<&aprice&7>"
+      - "&7Number of sales in progress: &b{TotalSale}"
   '50':
     utility: next
     material: ARROW
-    title: "&5Page suivante"
+    title: "&5Next Page"
     description:
-      - "&eCliquez ici pour aller sur la page suivante"
+      - "&eClick here to go to the next page"
     replacement:
       material: AIR
       title: "-"
@@ -206,16 +205,16 @@ block:
   '52':
     utility: player
     material: NETHER_STAR
-    title: "&5Mes Items"
+    title: "&5My Items"
     description:
-      - "&eCliquez ici pour voir vos items en vente"
+      - "&eClick here to see your items for sale"
     replacement:
       material: NETHER_STAR
-      title: "&5Retour à l'hotel des ventes"
+      title: "&5Back to the auction house"
       description:
-        - "&eCliquez ici pour retourner à l'hotel des ventes"
+        - "&eClick here to return to the auction house"
   '53':
     utility: close
     material: BARRIER
-    title: "Fermer"
+    title: "Close"
     description: {}

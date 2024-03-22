@@ -131,7 +131,7 @@ public class AuctionsGui extends AbstractGui implements GuiInterface {
         } else {
             title = title.replace("{ItemName}", item.getItemMeta().getDisplayName());
         }
-        title = title.replace("{ProprietaireName}", auction.getPlayerName());
+        title = title.replace("{OwnerName}", auction.getPlayerName());
         title = title.replace("{Price}", String.valueOf(auction.getPrice()));
         title = FormatUtil.format(title);
         DecimalFormat df = new DecimalFormat();
@@ -145,8 +145,8 @@ public class AuctionsGui extends AbstractGui implements GuiInterface {
                 desc = desc.replace("{ItemName}", item.getItemMeta().getDisplayName());
             }
 
-            desc = desc.replace("{TotalVente}", String.valueOf(this.auctions.size()));
-            desc = desc.replace("{ProprietaireName}", auction.getPlayerName());
+            desc = desc.replace("{TotalSale}", String.valueOf(this.auctions.size()));
+            desc = desc.replace("{OwnerName}", auction.getPlayerName());
             desc = desc.replace("{Price}", String.valueOf(auction.getPrice()));
             Date expireDate = new Date((auction.getDate().getTime() + globalConfig.getTime() * 1000L));
             SimpleDateFormat formater = new SimpleDateFormat(globalConfig.getDateFormat());
@@ -177,7 +177,7 @@ public class AuctionsGui extends AbstractGui implements GuiInterface {
         List<String> descriptions = new ArrayList<>();
         for (String desc : description) {
 
-            desc = desc.replace("{TotalVente}", String.valueOf(this.auctions.size()));
+            desc = desc.replace("{TotalSale}", String.valueOf(this.auctions.size()));
             desc = FormatUtil.format(desc);
             descriptions.add(desc);
         }
@@ -201,6 +201,8 @@ public class AuctionsGui extends AbstractGui implements GuiInterface {
         boolean isSpamming = spamTest.stream().anyMatch(d -> d.getHour() == clickTest.getHour() && d.getMinute() == clickTest.getMinute() && (d.getSecond() == clickTest.getSecond() || d.getSecond() == clickTest.getSecond() + 1 || d.getSecond() == clickTest.getSecond() - 1));
         if(isSpamming) {
             plugin.getLogger().warning("Warning : Spam gui auction Pseudo : " + player.getName());
+            CommandIssuer issuerTarget = plugin.getCommandManager().getCommandIssuer(player);
+            issuerTarget.sendInfo(MessageKeys.SPAM);
             return;
         } else {
             spamTest.add(clickTest);

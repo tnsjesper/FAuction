@@ -22,6 +22,7 @@ fauction:
   buy_auction_cancelled: "You cancelled your purchase."
   min_price: "Your price is below the minimum price of {minPrice}."
   auction_reload: "The plugin configuration has been reloaded."
+  spam: "&cStop! You are trying to perform too many actions in a very short time! Please wait a few seconds..."
 
   remove_expire_success: "You have recovered one of your expired items."
 acf-minecraft:
