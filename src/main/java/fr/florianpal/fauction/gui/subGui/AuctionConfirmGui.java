@@ -167,7 +167,7 @@ public class AuctionConfirmGui extends AbstractGui implements GuiInterface {
                 if (!confirm.isValue()) {
                     issuerTarget.sendInfo(MessageKeys.BUY_AUCTION_CANCELLED);
                     player.getOpenInventory().close();
-                    AuctionsGui auctionsGui = new AuctionsGui(plugin, player, ViewType.ALL, 1);
+                    AuctionsGui auctionsGui = new AuctionsGui(plugin, player, 1);
                     auctionsGui.initializeItems();
                     return;
                 }
@@ -232,7 +232,7 @@ public class AuctionConfirmGui extends AbstractGui implements GuiInterface {
                         plugin.getAuctionAction().remove((Integer)auction.getId());
 
                         player.getOpenInventory().close();
-                        AuctionsGui auctionsGui = new AuctionsGui(plugin, player, ViewType.ALL, 1);
+                        AuctionsGui auctionsGui = new AuctionsGui(plugin, player, 1);
                         auctionsGui.initializeItems();
                     }).execute();
 

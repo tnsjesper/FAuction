@@ -14,6 +14,9 @@ public class ConfigurationManager {
     private final AuctionConfig auctionConfig = new AuctionConfig();
     private FileConfiguration auctionConfiguration;
 
+    private final PlayerViewConfig playerViewConfig = new PlayerViewConfig();
+    private FileConfiguration playerViewConfiguration;
+
     private final ExpireGuiConfig expireConfig = new ExpireGuiConfig();
     private FileConfiguration expireConfiguration;
 
@@ -36,16 +39,20 @@ public class ConfigurationManager {
     }
 
     private void loadAllConfiguration(FAuction core) {
-        File auctionFile = new File(core.getDataFolder(), "auction.yml");
-        core.createDefaultConfiguration(auctionFile, "auction.yml");
+        File auctionFile = new File(core.getDataFolder(), "gui/auction.yml");
+        core.createDefaultConfiguration(auctionFile, "gui/auction.yml");
         auctionConfiguration = YamlConfiguration.loadConfiguration(auctionFile);
+
+        File myItemsFile = new File(core.getDataFolder(), "gui/playerView.yml");
+        core.createDefaultConfiguration(myItemsFile, "gui/playerView.yml");
+        playerViewConfiguration = YamlConfiguration.loadConfiguration(myItemsFile);
 
         File expireFile = new File(core.getDataFolder(), "expire.yml");
         core.createDefaultConfiguration(expireFile, "expire.yml");
         expireConfiguration = YamlConfiguration.loadConfiguration(expireFile);
 
-        File auctionConfirmFile = new File(core.getDataFolder(), "auctionConfirm.yml");
-        core.createDefaultConfiguration(auctionConfirmFile, "auctionConfirm.yml");
+        File auctionConfirmFile = new File(core.getDataFolder(), "gui/auctionConfirm.yml");
+        core.createDefaultConfiguration(auctionConfirmFile, "gui/auctionConfirm.yml");
         auctionConfirmConfiguration = YamlConfiguration.loadConfiguration(auctionConfirmFile);
 
         File globalFile = new File(core.getDataFolder(), "config.yml");
@@ -56,6 +63,7 @@ public class ConfigurationManager {
         auctionConfig.load(auctionConfiguration);
         auctionConfirmConfig.load(auctionConfirmConfiguration);
         expireConfig.load(expireConfiguration);
+        playerViewConfig.load(playerViewConfiguration);
     }
 
     public DatabaseConfig getDatabase() {
@@ -76,5 +84,9 @@ public class ConfigurationManager {
 
     public ExpireGuiConfig getExpireConfig() {
         return expireConfig;
+    }
+
+    public PlayerViewConfig getPlayerViewConfig() {
+        return playerViewConfig;
     }
 }

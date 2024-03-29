@@ -3,7 +3,7 @@ package fr.florianpal.fauction.gui.subGui;
 import co.aikar.commands.CommandIssuer;
 import co.aikar.taskchain.TaskChain;
 import fr.florianpal.fauction.FAuction;
-import fr.florianpal.fauction.configurations.AuctionConfig;
+import fr.florianpal.fauction.configurations.PlayerViewConfig;
 import fr.florianpal.fauction.gui.AbstractGui;
 import fr.florianpal.fauction.gui.GuiInterface;
 import fr.florianpal.fauction.languages.MessageKeys;
@@ -26,31 +26,36 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class AuctionsGui extends AbstractGui implements GuiInterface {
+public class PlayerViewGui extends AbstractGui implements GuiInterface {
+
     private List<Auction> auctions = new ArrayList<>();
+
     protected final AuctionCommandManager auctionCommandManager;
-    private final AuctionConfig auctionConfig;
+
+    private final PlayerViewConfig playerViewConfig;
 
     private final List<LocalDateTime> spamTest = new ArrayList<>();
 
-    public AuctionsGui(FAuction plugin, Player player, int page) {
+    public PlayerViewGui(FAuction plugin, Player player, int page) {
         super(plugin, player, page);
-        this.auctionConfig = plugin.getConfigurationManager().getAuctionConfig();
+        this.playerViewConfig = plugin.getConfigurationManager().getPlayerViewConfig();
         this.auctionCommandManager = new AuctionCommandManager(plugin);
-        initGui(auctionConfig.getNameGui(), 27);
+        initGui(playerViewConfig.getNameGui(), 27);
     }
 
     public void initializeItems() {
 
-        TaskChain<ArrayList<Auction>> finalChain = auctionCommandManager.getAuctions();
+        TaskChain<ArrayList<Auction>> chain = auctionCommandManager.getAuctions(player.getUniqueId());
+
+        TaskChain<ArrayList<Auction>> finalChain = chain;
         finalChain.sync(() -> {
                     this.auctions = finalChain.getTaskData("auctions");
 
-                    String titleInv = auctionConfig.getNameGui();
+                    String titleInv = playerViewConfig.getNameGui();
                     titleInv = titleInv.replace("{Page}", String.valueOf(this.page));
-                    titleInv = titleInv.replace("{TotalPage}", String.valueOf(((this.auctions.size() - 1) / auctionConfig.getAuctionBlocks().size()) + 1));
+                    titleInv = titleInv.replace("{TotalPage}", String.valueOf(((this.auctions.size() - 1) / playerViewConfig.getAuctionBlocks().size()) + 1));
 
-                    this.inv = Bukkit.createInventory(this, auctionConfig.getSize(), titleInv);
+                    this.inv = Bukkit.createInventory(this, playerViewConfig.getSize(), titleInv);
 
                     initBarrier();
 
@@ -60,8 +65,8 @@ public class AuctionsGui extends AbstractGui implements GuiInterface {
                         return;
                     }
 
-                    int id = (this.auctionConfig.getAuctionBlocks().size() * this.page) - this.auctionConfig.getAuctionBlocks().size();
-                    for (int index : auctionConfig.getAuctionBlocks()) {
+                    int id = (this.playerViewConfig.getAuctionBlocks().size() * this.page) - this.playerViewConfig.getAuctionBlocks().size();
+                    for (int index : playerViewConfig.getAuctionBlocks()) {
                         inv.setItem(index, createGuiItem(auctions.get(id)));
                         id++;
                         if (id >= (auctions.size())) break;
@@ -73,15 +78,15 @@ public class AuctionsGui extends AbstractGui implements GuiInterface {
 
     private void initBarrier() {
 
-        for (Barrier barrier : auctionConfig.getBarrierBlocks()) {
+        for (Barrier barrier : playerViewConfig.getBarrierBlocks()) {
             inv.setItem(barrier.getIndex(), createGuiItem(barrier.getMaterial(), barrier.getTitle(), barrier.getDescription()));
         }
 
-        for (Barrier barrier : auctionConfig.getExpireBlocks()) {
+        for (Barrier barrier : playerViewConfig.getExpireBlocks()) {
             inv.setItem(barrier.getIndex(), createGuiItem(barrier.getMaterial(), barrier.getTitle(), barrier.getDescription()));
         }
 
-        for (Barrier previous : auctionConfig.getPreviousBlocks()) {
+        for (Barrier previous : playerViewConfig.getPreviousBlocks()) {
             if (page > 1) {
                 inv.setItem(previous.getIndex(), createGuiItem(previous.getMaterial(), previous.getTitle(), previous.getDescription()));
             } else {
@@ -89,19 +94,19 @@ public class AuctionsGui extends AbstractGui implements GuiInterface {
             }
         }
 
-        for (Barrier next : auctionConfig.getNextBlocks()) {
-            if ((this.auctionConfig.getAuctionBlocks().size() * this.page) - this.auctionConfig.getAuctionBlocks().size() < auctions.size() - this.auctionConfig.getAuctionBlocks().size()) {
+        for (Barrier next : playerViewConfig.getNextBlocks()) {
+            if ((this.playerViewConfig.getAuctionBlocks().size() * this.page) - this.playerViewConfig.getAuctionBlocks().size() < auctions.size() - this.playerViewConfig.getAuctionBlocks().size()) {
                 inv.setItem(next.getIndex(), createGuiItem(next.getMaterial(), next.getTitle(), next.getDescription()));
             } else {
                 inv.setItem(next.getRemplacement().getIndex(), createGuiItem(next.getRemplacement().getMaterial(), next.getRemplacement().getTitle(), next.getRemplacement().getDescription()));
             }
         }
 
-        for (Barrier player : auctionConfig.getPlayerBlocks()) {
+        for (Barrier player : playerViewConfig.getPlayerBlocks()) {
             inv.setItem(player.getIndex(), createGuiItem(player.getMaterial(), player.getTitle(), player.getDescription()));
         }
 
-        for (Barrier close : auctionConfig.getCloseBlocks()) {
+        for (Barrier close : playerViewConfig.getCloseBlocks()) {
             inv.setItem(close.getIndex(), createGuiItem(close.getMaterial(), close.getTitle(), close.getDescription()));
         }
     }
@@ -109,7 +114,7 @@ public class AuctionsGui extends AbstractGui implements GuiInterface {
     private ItemStack createGuiItem(Auction auction) {
         ItemStack item = auction.getItemStack().clone();
         ItemMeta meta = item.getItemMeta();
-        String title = auctionConfig.getTitle();
+        String title = playerViewConfig.getTitle();
         if (item.getItemMeta().getDisplayName().equalsIgnoreCase("")) {
             title = title.replace("{ItemName}", item.getType().name().replace('_', ' ').toLowerCase());
         } else {
@@ -122,7 +127,7 @@ public class AuctionsGui extends AbstractGui implements GuiInterface {
         df.setMaximumFractionDigits(2);
         List<String> listDescription = new ArrayList<>();
 
-        for (String desc : auctionConfig.getDescription()) {
+        for (String desc : playerViewConfig.getDescription()) {
             if (item.getItemMeta().getDisplayName().equalsIgnoreCase("")) {
                 desc = desc.replace("{ItemName}", item.getType().name().replace('_', ' ').toLowerCase());
             } else {
@@ -195,49 +200,49 @@ public class AuctionsGui extends AbstractGui implements GuiInterface {
         ItemStack clickedItem = e.getCurrentItem();
         if (clickedItem == null || clickedItem.getType() == Material.AIR) return;
 
-        for (Barrier previous : auctionConfig.getPreviousBlocks()) {
+        for (Barrier previous : playerViewConfig.getPreviousBlocks()) {
             if (e.getRawSlot() == previous.getIndex() && this.page > 1) {
-                AuctionsGui gui = new AuctionsGui(plugin, player, this.page - 1);
+                PlayerViewGui gui = new PlayerViewGui(plugin, player, this.page - 1);
                 gui.initializeItems();
                 return;
             }
         }
-        for (Barrier next : auctionConfig.getNextBlocks()) {
-            if (e.getRawSlot() == next.getIndex() && ((this.auctionConfig.getAuctionBlocks().size() * this.page) - this.auctionConfig.getAuctionBlocks().size() < auctions.size() - this.auctionConfig.getAuctionBlocks().size()) && next.getMaterial() != next.getRemplacement().getMaterial()) {
-                AuctionsGui gui = new AuctionsGui(plugin, player, this.page + 1);
+        for (Barrier next : playerViewConfig.getNextBlocks()) {
+            if (e.getRawSlot() == next.getIndex() && ((this.playerViewConfig.getAuctionBlocks().size() * this.page) - this.playerViewConfig.getAuctionBlocks().size() < auctions.size() - this.playerViewConfig.getAuctionBlocks().size()) && next.getMaterial() != next.getRemplacement().getMaterial()) {
+                PlayerViewGui gui = new PlayerViewGui(plugin, player, this.page + 1);
                 gui.initializeItems();
                 return;
             }
         }
-        for (Barrier expire : auctionConfig.getExpireBlocks()) {
+        for (Barrier expire : playerViewConfig.getExpireBlocks()) {
             if (e.getRawSlot() == expire.getIndex()) {
                 ExpireGui gui = new ExpireGui(plugin, player, 1);
                 gui.initializeItems();
                 return;
             }
         }
-        for (Barrier close : auctionConfig.getCloseBlocks()) {
+        for (Barrier close : playerViewConfig.getCloseBlocks()) {
             if (e.getRawSlot() == close.getIndex()) {
                 inv.close();
                 return;
             }
         }
 
-        for (Barrier expire : auctionConfig.getPlayerBlocks()) {
+        for (Barrier expire : playerViewConfig.getPlayerBlocks()) {
             if (e.getRawSlot() == expire.getIndex()) {
 
-                PlayerViewGui gui = new PlayerViewGui(plugin, player, 1);
+                AuctionsGui gui = new AuctionsGui(plugin, player, 1);
                 gui.initializeItems();
 
                 return;
             }
         }
 
-        for (int index : auctionConfig.getAuctionBlocks()) {
+        for (int index : playerViewConfig.getAuctionBlocks()) {
             if (index == e.getRawSlot()) {
-                int nb0 = auctionConfig.getAuctionBlocks().get(0);
+                int nb0 = playerViewConfig.getAuctionBlocks().get(0);
                 int nb = ((e.getRawSlot() - nb0)) / 9;
-                Auction auction = auctions.get((e.getRawSlot() - nb0) + ((this.auctionConfig.getAuctionBlocks().size() * this.page) - this.auctionConfig.getAuctionBlocks().size()) - nb * 2);
+                Auction auction = auctions.get((e.getRawSlot() - nb0) + ((this.playerViewConfig.getAuctionBlocks().size() * this.page) - this.playerViewConfig.getAuctionBlocks().size()) - nb * 2);
 
                 if(plugin.getAuctionAction().contains((Integer)auction.getId())) {
                     return;
@@ -280,7 +285,7 @@ public class AuctionsGui extends AbstractGui implements GuiInterface {
                         plugin.getAuctionAction().remove((Integer)auction.getId());
 
                         inv.close();
-                        AuctionsGui gui = new AuctionsGui(plugin, player, page);
+                        PlayerViewGui gui = new PlayerViewGui(plugin, player, page);
                         gui.initializeItems();
 
                     }).execute();

@@ -46,7 +46,6 @@ public class ExpireGui extends AbstractGui implements GuiInterface {
 
     public void initializeItems() {
         TaskChain<ArrayList<Auction>> chain = expireCommandManager.getAuctions(player.getUniqueId());
-
         chain.sync(() -> {
             this.auctions = chain.getTaskData("auctions");
             if (this.auctions.size() == 0) {
@@ -246,7 +245,7 @@ public class ExpireGui extends AbstractGui implements GuiInterface {
         }
         for (Barrier auctionGui : expireGuiConfig.getAuctionGuiBlocks()) {
             if (e.getRawSlot() == auctionGui.getIndex()) {
-                AuctionsGui gui = new AuctionsGui(plugin, p, ViewType.ALL, 1);
+                AuctionsGui gui = new AuctionsGui(plugin, p, 1);
                 gui.initializeItems();
                 break;
             }

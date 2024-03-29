@@ -1,6 +1,6 @@
 name: FAuction
 main: fr.florianpal.fauction.FAuction
 author: florianpal
-version: 2.0
+version: 1.4.4
 api-version: 1.16
 softdepend: [Vault]

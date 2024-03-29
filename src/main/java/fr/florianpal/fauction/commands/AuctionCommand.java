@@ -59,7 +59,7 @@ public class AuctionCommand extends BaseCommand {
         }
 
         CommandIssuer issuerTarget = commandManager.getCommandIssuer(playerSender);
-        AuctionsGui gui = new AuctionsGui(plugin, playerSender, ViewType.ALL,1);
+        AuctionsGui gui = new AuctionsGui(plugin, playerSender, 1);
         gui.initializeItems();
         issuerTarget.sendInfo(MessageKeys.AUCTION_OPEN);
     }
