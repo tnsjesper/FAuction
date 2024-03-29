@@ -192,7 +192,7 @@ block:
     material: ARROW
     title: "&5Next Page"
     description:
-      - "&eClick here to go to the next page"
+      - "&e Click here to go to the next page"
     replacement:
       material: AIR
       title: "-"

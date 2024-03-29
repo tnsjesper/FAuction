@@ -167,7 +167,8 @@ block:
     description: {}
   '48':
     utility: previous
-    material: ARROW
+    material: PLAYER_HEAD
+    texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTY0MzlkMmUzMDZiMjI1NTE2YWE5YTZkMDA3YTdlNzVlZGQyZDUwMTVkMTEzYjQyZjQ0YmU2MmE1MTdlNTc0ZiJ9fX0="
     title: "&5Previous Page"
     description:
       - "&eClick here to return to previous page"
@@ -189,7 +190,8 @@ block:
       - "&7Number of sales in progress: &b{TotalSale}"
   '50':
     utility: next
-    material: ARROW
+    material: PLAYER_HEAD
+    texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGJmOGI2Mjc3Y2QzNjI2NjI4M2NiNWE5ZTY5NDM5NTNjNzgzZTZmZjdkNmEyZDU5ZDE1YWQwNjk3ZTkxZDQzYyJ9fX0="
     title: "&5Next Page"
     description:
       - "&eClick here to go to the next page"

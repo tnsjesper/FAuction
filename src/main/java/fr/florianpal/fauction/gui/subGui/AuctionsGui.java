@@ -74,35 +74,35 @@ public class AuctionsGui extends AbstractGui implements GuiInterface {
     private void initBarrier() {
 
         for (Barrier barrier : auctionConfig.getBarrierBlocks()) {
-            inv.setItem(barrier.getIndex(), createGuiItem(barrier.getMaterial(), barrier.getTitle(), barrier.getDescription()));
+            inv.setItem(barrier.getIndex(), getItemStack(barrier, false));
         }
 
         for (Barrier barrier : auctionConfig.getExpireBlocks()) {
-            inv.setItem(barrier.getIndex(), createGuiItem(barrier.getMaterial(), barrier.getTitle(), barrier.getDescription()));
+            inv.setItem(barrier.getIndex(), getItemStack(barrier, false));
         }
 
         for (Barrier previous : auctionConfig.getPreviousBlocks()) {
             if (page > 1) {
-                inv.setItem(previous.getIndex(), createGuiItem(previous.getMaterial(), previous.getTitle(), previous.getDescription()));
+                inv.setItem(previous.getIndex(), getItemStack(previous, false));
             } else {
-                inv.setItem(previous.getRemplacement().getIndex(), createGuiItem(previous.getRemplacement().getMaterial(), previous.getRemplacement().getTitle(), previous.getRemplacement().getDescription()));
+                inv.setItem(previous.getRemplacement().getIndex(), getItemStack(previous, true));
             }
         }
 
         for (Barrier next : auctionConfig.getNextBlocks()) {
             if ((this.auctionConfig.getAuctionBlocks().size() * this.page) - this.auctionConfig.getAuctionBlocks().size() < auctions.size() - this.auctionConfig.getAuctionBlocks().size()) {
-                inv.setItem(next.getIndex(), createGuiItem(next.getMaterial(), next.getTitle(), next.getDescription()));
+                inv.setItem(next.getIndex(), getItemStack(next, false));
             } else {
-                inv.setItem(next.getRemplacement().getIndex(), createGuiItem(next.getRemplacement().getMaterial(), next.getRemplacement().getTitle(), next.getRemplacement().getDescription()));
+                inv.setItem(next.getRemplacement().getIndex(), getItemStack(next, true));
             }
         }
 
         for (Barrier player : auctionConfig.getPlayerBlocks()) {
-            inv.setItem(player.getIndex(), createGuiItem(player.getMaterial(), player.getTitle(), player.getDescription()));
+            inv.setItem(player.getIndex(), getItemStack(player, false));
         }
 
         for (Barrier close : auctionConfig.getCloseBlocks()) {
-            inv.setItem(close.getIndex(), createGuiItem(close.getMaterial(), close.getTitle(), close.getDescription()));
+            inv.setItem(close.getIndex(), getItemStack(close, false));
         }
     }
 

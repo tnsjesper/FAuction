@@ -4,7 +4,6 @@ import co.aikar.commands.CommandIssuer;
 import co.aikar.taskchain.TaskChain;
 import fr.florianpal.fauction.FAuction;
 import fr.florianpal.fauction.configurations.AuctionConfirmGuiConfig;
-import fr.florianpal.fauction.enums.ViewType;
 import fr.florianpal.fauction.gui.AbstractGui;
 import fr.florianpal.fauction.gui.GuiInterface;
 import fr.florianpal.fauction.languages.MessageKeys;
@@ -15,7 +14,6 @@ import fr.florianpal.fauction.objects.Confirm;
 import fr.florianpal.fauction.utils.FormatUtil;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -26,7 +24,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.text.DecimalFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,7 +52,7 @@ public class AuctionConfirmGui extends AbstractGui implements GuiInterface {
     public void initializeItems() {
 
         for (Barrier barrier : auctionConfirmConfig.getBarrierBlocks()) {
-            inv.setItem(barrier.getIndex(), createGuiItem(barrier.getMaterial(), barrier.getTitle(), barrier.getDescription()));
+            inv.setItem(barrier.getIndex(), getItemStack(barrier, false));
         }
 
         int id = 0;

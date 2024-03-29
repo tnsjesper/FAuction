@@ -44,8 +44,10 @@ public class AuctionConfig {
                                 Integer.parseInt(index),
                                 Material.getMaterial(config.getString("block." + index + ".replacement.material")),
                                 config.getString("block." + index + ".replacement.title"),
-                                config.getStringList("block." + index + ".replacement.description")
-                        )
+                                config.getStringList("block." + index + ".replacement.description"),
+                                config.getString("block." + index + ".replacement.texture", "")
+                        ),
+                        config.getString("block." + index + ".texture", "")
                 );
                 previousBlocks.add(barrier);
             } else if (config.getString("block." + index + ".utility").equalsIgnoreCase("next")) {
@@ -58,9 +60,10 @@ public class AuctionConfig {
                                 Integer.parseInt(index),
                                 Material.getMaterial(config.getString("block." + index + ".replacement.material")),
                                 config.getString("block." + index + ".replacement.title"),
-                                config.getStringList("block." + index + ".replacement.description")
-                        )
-
+                                config.getStringList("block." + index + ".replacement.description"),
+                                config.getString("block." + index + ".replacement.texture", "")
+                        ),
+                        config.getString("block." + index + ".texture", "")
                 );
                 nextBlocks.add(barrier);
             } else if (config.getString("block." + index + ".utility").equalsIgnoreCase("player")) {
@@ -73,9 +76,10 @@ public class AuctionConfig {
                                 Integer.parseInt(index),
                                 Material.getMaterial(config.getString("block." + index + ".replacement.material")),
                                 config.getString("block." + index + ".replacement.title"),
-                                config.getStringList("block." + index + ".replacement.description")
-                        )
-
+                                config.getStringList("block." + index + ".replacement.description"),
+                                config.getString("block." + index + ".replacement.texture", "")
+                        ),
+                        config.getString("block." + index + ".texture", "")
                 );
                 playerBlocks.add(barrier);
             } else if (config.getString("block." + index + ".utility").equalsIgnoreCase("expire")) {
@@ -83,7 +87,8 @@ public class AuctionConfig {
                         Integer.parseInt(index),
                         Material.getMaterial(config.getString("block." + index + ".material")),
                         config.getString("block." + index + ".title"),
-                        config.getStringList("block." + index + ".description")
+                        config.getStringList("block." + index + ".description"),
+                        config.getString("block." + index + ".texture", "")
                 );
                 expireBlocks.add(barrier);
             } else if (config.getString("block." + index + ".utility").equalsIgnoreCase("barrier")) {
@@ -91,7 +96,8 @@ public class AuctionConfig {
                         Integer.parseInt(index),
                         Material.getMaterial(config.getString("block." + index + ".material")),
                         config.getString("block." + index + ".title"),
-                        config.getStringList("block." + index + ".description")
+                        config.getStringList("block." + index + ".description"),
+                        config.getString("block." + index + ".texture", "")
                 );
                 barrierBlocks.add(barrier);
             } else if (config.getString("block." + index + ".utility").equalsIgnoreCase("auction")) {
@@ -101,7 +107,8 @@ public class AuctionConfig {
                         Integer.parseInt(index),
                         Material.getMaterial(config.getString("block." + index + ".material")),
                         config.getString("block." + index + ".title"),
-                        config.getStringList("block." + index + ".description")
+                        config.getStringList("block." + index + ".description"),
+                        config.getString("block." + index + ".texture", "")
                 );
                 closeBlocks.add(barrier);
             }

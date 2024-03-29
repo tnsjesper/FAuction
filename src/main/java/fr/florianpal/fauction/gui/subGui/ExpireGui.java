@@ -4,7 +4,6 @@ import co.aikar.commands.CommandIssuer;
 import co.aikar.taskchain.TaskChain;
 import fr.florianpal.fauction.FAuction;
 import fr.florianpal.fauction.configurations.ExpireGuiConfig;
-import fr.florianpal.fauction.enums.ViewType;
 import fr.florianpal.fauction.gui.AbstractGui;
 import fr.florianpal.fauction.gui.GuiInterface;
 import fr.florianpal.fauction.languages.MessageKeys;
@@ -12,7 +11,6 @@ import fr.florianpal.fauction.managers.commandManagers.ExpireCommandManager;
 import fr.florianpal.fauction.objects.Auction;
 import fr.florianpal.fauction.objects.Barrier;
 import fr.florianpal.fauction.utils.FormatUtil;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -26,8 +24,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class ExpireGui extends AbstractGui implements GuiInterface {
     private List<Auction> auctions = new ArrayList<>();
@@ -53,26 +49,29 @@ public class ExpireGui extends AbstractGui implements GuiInterface {
                 issuerTarget.sendInfo(MessageKeys.NO_AUCTION);
                 return;
             }
+
             for (Barrier barrier : expireGuiConfig.getBarrierBlocks()) {
-                inv.setItem(barrier.getIndex(), createGuiItem(barrier.getMaterial(), barrier.getTitle(), barrier.getDescription()));
+                inv.setItem(barrier.getIndex(), getItemStack(barrier, false));
             }
+
             for (Barrier barrier : expireGuiConfig.getAuctionGuiBlocks()) {
-                inv.setItem(barrier.getIndex(), createGuiItem(barrier.getMaterial(), barrier.getTitle(), barrier.getDescription()));
+                inv.setItem(barrier.getIndex(), getItemStack(barrier, false));
             }
+
             for (Barrier previous : expireGuiConfig.getPreviousBlocks()) {
                 if (page > 1) {
-                    inv.setItem(previous.getIndex(), createGuiItem(previous.getMaterial(), previous.getTitle(), previous.getDescription()));
+                    inv.setItem(previous.getIndex(), getItemStack(previous, false));
 
                 } else {
-                    inv.setItem(previous.getRemplacement().getIndex(), createGuiItem(previous.getRemplacement().getMaterial(), previous.getRemplacement().getTitle(), previous.getRemplacement().getDescription()));
+                    inv.setItem(previous.getRemplacement().getIndex(), getItemStack(previous, true));
                 }
             }
 
             for (Barrier next : expireGuiConfig.getNextBlocks()) {
                 if ((this.expireGuiConfig.getExpireBlocks().size() * this.page) - this.expireGuiConfig.getExpireBlocks().size() < auctions.size() - this.expireGuiConfig.getExpireBlocks().size()) {
-                    inv.setItem(next.getIndex(), createGuiItem(next.getMaterial(), next.getTitle(), next.getDescription()));
+                    inv.setItem(next.getIndex(), getItemStack(next, false));
                 } else {
-                    inv.setItem(next.getRemplacement().getIndex(), createGuiItem(next.getRemplacement().getMaterial(), next.getRemplacement().getTitle(), next.getRemplacement().getDescription()));
+                    inv.setItem(next.getRemplacement().getIndex(), getItemStack(next, true));
                 }
             }
 

@@ -35,7 +35,8 @@ public class AuctionConfirmGuiConfig {
                         Integer.parseInt(index),
                         Material.getMaterial(config.getString("block." + index + ".material")),
                         config.getString("block." + index + ".title"),
-                        config.getStringList("block." + index + ".description")
+                        config.getStringList("block." + index + ".description"),
+                        config.getString("block." + index + ".texture", "")
                 );
                 barrierBlocks.add(barrier);
             } else if (config.getString("block." + index + ".utility").equalsIgnoreCase("confirm")) {
