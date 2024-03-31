@@ -50,7 +50,7 @@ public abstract class AbstractGui implements InventoryHolder, Listener {
     }
 
     protected void initGui(String title, int size) {
-        inv = Bukkit.createInventory(this, size, title);
+        inv = Bukkit.createInventory(this, size, FormatUtil.format(title));
     }
 
     public ItemStack getItemStack(Barrier barrier, boolean isRemplacement) {
