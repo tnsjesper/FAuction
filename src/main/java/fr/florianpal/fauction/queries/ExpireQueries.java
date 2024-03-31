@@ -3,6 +3,7 @@ package fr.florianpal.fauction.queries;
 import co.aikar.taskchain.TaskChain;
 import fr.florianpal.fauction.FAuction;
 import fr.florianpal.fauction.IDatabaseTable;
+import fr.florianpal.fauction.enums.SQLType;
 import fr.florianpal.fauction.managers.DatabaseManager;
 import fr.florianpal.fauction.objects.Auction;
 
@@ -24,8 +25,16 @@ public class ExpireQueries implements IDatabaseTable {
 
     private final DatabaseManager databaseManager;
 
+    private String AUTO_INCREMENT = "AUTO_INCREMENT";
+
+    private String PARAMETERS = "DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci";
+
     public ExpireQueries(FAuction plugin) {
         this.databaseManager = plugin.getDatabaseManager();
+        if (plugin.getConfigurationManager().getDatabase().getSqlType() == SQLType.SQLite) {
+            AUTO_INCREMENT = "AUTOINCREMENT";
+            PARAMETERS = "";
+        }
     }
 
     public void addAuction(UUID playerUUID, String playerName, byte[] item, double price, Date date){
@@ -206,13 +215,13 @@ public class ExpireQueries implements IDatabaseTable {
     @Override
     public String[] getTable() {
         return new String[]{"expires",
-                "`id` INTEGER NOT NULL AUTO_INCREMENT, " +
+                "`id` INTEGER PRIMARY KEY " + AUTO_INCREMENT + ", " +
                         "`playerUuid` VARCHAR(36) NOT NULL, " +
                         "`playerName` VARCHAR(36) NOT NULL, " +
                         "`item` BLOB NOT NULL, " +
                         "`price` DOUBLE NOT NULL, " +
-                        "`date` LONG NOT NULL," +
-                        "PRIMARY KEY (`id`)",
-                "DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci"};
+                        "`date` LONG NOT NULL",
+                        PARAMETERS
+        };
     }
 }

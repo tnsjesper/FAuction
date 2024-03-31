@@ -51,27 +51,27 @@ public class ExpireGui extends AbstractGui implements GuiInterface {
             }
 
             for (Barrier barrier : expireGuiConfig.getBarrierBlocks()) {
-                inv.setItem(barrier.getIndex(), getItemStack(barrier, false));
+                inv.setItem(barrier.getIndex(), createGuiItem(getItemStack(barrier, false)));
             }
 
             for (Barrier barrier : expireGuiConfig.getAuctionGuiBlocks()) {
-                inv.setItem(barrier.getIndex(), getItemStack(barrier, false));
+                inv.setItem(barrier.getIndex(), createGuiItem(getItemStack(barrier, false)));
             }
 
             for (Barrier previous : expireGuiConfig.getPreviousBlocks()) {
                 if (page > 1) {
-                    inv.setItem(previous.getIndex(), getItemStack(previous, false));
+                    inv.setItem(previous.getIndex(), createGuiItem(getItemStack(previous, false)));
 
                 } else {
-                    inv.setItem(previous.getRemplacement().getIndex(), getItemStack(previous, true));
+                    inv.setItem(previous.getRemplacement().getIndex(), createGuiItem(getItemStack(previous, true)));
                 }
             }
 
             for (Barrier next : expireGuiConfig.getNextBlocks()) {
                 if ((this.expireGuiConfig.getExpireBlocks().size() * this.page) - this.expireGuiConfig.getExpireBlocks().size() < auctions.size() - this.expireGuiConfig.getExpireBlocks().size()) {
-                    inv.setItem(next.getIndex(), getItemStack(next, false));
+                    inv.setItem(next.getIndex(), createGuiItem(getItemStack(next, false)));
                 } else {
-                    inv.setItem(next.getRemplacement().getIndex(), getItemStack(next, true));
+                    inv.setItem(next.getRemplacement().getIndex(), createGuiItem(getItemStack(next, true)));
                 }
             }
 
@@ -87,7 +87,6 @@ public class ExpireGui extends AbstractGui implements GuiInterface {
         }).execute();
 
     }
-
 
     private ItemStack createGuiItem(Auction auction, String playerName) {
         ItemStack item = auction.getItemStack().clone();
@@ -150,6 +149,27 @@ public class ExpireGui extends AbstractGui implements GuiInterface {
             item.setItemMeta(meta);
         }
         return item;
+    }
+
+    public ItemStack createGuiItem(ItemStack itemStack) {
+        ItemMeta meta = itemStack.getItemMeta();
+        if (meta == null || meta.getDisplayName() == null || meta.getLore() == null) {
+            return itemStack;
+        }
+        String name = FormatUtil.format(meta.getDisplayName());
+        List<String> descriptions = new ArrayList<>();
+        for (String desc : meta.getLore()) {
+
+            desc = desc.replace("{TotalSale}", String.valueOf(this.auctions.size()));
+            desc = FormatUtil.format(desc);
+            descriptions.add(desc);
+        }
+        if (meta != null) {
+            meta.setDisplayName(name);
+            meta.setLore(descriptions);
+            itemStack.setItemMeta(meta);
+        }
+        return itemStack;
     }
 
     @EventHandler

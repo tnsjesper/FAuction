@@ -19,6 +19,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.*;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.jar.JarFile;
@@ -69,7 +70,11 @@ public class FAuction extends JavaPlugin {
 
         vaultIntegrationManager = new VaultIntegrationManager(this);
 
-        databaseManager = new DatabaseManager(this);
+        try {
+            databaseManager = new DatabaseManager(this);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         auctionQueries = new AuctionQueries(this);
         expireQueries = new ExpireQueries(this);
 

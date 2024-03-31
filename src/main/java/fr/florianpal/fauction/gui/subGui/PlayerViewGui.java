@@ -79,35 +79,35 @@ public class PlayerViewGui extends AbstractGui implements GuiInterface {
     private void initBarrier() {
 
         for (Barrier barrier : playerViewConfig.getBarrierBlocks()) {
-            inv.setItem(barrier.getIndex(), getItemStack(barrier, false));
+            inv.setItem(barrier.getIndex(), createGuiItem(getItemStack(barrier, false)));
         }
 
         for (Barrier barrier : playerViewConfig.getExpireBlocks()) {
-            inv.setItem(barrier.getIndex(), getItemStack(barrier, false));
+            inv.setItem(barrier.getIndex(), createGuiItem(getItemStack(barrier, false)));
         }
 
         for (Barrier previous : playerViewConfig.getPreviousBlocks()) {
             if (page > 1) {
-                inv.setItem(previous.getIndex(), getItemStack(previous, false));
+                inv.setItem(previous.getIndex(), createGuiItem(getItemStack(previous, false)));
             } else {
-                inv.setItem(previous.getRemplacement().getIndex(), getItemStack(previous, true));
+                inv.setItem(previous.getRemplacement().getIndex(), createGuiItem(getItemStack(previous, true)));
             }
         }
 
         for (Barrier next : playerViewConfig.getNextBlocks()) {
             if ((this.playerViewConfig.getAuctionBlocks().size() * this.page) - this.playerViewConfig.getAuctionBlocks().size() < auctions.size() - this.playerViewConfig.getAuctionBlocks().size()) {
-                inv.setItem(next.getIndex(), getItemStack(next, false));
+                inv.setItem(next.getIndex(), createGuiItem(getItemStack(next, false)));
             } else {
-                inv.setItem(next.getRemplacement().getIndex(), getItemStack(next, true));
+                inv.setItem(next.getRemplacement().getIndex(), createGuiItem(getItemStack(next, true)));
             }
         }
 
         for (Barrier player : playerViewConfig.getPlayerBlocks()) {
-            inv.setItem(player.getIndex(), getItemStack(player, false));
+            inv.setItem(player.getIndex(), createGuiItem(getItemStack(player, false)));
         }
 
         for (Barrier close : playerViewConfig.getCloseBlocks()) {
-            inv.setItem(close.getIndex(), getItemStack(close, false));
+            inv.setItem(close.getIndex(), createGuiItem(getItemStack(close, false)));
         }
     }
 
@@ -178,6 +178,26 @@ public class PlayerViewGui extends AbstractGui implements GuiInterface {
         return item;
     }
 
+    public ItemStack createGuiItem(ItemStack itemStack) {
+        ItemMeta meta = itemStack.getItemMeta();
+        if (meta == null || meta.getDisplayName() == null || meta.getLore() == null) {
+            return itemStack;
+        }
+        String name = FormatUtil.format(meta.getDisplayName());
+        List<String> descriptions = new ArrayList<>();
+        for (String desc : meta.getLore()) {
+
+            desc = desc.replace("{TotalSale}", String.valueOf(this.auctions.size()));
+            desc = FormatUtil.format(desc);
+            descriptions.add(desc);
+        }
+        if (meta != null) {
+            meta.setDisplayName(name);
+            meta.setLore(descriptions);
+            itemStack.setItemMeta(meta);
+        }
+        return itemStack;
+    }
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {

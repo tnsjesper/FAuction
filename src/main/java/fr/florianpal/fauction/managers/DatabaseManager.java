@@ -11,9 +11,12 @@ import java.util.ArrayList;
 public class DatabaseManager {
     private final HikariConfig config = new HikariConfig();
     private final HikariDataSource ds;
+
+    private Connection connection;
+
     private final FAuction plugin;
     private final ArrayList<IDatabaseTable> repositories = new ArrayList<>();
-    public DatabaseManager(FAuction plugin) {
+    public DatabaseManager(FAuction plugin) throws SQLException {
         this.plugin = plugin;
         config.setJdbcUrl(  plugin.getConfigurationManager().getDatabase().getUrl() );
         config.setUsername( plugin.getConfigurationManager().getDatabase().getUser() );
@@ -22,11 +25,15 @@ public class DatabaseManager {
         config.addDataSourceProperty( "prepStmtCacheSize" , "250" );
         config.addDataSourceProperty( "prepStmtCacheSqlLimit" , "2048" );
         ds = new HikariDataSource( config );
+        this.connection = ds.getConnection();
     }
 
 
     public Connection getConnection() throws SQLException {
-        return ds.getConnection();
+        if (connection.isClosed()) {
+            connection = ds.getConnection();
+        }
+        return connection;
     }
 
     public void addRepository(IDatabaseTable repository) {
