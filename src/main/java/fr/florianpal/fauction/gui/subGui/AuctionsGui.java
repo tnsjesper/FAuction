@@ -50,7 +50,7 @@ public class AuctionsGui extends AbstractGui implements GuiInterface {
                     titleInv = titleInv.replace("{Page}", String.valueOf(this.page));
                     titleInv = titleInv.replace("{TotalPage}", String.valueOf(((this.auctions.size() - 1) / auctionConfig.getAuctionBlocks().size()) + 1));
 
-                    this.inv = Bukkit.createInventory(this, auctionConfig.getSize(), titleInv);
+                    this.inv = Bukkit.createInventory(this, auctionConfig.getSize(), FormatUtil.format(titleInv));
 
                     initBarrier();
 
