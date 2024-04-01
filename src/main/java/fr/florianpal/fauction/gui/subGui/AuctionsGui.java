@@ -136,8 +136,8 @@ public class AuctionsGui extends AbstractGui implements GuiInterface {
             SimpleDateFormat formater = new SimpleDateFormat(globalConfig.getDateFormat());
             desc = desc.replace("{ExpireTime}", formater.format(expireDate));
             if (desc.contains("lore")) {
-                if (item.getLore() != null) {
-                    listDescription.addAll(item.getLore());
+                if (item.getItemMeta().getLore() != null) {
+                    listDescription.addAll(item.getItemMeta().getLore());
                 } else {
                     listDescription.add(desc.replace("{lore}", ""));
                 }
@@ -239,7 +239,7 @@ public class AuctionsGui extends AbstractGui implements GuiInterface {
         }
         for (Barrier close : auctionConfig.getCloseBlocks()) {
             if (e.getRawSlot() == close.getIndex()) {
-                inv.close();
+                player.closeInventory();
                 return;
             }
         }
@@ -300,7 +300,7 @@ public class AuctionsGui extends AbstractGui implements GuiInterface {
 
                         plugin.getAuctionAction().remove((Integer)auction.getId());
 
-                        inv.close();
+                        player.closeInventory();
                         AuctionsGui gui = new AuctionsGui(plugin, player, page);
                         gui.initializeItems();
 

@@ -16,7 +16,6 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -80,9 +79,10 @@ public abstract class AbstractGui implements InventoryHolder, Listener {
                     field.set(skullMeta, gameProfile);
 
                     skullMeta.setDisplayName(FormatUtil.format(barrier.getTitle())); // We set a displayName to the skull
+                    skullMeta.setLore(descriptions);
                     itemStack.setItemMeta(skullMeta);
                     itemStack.setAmount(1);
-                    itemStack.setLore(descriptions);
+
                 } else {
                     itemStack = new ItemStack(barrier.getMaterial(), 1);
                     ItemMeta meta = itemStack.getItemMeta();
@@ -106,7 +106,7 @@ public abstract class AbstractGui implements InventoryHolder, Listener {
     }
 
     @Override
-    public @NotNull Inventory getInventory() {
+    public Inventory getInventory() {
         return inv;
     }
 

@@ -4,6 +4,7 @@ import co.aikar.taskchain.TaskChain;
 import fr.florianpal.fauction.FAuction;
 import fr.florianpal.fauction.objects.Auction;
 import fr.florianpal.fauction.queries.AuctionQueries;
+import fr.florianpal.fauction.utils.SerializationUtil;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -28,7 +29,7 @@ public class AuctionCommandManager {
     }
 
     public void addAuction(Player player, ItemStack item, double price)  {
-        auctionQueries.addAuction(player.getUniqueId(), player.getName(),item.serializeAsBytes(), price, Calendar.getInstance().getTime());
+        auctionQueries.addAuction(player.getUniqueId(), player.getName(), SerializationUtil.serialize(item), price, Calendar.getInstance().getTime());
     }
 
 

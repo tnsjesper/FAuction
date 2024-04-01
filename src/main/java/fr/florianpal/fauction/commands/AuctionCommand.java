@@ -6,7 +6,7 @@ import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.annotation.*;
 import co.aikar.taskchain.TaskChain;
 import fr.florianpal.fauction.FAuction;
-import fr.florianpal.fauction.enums.ViewType;
+import fr.florianpal.fauction.configurations.GlobalConfig;
 import fr.florianpal.fauction.gui.subGui.AuctionsGui;
 import fr.florianpal.fauction.gui.subGui.ExpireGui;
 import fr.florianpal.fauction.languages.MessageKeys;
@@ -34,12 +34,15 @@ public class AuctionCommand extends BaseCommand {
     private final AuctionCommandManager auctionCommandManager;
     private final FAuction plugin;
 
+    private final GlobalConfig globalConfig;
+
     private final List<LocalDateTime> spamTest = new ArrayList<>();
 
     public AuctionCommand(FAuction plugin) {
         this.plugin = plugin;
         this.commandManager = plugin.getCommandManager();
         this.auctionCommandManager = plugin.getAuctionCommandManager();
+        this.globalConfig = plugin.getConfigurationManager().getGlobalConfig();
     }
 
     @Default
@@ -47,15 +50,17 @@ public class AuctionCommand extends BaseCommand {
     @CommandPermission("fauction.list")
     @Description("{@@fauction.auction_list_help_description}")
     public void onList(Player playerSender){
-        LocalDateTime clickTest = LocalDateTime.now();
-        boolean isSpamming = spamTest.stream().anyMatch(d -> d.getHour() == clickTest.getHour() && d.getMinute() == clickTest.getMinute() && (d.getSecond() == clickTest.getSecond() || d.getSecond() == clickTest.getSecond() + 1 || d.getSecond() == clickTest.getSecond() - 1));
-        if(isSpamming) {
-            plugin.getLogger().warning("Warning : Spam command list. Pseudo : " + playerSender.getName());
-            CommandIssuer issuerTarget = plugin.getCommandManager().getCommandIssuer(playerSender);
-            issuerTarget.sendInfo(MessageKeys.SPAM);
-            return;
-        } else {
-            spamTest.add(clickTest);
+        if (globalConfig.isSecurityForSpammingPacket()) {
+            LocalDateTime clickTest = LocalDateTime.now();
+            boolean isSpamming = spamTest.stream().anyMatch(d -> d.getHour() == clickTest.getHour() && d.getMinute() == clickTest.getMinute() && (d.getSecond() == clickTest.getSecond() || d.getSecond() == clickTest.getSecond() + 1 || d.getSecond() == clickTest.getSecond() - 1));
+            if (isSpamming) {
+                plugin.getLogger().warning("Warning : Spam command list. Pseudo : " + playerSender.getName());
+                CommandIssuer issuerTarget = plugin.getCommandManager().getCommandIssuer(playerSender);
+                issuerTarget.sendInfo(MessageKeys.SPAM);
+                return;
+            } else {
+                spamTest.add(clickTest);
+            }
         }
 
         CommandIssuer issuerTarget = commandManager.getCommandIssuer(playerSender);
@@ -68,15 +73,18 @@ public class AuctionCommand extends BaseCommand {
     @CommandPermission("fauction.sell")
     @Description("{@@fauction.auction_add_help_description}")
     public void onAdd(Player playerSender, double price) {
-        LocalDateTime clickTest = LocalDateTime.now();
-        boolean isSpamming = spamTest.stream().anyMatch(d -> d.getHour() == clickTest.getHour() && d.getMinute() == clickTest.getMinute() && (d.getSecond() == clickTest.getSecond() || d.getSecond() == clickTest.getSecond() + 1 || d.getSecond() == clickTest.getSecond() - 1));
-        if(isSpamming) {
-            plugin.getLogger().warning("Warning : Spam command sell Pseudo : " + playerSender.getName());
-            CommandIssuer issuerTarget = plugin.getCommandManager().getCommandIssuer(playerSender);
-            issuerTarget.sendInfo(MessageKeys.SPAM);
-            return;
-        } else {
-            spamTest.add(clickTest);
+
+        if (globalConfig.isSecurityForSpammingPacket()) {
+            LocalDateTime clickTest = LocalDateTime.now();
+            boolean isSpamming = spamTest.stream().anyMatch(d -> d.getHour() == clickTest.getHour() && d.getMinute() == clickTest.getMinute() && (d.getSecond() == clickTest.getSecond() || d.getSecond() == clickTest.getSecond() + 1 || d.getSecond() == clickTest.getSecond() - 1));
+            if (isSpamming) {
+                plugin.getLogger().warning("Warning : Spam command sell Pseudo : " + playerSender.getName());
+                CommandIssuer issuerTarget = plugin.getCommandManager().getCommandIssuer(playerSender);
+                issuerTarget.sendInfo(MessageKeys.SPAM);
+                return;
+            } else {
+                spamTest.add(clickTest);
+            }
         }
 
         CommandIssuer issuerTarget = commandManager.getCommandIssuer(playerSender);
@@ -127,7 +135,7 @@ public class AuctionCommand extends BaseCommand {
 
             plugin.getLogger().info("Player " + playerSender.getName() + " add item to ah Item : " + playerSender.getInventory().getItemInMainHand().getItemMeta().getDisplayName() + ", At Price : " + price);
             auctionCommandManager.addAuction(playerSender, playerSender.getInventory().getItemInMainHand(), price);
-            playerSender.getInventory().getItemInMainHand().subtract(playerSender.getInventory().getItemInMainHand().getAmount());
+            playerSender.getInventory().getItemInMainHand().setAmount(0);
             issuerTarget.sendInfo(MessageKeys.AUCTION_ADD_SUCCESS);
 
         }).execute();

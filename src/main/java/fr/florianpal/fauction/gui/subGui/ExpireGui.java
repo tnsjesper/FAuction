@@ -116,8 +116,8 @@ public class ExpireGui extends AbstractGui implements GuiInterface {
             desc = desc.replace("{OwnerName}", playerName);
             desc = desc.replace("{Price}", String.valueOf(auction.getPrice()));
             if (desc.contains("lore")) {
-                if (item.getLore() != null) {
-                    listDescription.addAll(item.getLore());
+                if (item.getItemMeta().getLore() != null) {
+                    listDescription.addAll(item.getItemMeta().getLore());
                 } else {
                     listDescription.add(desc.replace("{lore}", ""));
                 }
@@ -200,7 +200,7 @@ public class ExpireGui extends AbstractGui implements GuiInterface {
             if (index == e.getRawSlot()) {
 
                 if(auctions.isEmpty()) {
-                    inv.close();
+                    player.closeInventory();
                     return;
                 }
 

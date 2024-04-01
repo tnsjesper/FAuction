@@ -1,7 +1,10 @@
 package fr.florianpal.fauction.objects;
 
+import fr.florianpal.fauction.utils.SerializationUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.UUID;
 
@@ -18,7 +21,11 @@ public class Auction {
         this.playerUuid = playerUuid;
         this.playerName = playerName;
         this.price = price;
-        this.itemStack = ItemStack.deserializeBytes(item);
+        try {
+            this.itemStack = SerializationUtil.deserialize(item);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         this.date = new Date(date);
     }
 

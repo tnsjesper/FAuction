@@ -76,9 +76,9 @@ public class Barrier {
                     field.set(skullMeta, gameProfile);
 
                     skullMeta.setDisplayName(FormatUtil.format(barrier.getTitle())); // We set a displayName to the skull
+                    skullMeta.setLore(descriptions);
                     itemStack.setItemMeta(skullMeta);
                     itemStack.setAmount(1);
-                    itemStack.setLore(descriptions);
                 } else {
                     itemStack = new ItemStack(barrier.getMaterial(), 1);
                     ItemMeta meta = itemStack.getItemMeta();
