@@ -47,8 +47,8 @@ public class ConfigurationManager {
         core.createDefaultConfiguration(myItemsFile, "gui/playerView.yml");
         playerViewConfiguration = YamlConfiguration.loadConfiguration(myItemsFile);
 
-        File expireFile = new File(core.getDataFolder(), "expire.yml");
-        core.createDefaultConfiguration(expireFile, "expire.yml");
+        File expireFile = new File(core.getDataFolder(), "gui/expire.yml");
+        core.createDefaultConfiguration(expireFile, "gui/expire.yml");
         expireConfiguration = YamlConfiguration.loadConfiguration(expireFile);
 
         File auctionConfirmFile = new File(core.getDataFolder(), "gui/auctionConfirm.yml");
