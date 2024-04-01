@@ -40,9 +40,11 @@ public class ExpireGuiConfig {
                                 Material.getMaterial(config.getString("block." + index + ".replacement.material")),
                                 config.getString("block." + index + ".replacement.title"),
                                 config.getStringList("block." + index + ".replacement.description"),
-                                config.getString("block." + index + ".replacement.texture", "")
+                                config.getString("block." + index + ".replacement.texture", ""),
+                                config.getInt("block." + index + ".replacement.customModelData", 0)
                         ),
-                        config.getString("block." + index + ".texture", "")
+                        config.getString("block." + index + ".texture", ""),
+                        config.getInt("block." + index + ".customModelData", 0)
                 );
                 previousBlocks.add(barrier);
             } else if (config.getString("block." + index + ".utility").equalsIgnoreCase("next")) {
@@ -56,9 +58,11 @@ public class ExpireGuiConfig {
                                 Material.getMaterial(config.getString("block." + index + ".replacement.material")),
                                 config.getString("block." + index + ".replacement.title"),
                                 config.getStringList("block." + index + ".replacement.description"),
-                                config.getString("block." + index + ".replacement.texture", "")
+                                config.getString("block." + index + ".replacement.texture", ""),
+                                config.getInt("block." + index + ".replacement.customModelData", 0)
                         ),
-                        config.getString("block." + index + ".texture", "")
+                        config.getString("block." + index + ".texture", ""),
+                        config.getInt("block." + index + ".customModelData", 0)
 
                 );
                 nextBlocks.add(barrier);
@@ -68,7 +72,8 @@ public class ExpireGuiConfig {
                         Material.getMaterial(config.getString("block." + index + ".material")),
                         config.getString("block." + index + ".title"),
                         config.getStringList("block." + index + ".description"),
-                        config.getString("block." + index + ".texture", "")
+                        config.getString("block." + index + ".texture", ""),
+                        config.getInt("block." + index + ".customModelData", 0)
                 );
                 barrierBlocks.add(barrier);
             } else if (config.getString("block." + index + ".utility").equalsIgnoreCase("expire")) {
@@ -79,7 +84,8 @@ public class ExpireGuiConfig {
                         Material.getMaterial(config.getString("block." + index + ".material")),
                         config.getString("block." + index + ".title"),
                         config.getStringList("block." + index + ".description"),
-                        config.getString("block." + index + ".texture", "")
+                        config.getString("block." + index + ".texture", ""),
+                        config.getInt("block." + index + ".customModelData", 0)
                 );
                 auctionGuiBlocks.add(barrier);
          }

@@ -94,11 +94,10 @@ public abstract class AbstractGui implements InventoryHolder, Listener {
                     if (meta != null) {
                         meta.setDisplayName(FormatUtil.format(barrier.getTitle()));
                         meta.setLore(descriptions);
+                        meta.setCustomModelData(barrier.getCustomModelData());
                         itemStack.setItemMeta(meta);
                     }
                 }
-
-
             }
         } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new RuntimeException(e);
