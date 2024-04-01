@@ -14,14 +14,17 @@ import fr.florianpal.fauction.managers.commandManagers.ExpireCommandManager;
 import fr.florianpal.fauction.managers.commandManagers.LimitationManager;
 import fr.florianpal.fauction.queries.AuctionQueries;
 import fr.florianpal.fauction.queries.ExpireQueries;
+import fr.florianpal.fauction.utils.SerializationUtil;
 import io.papermc.lib.PaperLib;
 import org.bukkit.Bukkit;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
@@ -189,5 +192,43 @@ public class FAuction extends JavaPlugin {
 
     public List<Integer> getExpireAction() {
         return auctionAction;
+    }
+
+    public void transfertBDD(boolean toPaper) {
+        TaskChain<Map<Integer, byte[]>> chain = getAuctionQueries().getAuctionsBrut();
+        chain.async(() -> {
+            Map<Integer, byte[]> auctions = chain.getTaskData("auctions");
+            try {
+                for (Map.Entry<Integer, byte[]> entry : auctions.entrySet()) {
+                    if (toPaper) {
+                        ItemStack item = SerializationUtil.deserializeBukkit(entry.getValue());
+                        getAuctionQueries().updateItem(entry.getKey(), SerializationUtil.serializePaper(item));
+                    } else {
+                        ItemStack item = SerializationUtil.deserializePaper(entry.getValue());
+                        getAuctionQueries().updateItem(entry.getKey(), SerializationUtil.serializeBukkit(item));
+                    }
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }).execute();
+
+        TaskChain<Map<Integer, byte[]>> chainExpires = getExpireQueries().getExpiresBrut();
+        chainExpires.async(() -> {
+            Map<Integer, byte[]> expires = chain.getTaskData("auctions");
+            try {
+                for (Map.Entry<Integer, byte[]> entry : expires.entrySet()) {
+                    if (toPaper) {
+                        ItemStack item = SerializationUtil.deserializeBukkit(entry.getValue());
+                        getExpireQueries().updateItem(entry.getKey(), SerializationUtil.serializePaper(item));
+                    } else {
+                        ItemStack item = SerializationUtil.deserializePaper(entry.getValue());
+                        getExpireQueries().updateItem(entry.getKey(), SerializationUtil.serializeBukkit(item));
+                    }
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }).execute();
     }
 }

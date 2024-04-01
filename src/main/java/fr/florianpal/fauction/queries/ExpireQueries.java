@@ -11,16 +11,15 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class ExpireQueries implements IDatabaseTable {
     private static final String GET_AUCTIONS = "SELECT * FROM expires";
     private static final String GET_AUCTION_WITH_ID = "SELECT * FROM expires WHERE id=?";
     private static final String GET_AUCTIONS_BY_UUID = "SELECT * FROM expires WHERE playerUuid=?";
     private static final String ADD_AUCTION = "INSERT INTO expires (playerUuid, playerName, item, price, date) VALUES(?,?,?,?,?)";
+
+    private static final String UPDATE_ITEM = "UPDATE expires set item=? where id=?";
     private static final String DELETE_AUCTION = "DELETE FROM expires WHERE id=?";
 
     private final DatabaseManager databaseManager;
@@ -64,6 +63,30 @@ public class ExpireQueries implements IDatabaseTable {
         }).execute();
     }
 
+    public void updateItem(int id, byte[] item){
+        final TaskChain<Void> chain = FAuction.newChain();
+        chain.asyncFirst(() -> {
+            PreparedStatement statement = null;
+            try (Connection connection = databaseManager.getConnection()) {
+                statement = connection.prepareStatement(UPDATE_ITEM);
+                statement.setBytes(1, item);
+                statement.setInt(2, id);
+                statement.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (statement != null) {
+                        statement.close();
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }).execute();
+    }
+
     public void deleteAuctions(int id) {
         final TaskChain<Void> chain = FAuction.newChain();
         chain.asyncFirst(() -> {
@@ -85,6 +108,44 @@ public class ExpireQueries implements IDatabaseTable {
             }
             return null;
         }).execute();
+    }
+
+    public TaskChain<Map<Integer, byte[]>> getExpiresBrut() {
+
+        final TaskChain<Map<Integer, byte[]>> chain = FAuction.getTaskChainFactory().newSharedChain("getAuctions");
+        chain.asyncFirst(() -> {
+            PreparedStatement statement = null;
+            ResultSet result = null;
+            Map<Integer, byte[]> auctions = new HashMap<>();
+            try (Connection connection = databaseManager.getConnection()) {
+                statement = connection.prepareStatement(GET_AUCTIONS);
+
+                result = statement.executeQuery();
+
+                while (result.next()) {
+                    int id = result.getInt(1);
+
+                    byte[] item = result.getBytes(4);
+                    auctions.put(id, item);
+                }
+                chain.setTaskData("auctions", auctions);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (result != null) {
+                        result.close();
+                    }
+                    if (statement != null) {
+                        statement.close();
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            return chain;
+        });
+        return chain;
     }
 
     public TaskChain<ArrayList<Auction>> getAuctions() {

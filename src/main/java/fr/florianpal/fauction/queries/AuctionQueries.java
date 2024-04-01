@@ -12,9 +12,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.UUID;
+import java.util.*;
 
 public class AuctionQueries implements IDatabaseTable {
 
@@ -22,6 +20,9 @@ public class AuctionQueries implements IDatabaseTable {
     private static final String GET_AUCTION_WITH_ID = "SELECT * FROM auctions WHERE id=?";
     private static final String GET_AUCTIONS_BY_UUID = "SELECT * FROM auctions WHERE playerUuid=?";
     private static final String ADD_AUCTION = "INSERT INTO auctions (playerUuid, playerName, item, price, date) VALUES(?,?,?,?,?)";
+
+    private static final String UPDATE_ITEM = "UPDATE auctions set item=? where id=?";
+
     private static final String DELETE_AUCTION = "DELETE FROM auctions WHERE id=?";
 
     private final DatabaseManager databaseManager;
@@ -68,6 +69,30 @@ public class AuctionQueries implements IDatabaseTable {
         }).execute();
     }
 
+    public void updateItem(int id, byte[] item){
+        final TaskChain<Void> chain = FAuction.newChain();
+        chain.asyncFirst(() -> {
+            PreparedStatement statement = null;
+            try (Connection connection = databaseManager.getConnection()) {
+                statement = connection.prepareStatement(UPDATE_ITEM);
+                statement.setBytes(1, item);
+                statement.setInt(2, id);
+                statement.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (statement != null) {
+                        statement.close();
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }).execute();
+    }
+
     public void deleteAuctions(int id) {
         final TaskChain<Void> chain = FAuction.newChain();
         chain.asyncFirst(() -> {
@@ -89,6 +114,44 @@ public class AuctionQueries implements IDatabaseTable {
             }
             return null;
         }).execute();
+    }
+
+    public TaskChain<Map<Integer, byte[]>> getAuctionsBrut() {
+
+        final TaskChain<Map<Integer, byte[]>> chain = FAuction.getTaskChainFactory().newSharedChain("getAuctions");
+        chain.asyncFirst(() -> {
+            PreparedStatement statement = null;
+            ResultSet result = null;
+            Map<Integer, byte[]> auctions = new HashMap<>();
+            try (Connection connection = databaseManager.getConnection()) {
+                statement = connection.prepareStatement(GET_AUCTIONS + this.globalConfig.getOrderBy());
+
+                result = statement.executeQuery();
+
+                while (result.next()) {
+                    int id = result.getInt(1);
+
+                    byte[] item = result.getBytes(4);
+                    auctions.put(id, item);
+                }
+                chain.setTaskData("auctions", auctions);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (result != null) {
+                        result.close();
+                    }
+                    if (statement != null) {
+                        statement.close();
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            return chain;
+        });
+        return chain;
     }
 
     public TaskChain<ArrayList<Auction>> getAuctions() {

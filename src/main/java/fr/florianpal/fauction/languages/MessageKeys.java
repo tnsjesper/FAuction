@@ -27,6 +27,8 @@ public enum MessageKeys implements MessageKeyProvider {
 
     REMOVE_EXPIRE_SUCCESS,
 
+    TRANSFERT_BDD,
+
     DATABASEERROR;
 
     private static final String PREFIX = "fauction";

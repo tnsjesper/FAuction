@@ -133,7 +133,8 @@ public class AuctionCommand extends BaseCommand {
 
             }
 
-            plugin.getLogger().info("Player " + playerSender.getName() + " add item to ah Item : " + playerSender.getInventory().getItemInMainHand().getItemMeta().getDisplayName() + ", At Price : " + price);
+            String itemName = playerSender.getInventory().getItemInMainHand().getItemMeta().getDisplayName() == null || playerSender.getInventory().getItemInMainHand().getItemMeta().getDisplayName().isEmpty() ? playerSender.getInventory().getItemInMainHand().getType().toString() : playerSender.getInventory().getItemInMainHand().getItemMeta().getDisplayName();
+            plugin.getLogger().info("Player " + playerSender.getName() + " add item to ah Item : " + itemName + ", At Price : " + price);
             auctionCommandManager.addAuction(playerSender, playerSender.getInventory().getItemInMainHand(), price);
             playerSender.getInventory().getItemInMainHand().setAmount(0);
             issuerTarget.sendInfo(MessageKeys.AUCTION_ADD_SUCCESS);
@@ -151,13 +152,31 @@ public class AuctionCommand extends BaseCommand {
         issuerTarget.sendInfo(MessageKeys.AUCTION_OPEN);
     }
 
-    @Subcommand("reload")
-    @CommandPermission("fauction.reload")
+    @Subcommand("admin reload")
+    @CommandPermission("fauction.admin.reload")
     @Description("{@@fauction.reload_help_description}")
     public void onReload(Player playerSender) {
         CommandIssuer issuerTarget = commandManager.getCommandIssuer(playerSender);
         plugin.reloadConfig();
         issuerTarget.sendInfo(MessageKeys.AUCTION_RELOAD);
+    }
+
+    @Subcommand("admin transfertToPaper")
+    @CommandPermission("fauction.admin.transfertBddToPaper")
+    @Description("{@@fauction.transfert_bdd_help_description}")
+    public void onTransferBddPaper(Player playerSender) {
+        CommandIssuer issuerTarget = commandManager.getCommandIssuer(playerSender);
+        plugin.transfertBDD(true);
+        issuerTarget.sendInfo(MessageKeys.TRANSFERT_BDD);
+    }
+
+    @Subcommand("admin transfertToBukkit")
+    @CommandPermission("fauction.admin.transfertBddToPaper")
+    @Description("{@@fauction.transfert_bdd_help_description}")
+    public void onTransferBddSpigot(Player playerSender) {
+        CommandIssuer issuerTarget = commandManager.getCommandIssuer(playerSender);
+        plugin.transfertBDD(false);
+        issuerTarget.sendInfo(MessageKeys.TRANSFERT_BDD);
     }
 
     @HelpCommand
