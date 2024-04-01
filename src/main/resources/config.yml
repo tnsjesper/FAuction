@@ -1,6 +1,7 @@
 lang: "en"
 orderBy: "ASC" # ASC or DESC / ASC : More recent to older / DESC : Older to more recent
 dateFormat: "dd/MM/yyyy ':' HH:mm"
+securityForSpammingPacket: true
 onBuy:
   sendCommand: # Command sends if item is buying
     use: false

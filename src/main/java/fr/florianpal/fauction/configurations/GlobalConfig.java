@@ -12,6 +12,8 @@ public class GlobalConfig {
     private String orderBy;
     private boolean onBuyCommandUse;
 
+    private boolean securityForSpammingPacket;
+
     private String dateFormat;
 
     private String onBuyCommand;
@@ -26,6 +28,7 @@ public class GlobalConfig {
         dateFormat = config.getString("dateFormat");
         onBuyCommandUse = config.getBoolean("onBuy.sendCommand.use");
         onBuyCommand = config.getString("onBuy.sendCommand.command");
+        securityForSpammingPacket = config.getBoolean("securityForSpammingPacket", true);
         time = config.getInt("expiration.time");
         checkEvery = config.getInt("expiration.checkEvery");
 
@@ -74,5 +77,9 @@ public class GlobalConfig {
 
     public String getDateFormat() {
         return dateFormat;
+    }
+
+    public boolean isSecurityForSpammingPacket() {
+        return securityForSpammingPacket;
     }
 }

@@ -143,15 +143,17 @@ public class AuctionConfirmGui extends AbstractGui implements GuiInterface {
         }
         e.setCancelled(true);
 
-        LocalDateTime clickTest = LocalDateTime.now();
-        boolean isSpamming = spamTest.stream().anyMatch(d -> d.getHour() == clickTest.getHour() && d.getMinute() == clickTest.getMinute() && (d.getSecond() == clickTest.getSecond() || d.getSecond() == clickTest.getSecond() + 1 || d.getSecond() == clickTest.getSecond() - 1));
-        if(isSpamming) {
-            plugin.getLogger().warning("Warning : Spam gui auction confirm Pseudo : " + player.getName());
-            CommandIssuer issuerTarget = plugin.getCommandManager().getCommandIssuer(player);
-            issuerTarget.sendInfo(MessageKeys.SPAM);
-            return;
-        } else {
-            spamTest.add(clickTest);
+        if (globalConfig.isSecurityForSpammingPacket()) {
+            LocalDateTime clickTest = LocalDateTime.now();
+            boolean isSpamming = spamTest.stream().anyMatch(d -> d.getHour() == clickTest.getHour() && d.getMinute() == clickTest.getMinute() && (d.getSecond() == clickTest.getSecond() || d.getSecond() == clickTest.getSecond() + 1 || d.getSecond() == clickTest.getSecond() - 1));
+            if (isSpamming) {
+                plugin.getLogger().warning("Warning : Spam gui auction confirm Pseudo : " + player.getName());
+                CommandIssuer issuerTarget = plugin.getCommandManager().getCommandIssuer(player);
+                issuerTarget.sendInfo(MessageKeys.SPAM);
+                return;
+            } else {
+                spamTest.add(clickTest);
+            }
         }
 
         ItemStack clickedItem = e.getCurrentItem();
