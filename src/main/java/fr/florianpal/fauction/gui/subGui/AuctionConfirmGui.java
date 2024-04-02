@@ -7,7 +7,6 @@ import fr.florianpal.fauction.configurations.AuctionConfirmGuiConfig;
 import fr.florianpal.fauction.gui.AbstractGui;
 import fr.florianpal.fauction.gui.GuiInterface;
 import fr.florianpal.fauction.languages.MessageKeys;
-import fr.florianpal.fauction.managers.commandManagers.AuctionCommandManager;
 import fr.florianpal.fauction.objects.Auction;
 import fr.florianpal.fauction.objects.Barrier;
 import fr.florianpal.fauction.objects.Confirm;
@@ -36,7 +35,7 @@ public class AuctionConfirmGui extends AbstractGui implements GuiInterface {
 
     private final Auction auction;
     protected final AuctionConfirmGuiConfig auctionConfirmConfig;
-    private final AuctionCommandManager auctionCommandManager;
+
     private final Map<Integer, Confirm> confirmList = new HashMap<>();
 
     private final List<LocalDateTime> spamTest = new ArrayList<>();
@@ -45,8 +44,7 @@ public class AuctionConfirmGui extends AbstractGui implements GuiInterface {
         super(plugin, player, page);
         this.auction = auction;
         this.auctionConfirmConfig = plugin.getConfigurationManager().getAuctionConfirmConfig();
-        this.auctionCommandManager = new AuctionCommandManager(plugin);
-        initGui(auctionConfirmConfig.getNameGui(), 27);
+        initGui(auctionConfirmConfig.getNameGui(), auctionConfirmConfig.getSize());
     }
 
     public void initializeItems() {
@@ -166,75 +164,84 @@ public class AuctionConfirmGui extends AbstractGui implements GuiInterface {
                 if (!confirm.isValue()) {
                     issuerTarget.sendInfo(MessageKeys.BUY_AUCTION_CANCELLED);
                     player.getOpenInventory().close();
-                    AuctionsGui auctionsGui = new AuctionsGui(plugin, player, 1);
-                    auctionsGui.initializeItems();
+                    TaskChain<ArrayList<Auction>> chain = FAuction.newChain();
+                    chain.asyncFirst(auctionCommandManager::getAuctions).sync(auctions -> {
+                        AuctionsGui gui = new AuctionsGui(plugin, player, auctions, 1);
+                        gui.initializeItems();
+                        return null;
+                    }).execute();
                     return;
                 }
 
-                TaskChain<Auction> chainAuction = auctionCommandManager.auctionExist(this.auction.getId());
-                chainAuction.sync(() -> {
-                    if (chainAuction.getTaskData("auction") == null) {
+                TaskChain<Auction> chainAuction = FAuction.newChain();
+                chainAuction.asyncFirst(() -> auctionCommandManager.auctionExist(this.auction.getId())).sync(a -> {
+                    if (a == null) {
                         issuerTarget.sendInfo(MessageKeys.NO_AUCTION);
                         plugin.getAuctionAction().remove((Integer)auction.getId());
-                        return;
+                        return null;
                     }
-                    TaskChain<Auction> chainAuction2 = auctionCommandManager.auctionExist(this.auction.getId());
-                    chainAuction2.sync(() -> {
-                        if (chainAuction2.getTaskData("auction") == null) {
+                    TaskChain<Auction> chainAuction2 = FAuction.newChain();
+                    chainAuction2.asyncFirst(() -> auctionCommandManager.auctionExist(this.auction.getId())).sync(auctionGood -> {
+                        if (auctionGood == null) {
                             issuerTarget.sendInfo(MessageKeys.AUCTION_ALREADY_SELL);
                             plugin.getAuctionAction().remove((Integer)auction.getId());
-                            return;
+                            return null;
                         }
 
-                        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(auction.getPlayerUuid());
+                        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(auctionGood.getPlayerUuid());
                         if (offlinePlayer == null) {
-                            return;
+                            return null;
                         }
 
-                        EconomyResponse economyResponse4 = plugin.getVaultIntegrationManager().getEconomy().depositPlayer(offlinePlayer, auction.getPrice());
+                        EconomyResponse economyResponse4 = plugin.getVaultIntegrationManager().getEconomy().depositPlayer(offlinePlayer, auctionGood.getPrice());
                         if (!economyResponse4.transactionSuccess()) {
-                            plugin.getAuctionAction().remove((Integer)auction.getId());
-                            return;
+                            plugin.getAuctionAction().remove((Integer)auctionGood.getId());
+                            return null;
                         }
 
-                        EconomyResponse economyResponse5 = plugin.getVaultIntegrationManager().getEconomy().withdrawPlayer(player, auction.getPrice());
+                        EconomyResponse economyResponse5 = plugin.getVaultIntegrationManager().getEconomy().withdrawPlayer(player, auctionGood.getPrice());
                         if (!economyResponse5.transactionSuccess()) {
-                            plugin.getAuctionAction().remove((Integer)auction.getId());
-                            return;
+                            plugin.getAuctionAction().remove((Integer)auctionGood.getId());
+                            return null;
                         }
 
                         issuerTarget.sendInfo(MessageKeys.BUY_AUCTION_SUCCESS);
-                        auctionCommandManager.deleteAuction(auction.getId());
+                        auctionCommandManager.deleteAuction(auctionGood.getId());
 
                         if (player.getInventory().firstEmpty() == -1) {
-                            player.getWorld().dropItem(player.getLocation(), auction.getItemStack());
+                            player.getWorld().dropItem(player.getLocation(), auctionGood.getItemStack());
                         } else {
-                            player.getInventory().addItem(auction.getItemStack());
+                            player.getInventory().addItem(auctionGood.getItemStack());
                         }
 
                         if (plugin.getConfigurationManager().getGlobalConfig().isOnBuyCommandUse()) {
                             String command = plugin.getConfigurationManager().getGlobalConfig().getOnBuyCommand();
-                            command = command.replace("{OwnerName}", auction.getPlayerName());
-                            command = command.replace("{Amount}", String.valueOf(auction.getItemStack().getAmount()));
-                            if (!auction.getItemStack().getItemMeta().getDisplayName().equalsIgnoreCase("")) {
-                                command = command.replace("{ItemName}", auction.getItemStack().getItemMeta().getDisplayName());
+                            command = command.replace("{OwnerName}", auctionGood.getPlayerName());
+                            command = command.replace("{Amount}", String.valueOf(auctionGood.getItemStack().getAmount()));
+                            if (!auctionGood.getItemStack().getItemMeta().getDisplayName().equalsIgnoreCase("")) {
+                                command = command.replace("{ItemName}", auctionGood.getItemStack().getItemMeta().getDisplayName());
                             } else {
-                                command = command.replace("{ItemName}", auction.getItemStack().getType().name().replace('_', ' ').toLowerCase());
+                                command = command.replace("{ItemName}", auctionGood.getItemStack().getType().name().replace('_', ' ').toLowerCase());
                             }
                             command = command.replace("{BuyerName}", player.getName());
-                            command = command.replace("{ItemPrice}", String.valueOf(auction.getPrice()));
+                            command = command.replace("{ItemPrice}", String.valueOf(auctionGood.getPrice()));
                             getServer().dispatchCommand(getServer().getConsoleSender(), command);
                         }
 
-                        plugin.getLogger().info("Player : " + player.getName() + " buy " + auction.getItemStack().getItemMeta().getDisplayName() + " at " + auction.getPlayerName());
+                        plugin.getLogger().info("Player : " + player.getName() + " buy " + auctionGood.getItemStack().getItemMeta().getDisplayName() + " at " + auctionGood.getPlayerName());
 
-                        plugin.getAuctionAction().remove((Integer)auction.getId());
+                        plugin.getAuctionAction().remove((Integer)auctionGood.getId());
 
                         player.getOpenInventory().close();
-                        AuctionsGui auctionsGui = new AuctionsGui(plugin, player, 1);
-                        auctionsGui.initializeItems();
+                        TaskChain<ArrayList<Auction>> chain = FAuction.newChain();
+                        chain.asyncFirst(auctionCommandManager::getAuctions).sync(auctions -> {
+                            AuctionsGui gui = new AuctionsGui(plugin, player, auctions, 1);
+                            gui.initializeItems();
+                            return null;
+                        }).execute();
+                        return null;
                     }).execute();
-
+                    return null;
                 }).execute();
                 break;
             }

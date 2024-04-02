@@ -1,6 +1,5 @@
 package fr.florianpal.fauction.managers.commandManagers;
 
-import co.aikar.taskchain.TaskChain;
 import fr.florianpal.fauction.FAuction;
 import fr.florianpal.fauction.objects.Auction;
 import fr.florianpal.fauction.queries.AuctionQueries;
@@ -8,8 +7,8 @@ import fr.florianpal.fauction.utils.SerializationUtil;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -20,11 +19,11 @@ public class AuctionCommandManager {
         this.auctionQueries = plugin.getAuctionQueries();
     }
 
-    public TaskChain<ArrayList<Auction>> getAuctions() {
+    public List<Auction> getAuctions() {
         return auctionQueries.getAuctions();
     }
 
-    public TaskChain<ArrayList<Auction>> getAuctions(UUID uuid) {
+    public List<Auction> getAuctions(UUID uuid) {
         return auctionQueries.getAuctions(uuid);
     }
 
@@ -37,7 +36,7 @@ public class AuctionCommandManager {
         auctionQueries.deleteAuctions(id);
     }
 
-    public TaskChain<Auction> auctionExist(int id) {
+    public Auction auctionExist(int id) {
         return auctionQueries.getAuction(id);
     }
 }

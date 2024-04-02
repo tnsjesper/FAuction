@@ -195,9 +195,8 @@ public class FAuction extends JavaPlugin {
     }
 
     public void transfertBDD(boolean toPaper) {
-        TaskChain<Map<Integer, byte[]>> chain = getAuctionQueries().getAuctionsBrut();
-        chain.async(() -> {
-            Map<Integer, byte[]> auctions = chain.getTaskData("auctions");
+        TaskChain<Map<Integer, byte[]>> chain = FAuction.newChain();
+        chain.asyncFirst(() -> getAuctionQueries().getAuctionsBrut()).async(auctions -> {
             try {
                 for (Map.Entry<Integer, byte[]> entry : auctions.entrySet()) {
                     if (toPaper) {
@@ -211,11 +210,11 @@ public class FAuction extends JavaPlugin {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+            return null;
         }).execute();
 
-        TaskChain<Map<Integer, byte[]>> chainExpires = getExpireQueries().getExpiresBrut();
-        chainExpires.async(() -> {
-            Map<Integer, byte[]> expires = chain.getTaskData("auctions");
+        TaskChain<Map<Integer, byte[]>> chainExpires = FAuction.newChain();
+        chainExpires.asyncFirst(() -> getExpireQueries().getExpiresBrut()).async(expires -> {
             try {
                 for (Map.Entry<Integer, byte[]> entry : expires.entrySet()) {
                     if (toPaper) {
@@ -229,6 +228,7 @@ public class FAuction extends JavaPlugin {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+            return null;
         }).execute();
     }
 }

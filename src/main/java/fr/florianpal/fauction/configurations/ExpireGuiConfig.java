@@ -7,16 +7,25 @@ import org.bukkit.configuration.Configuration;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExpireGuiConfig {
+public class ExpireGuiConfig extends AbstractGuiWithAuctionsConfig  {
+
     private List<Barrier> barrierBlocks = new ArrayList<>();
+
     private List<Barrier> previousBlocks = new ArrayList<>();
+
     private List<Barrier> nextBlocks = new ArrayList<>();
+
     private List<Integer> expireBlocks = new ArrayList<>();
+
     private List<Barrier> auctionGuiBlocks = new ArrayList<>();
-    private int size = 27;
+
     private String title = "";
+
     private List<String> description = new ArrayList<>();
+
     private String nameGui = "";
+
+    protected int size;
 
 
     public void load(Configuration config) {
@@ -121,6 +130,12 @@ public class ExpireGuiConfig {
         return nextBlocks;
     }
 
+    @Override
+    public List<Integer> getAuctionBlocks() {
+        return expireBlocks;
+    }
+
+    @Override
     public int getSize() {
         return size;
     }

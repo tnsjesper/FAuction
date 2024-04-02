@@ -11,17 +11,18 @@ import java.util.List;
 public class ExpireSchedule implements Runnable {
 
     private final FAuction plugin;
+
     private List<Auction> auctions = new ArrayList<>();
+
     public ExpireSchedule(FAuction plugin) {
         this.plugin = plugin;
     }
 
     @Override
     public void run() {
-        TaskChain<ArrayList<Auction>> chain = plugin.getAuctionCommandManager().getAuctions();
-        chain.sync(() -> {
-            this.auctions = new ArrayList<>();
-            this.auctions = chain.getTaskData("auctions");
+        TaskChain<ArrayList<Auction>> chain = FAuction.newChain();
+        chain.asyncFirst(() -> plugin.getAuctionCommandManager().getAuctions()).sync(auctionList -> {
+            this.auctions = auctionList;
             for (Auction auction : this.auctions) {
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(auction.getDate());
@@ -31,6 +32,7 @@ public class ExpireSchedule implements Runnable {
                     plugin.getAuctionCommandManager().deleteAuction(auction.getId());
                 }
             }
+            return null;
         }).execute();
 
     }

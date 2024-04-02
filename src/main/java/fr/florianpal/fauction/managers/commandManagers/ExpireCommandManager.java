@@ -1,12 +1,11 @@
 package fr.florianpal.fauction.managers.commandManagers;
 
-import co.aikar.taskchain.TaskChain;
 import fr.florianpal.fauction.FAuction;
 import fr.florianpal.fauction.objects.Auction;
 import fr.florianpal.fauction.queries.ExpireQueries;
 import fr.florianpal.fauction.utils.SerializationUtil;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -17,11 +16,11 @@ public class ExpireCommandManager {
         this.expireQueries = plugin.getExpireQueries();
     }
 
-    public TaskChain<ArrayList<Auction>> getAuctions() {
+    public List<Auction> getAuctions() {
         return expireQueries.getAuctions();
     }
 
-    public TaskChain<ArrayList<Auction>> getAuctions(UUID uuid) {
+    public List<Auction> getAuctions(UUID uuid) {
         return expireQueries.getAuctions(uuid);
     }
 
@@ -33,7 +32,7 @@ public class ExpireCommandManager {
         expireQueries.deleteAuctions(id);
     }
 
-    public TaskChain<Auction> auctionExist(int id) {
+    public Auction auctionExist(int id) {
         return expireQueries.getAuction(id);
     }
 }

@@ -3,18 +3,16 @@ package fr.florianpal.fauction.gui;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import fr.florianpal.fauction.FAuction;
+import fr.florianpal.fauction.configurations.AbstractGuiWithAuctionsConfig;
 import fr.florianpal.fauction.configurations.GlobalConfig;
-import fr.florianpal.fauction.managers.commandManagers.AuctionCommandManager;
 import fr.florianpal.fauction.managers.commandManagers.CommandManager;
-import fr.florianpal.fauction.managers.commandManagers.ExpireCommandManager;
+import fr.florianpal.fauction.objects.Auction;
 import fr.florianpal.fauction.objects.Barrier;
 import fr.florianpal.fauction.utils.FormatUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -25,41 +23,27 @@ import java.util.List;
 
 import static java.util.UUID.randomUUID;
 
-public abstract class AbstractGui implements InventoryHolder, Listener {
+public abstract class AbstractGuiWithAuctions extends AbstractGui  {
 
-    protected Inventory inv;
+    protected final List<Auction> auctions;
 
-    protected final FAuction plugin;
+    protected AbstractGuiWithAuctionsConfig abstractGuiWithAuctionsConfig;
 
-    protected Player player;
-
-    protected int page;
-
-    protected final GlobalConfig globalConfig;
-
-    protected final CommandManager commandManager;
-
-    protected final AuctionCommandManager auctionCommandManager;
-
-    protected  final ExpireCommandManager expireCommandManager;
-
-    protected AbstractGui(FAuction plugin, Player player, int page) {
-        this.plugin = plugin;
-        this.player = player;
-        this.page = page;
-        this.commandManager = plugin.getCommandManager();
-        inv = null;
-        this.globalConfig = plugin.getConfigurationManager().getGlobalConfig();
-        this.auctionCommandManager = plugin.getAuctionCommandManager();
-        this.expireCommandManager = plugin.getExpireCommandManager();
-
-        Bukkit.getPluginManager().registerEvents(this, Bukkit.getPluginManager().getPlugins()[0]);
+    protected AbstractGuiWithAuctions(FAuction plugin, Player player, int page, List<Auction> auctions, AbstractGuiWithAuctionsConfig abstractGuiWithAuctionsConfig) {
+        super(plugin, player, page);
+        this.auctions = auctions;
+        this.abstractGuiWithAuctionsConfig = abstractGuiWithAuctionsConfig;
     }
 
+    @Override
     protected void initGui(String title, int size) {
-        inv = Bukkit.createInventory(this, size, FormatUtil.format(title));
+        title = title.replace("{Page}", String.valueOf(this.page));
+        title = title.replace("{TotalPage}", String.valueOf(((this.auctions.size() - 1) / abstractGuiWithAuctionsConfig.getAuctionBlocks().size()) + 1));
+
+        this.inv = Bukkit.createInventory(this, abstractGuiWithAuctionsConfig.getSize(), FormatUtil.format(title));
     }
 
+    @Override
     public ItemStack getItemStack(Barrier barrier, boolean isRemplacement) {
         ItemStack itemStack;
         try {

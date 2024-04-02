@@ -7,19 +7,29 @@ import org.bukkit.configuration.Configuration;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AuctionConfig {
+public class AuctionConfig extends AbstractGuiWithAuctionsConfig {
+
     private List<Barrier> barrierBlocks = new ArrayList<>();
+
     private List<Barrier> previousBlocks = new ArrayList<>();
+
     private List<Barrier> nextBlocks = new ArrayList<>();
+
     private List<Barrier> expireBlocks = new ArrayList<>();
-    private  List<Integer> auctionBlocks = new ArrayList<>();
+
     private List<Barrier> closeBlocks = new ArrayList<>();
+
     private List<Barrier> playerBlocks = new ArrayList<>();
 
-    private int size = 27;
+    protected List<Integer> auctionBlocks = new ArrayList<>();
+
     private String title = "";
+
     private List<String> description = new ArrayList<>();
+
     private String nameGui = "";
+
+    protected int size = 27;
 
 
     public void load(Configuration config) {
@@ -157,10 +167,6 @@ public class AuctionConfig {
         return nextBlocks;
     }
 
-    public List<Integer> getAuctionBlocks() {
-        return auctionBlocks;
-    }
-
     public List<Barrier> getCloseBlocks() {
         return closeBlocks;
     }
@@ -169,6 +175,12 @@ public class AuctionConfig {
         return playerBlocks;
     }
 
+    @Override
+    public List<Integer> getAuctionBlocks() {
+        return auctionBlocks;
+    }
+
+    @Override
     public int getSize() {
         return size;
     }

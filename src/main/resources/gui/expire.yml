@@ -1,11 +1,11 @@
 gui:
   size: 54
-  name: "Hôtel des ventes: items expirés"
+  name: "Auction House: Expired Items"
   title: "&eItem : &6{ItemName}"
   description:
-    - "&5vente de de : &6{OwnerName}"
-    - "&5Prix : &6{Price}"
-    - "&5A expiré le : &6{ExpireTime}"
+    - "&5Sales of : &6{OwnerName}"
+    - "&5Price : &6{Price}"
+    - "&5Expired on : &6{ExpireTime}"
     - "&5Lore :"
     - "{lore}"
 block:
@@ -153,7 +153,7 @@ block:
   '45':
     utility: auctionGui
     material: CHEST
-    title: "Retour à l'hôtel des ventes"
+    title: "Return to the auction house"
     description: {}
   '46':
     utility: barrier
@@ -168,9 +168,9 @@ block:
   '48':
     utility: previous
     material: ARROW
-    title: "&5Page précédente"
+    title: "&5Previous page"
     description:
-      - "&eCliquez ici pour retourner à la page précédente"
+      - "&eClick here to return to the previous page"
     replacement:
       material: GRAY_STAINED_GLASS_PANE
       title: "-"
@@ -180,15 +180,15 @@ block:
     material: NETHER_STAR
     title: "Informations"
     description:
-      - "&7Bienvenue dans vos items expirés"
-      - "&7Ici, sont rangés les items"
-      - "&7ayant dépassé le délai d'expiration."
+      - "&7Welcome to your expired items"
+      - "&7Here, the items are stored"
+      - "&7having exceeded the expiration time."
   '50':
     utility: next
     material: ARROW
-    title: "&5Page suivante"
+    title: "&5Next page"
     description:
-      - "&eCliquez ici pour aller sur la page suivante"
+      - "&eClick here to go to the next page"
     replacement:
       material: AIR
       title: "-"

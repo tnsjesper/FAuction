@@ -4,14 +4,12 @@ import co.aikar.commands.CommandIssuer;
 import co.aikar.taskchain.TaskChain;
 import fr.florianpal.fauction.FAuction;
 import fr.florianpal.fauction.configurations.AuctionConfig;
-import fr.florianpal.fauction.gui.AbstractGui;
+import fr.florianpal.fauction.gui.AbstractGuiWithAuctions;
 import fr.florianpal.fauction.gui.GuiInterface;
 import fr.florianpal.fauction.languages.MessageKeys;
-import fr.florianpal.fauction.managers.commandManagers.AuctionCommandManager;
 import fr.florianpal.fauction.objects.Auction;
 import fr.florianpal.fauction.objects.Barrier;
 import fr.florianpal.fauction.utils.FormatUtil;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -26,49 +24,35 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class AuctionsGui extends AbstractGui implements GuiInterface {
-    private List<Auction> auctions = new ArrayList<>();
-    protected final AuctionCommandManager auctionCommandManager;
+public class AuctionsGui extends AbstractGuiWithAuctions implements GuiInterface {
+
     private final AuctionConfig auctionConfig;
 
     private final List<LocalDateTime> spamTest = new ArrayList<>();
 
-    public AuctionsGui(FAuction plugin, Player player, int page) {
-        super(plugin, player, page);
+    public AuctionsGui(FAuction plugin, Player player, List<Auction> auctions, int page) {
+        super(plugin, player, page, auctions, plugin.getConfigurationManager().getAuctionConfig());
         this.auctionConfig = plugin.getConfigurationManager().getAuctionConfig();
-        this.auctionCommandManager = new AuctionCommandManager(plugin);
-        initGui(auctionConfig.getNameGui(), 27);
+        initGui(auctionConfig.getNameGui(), auctionConfig.getSize());
     }
 
     public void initializeItems() {
 
-        TaskChain<ArrayList<Auction>> finalChain = auctionCommandManager.getAuctions();
-        finalChain.sync(() -> {
-                    this.auctions = finalChain.getTaskData("auctions");
+        initBarrier();
 
-                    String titleInv = auctionConfig.getNameGui();
-                    titleInv = titleInv.replace("{Page}", String.valueOf(this.page));
-                    titleInv = titleInv.replace("{TotalPage}", String.valueOf(((this.auctions.size() - 1) / auctionConfig.getAuctionBlocks().size()) + 1));
+        if (this.auctions.isEmpty()) {
+            CommandIssuer issuerTarget = plugin.getCommandManager().getCommandIssuer(player);
+            issuerTarget.sendInfo(MessageKeys.NO_AUCTION);
+            return;
+        }
 
-                    this.inv = Bukkit.createInventory(this, auctionConfig.getSize(), FormatUtil.format(titleInv));
-
-                    initBarrier();
-
-                    if (this.auctions.isEmpty()) {
-                        CommandIssuer issuerTarget = plugin.getCommandManager().getCommandIssuer(player);
-                        issuerTarget.sendInfo(MessageKeys.NO_AUCTION);
-                        return;
-                    }
-
-                    int id = (this.auctionConfig.getAuctionBlocks().size() * this.page) - this.auctionConfig.getAuctionBlocks().size();
-                    for (int index : auctionConfig.getAuctionBlocks()) {
-                        inv.setItem(index, createGuiItem(auctions.get(id)));
-                        id++;
-                        if (id >= (auctions.size())) break;
-                    }
-                    openInventory(player);
-                }
-        ).execute();
+        int id = (this.auctionConfig.getAuctionBlocks().size() * this.page) - this.auctionConfig.getAuctionBlocks().size();
+        for (int index : auctionConfig.getAuctionBlocks()) {
+            inv.setItem(index, createGuiItem(auctions.get(id)));
+            id++;
+            if (id >= (auctions.size())) break;
+        }
+        openInventory(player);
     }
 
     private void initBarrier() {
@@ -218,22 +202,34 @@ public class AuctionsGui extends AbstractGui implements GuiInterface {
 
         for (Barrier previous : auctionConfig.getPreviousBlocks()) {
             if (e.getRawSlot() == previous.getIndex() && this.page > 1) {
-                AuctionsGui gui = new AuctionsGui(plugin, player, this.page - 1);
-                gui.initializeItems();
-                return;
+                TaskChain<ArrayList<Auction>> chain = FAuction.newChain();
+                chain.asyncFirst(auctionCommandManager::getAuctions).sync((auctions) -> {
+                    AuctionsGui gui = new AuctionsGui(plugin, player, auctions, this.page - 1);
+                    gui.initializeItems();
+                    return null;
+                }).execute();
             }
         }
         for (Barrier next : auctionConfig.getNextBlocks()) {
             if (e.getRawSlot() == next.getIndex() && ((this.auctionConfig.getAuctionBlocks().size() * this.page) - this.auctionConfig.getAuctionBlocks().size() < auctions.size() - this.auctionConfig.getAuctionBlocks().size()) && next.getMaterial() != next.getRemplacement().getMaterial()) {
-                AuctionsGui gui = new AuctionsGui(plugin, player, this.page + 1);
-                gui.initializeItems();
+                TaskChain<ArrayList<Auction>> chain = FAuction.newChain();
+                chain.asyncFirst(auctionCommandManager::getAuctions).sync(auctions -> {
+                    AuctionsGui gui = new AuctionsGui(plugin, player, auctions, this.page + 1);
+                    gui.initializeItems();
+                    return null;
+                }).execute();
                 return;
             }
         }
         for (Barrier expire : auctionConfig.getExpireBlocks()) {
             if (e.getRawSlot() == expire.getIndex()) {
-                ExpireGui gui = new ExpireGui(plugin, player, 1);
-                gui.initializeItems();
+                TaskChain<ArrayList<Auction>> chain = FAuction.newChain();
+                chain.asyncFirst(() -> expireCommandManager.getAuctions(player.getUniqueId())).sync(auctions -> {
+                    ExpireGui gui = new ExpireGui(plugin, player, auctions, 1);
+                    gui.initializeItems();
+                    return null;
+                }).execute();
+
                 return;
             }
         }
@@ -247,8 +243,12 @@ public class AuctionsGui extends AbstractGui implements GuiInterface {
         for (Barrier expire : auctionConfig.getPlayerBlocks()) {
             if (e.getRawSlot() == expire.getIndex()) {
 
-                PlayerViewGui gui = new PlayerViewGui(plugin, player, 1);
-                gui.initializeItems();
+                TaskChain<ArrayList<Auction>> chain = FAuction.newChain();
+                chain.asyncFirst(auctionCommandManager::getAuctions).sync(auctions -> {
+                    PlayerViewGui gui = new PlayerViewGui(plugin, player, auctions, 1);
+                    gui.initializeItems();
+                    return null;
+                }).execute();
 
                 return;
             }
@@ -266,44 +266,49 @@ public class AuctionsGui extends AbstractGui implements GuiInterface {
                 plugin.getAuctionAction().add((Integer)auction.getId());
 
                 if (e.isRightClick()) {
-                    TaskChain<Auction> chainAuction = auctionCommandManager.auctionExist(auction.getId());
-                    chainAuction.sync(() -> {
-                        if (chainAuction.getTaskData("auction") == null) {
+                    TaskChain<Auction> chainAuction = FAuction.newChain();
+                    chainAuction.asyncFirst(() -> auctionCommandManager.auctionExist(auction.getId())).sync((a) -> {
+                        if (a == null) {
                             plugin.getAuctionAction().remove((Integer)auction.getId());
-                            return;
+                            return null;
                         }
 
                         boolean isModCanCancel = (e.isShiftClick() && player.hasPermission("fauction.mod.cancel"));
-                        if (!auction.getPlayerUuid().equals(player.getUniqueId()) && !isModCanCancel) {
-                            plugin.getAuctionAction().remove((Integer)auction.getId());
-                            return;
+                        if (!a.getPlayerUuid().equals(player.getUniqueId()) && !isModCanCancel) {
+                            plugin.getAuctionAction().remove((Integer)a.getId());
+                            return null;
                         }
 
                         if (!isModCanCancel) {
                             if (player.getInventory().firstEmpty() == -1) {
-                                player.getWorld().dropItem(player.getLocation(), auction.getItemStack());
+                                player.getWorld().dropItem(player.getLocation(), a.getItemStack());
                             } else {
-                                player.getInventory().addItem(auction.getItemStack());
+                                player.getInventory().addItem(a.getItemStack());
                             }
                         }
 
-                        auctionCommandManager.deleteAuction(auction.getId());
+                        auctionCommandManager.deleteAuction(a.getId());
                         if (isModCanCancel) {
-                            plugin.getExpireCommandManager().addAuction(auction);
-                            plugin.getLogger().info("Modo delete from ah auction : " + auction.getId() + ", Item : " + auction.getItemStack().getItemMeta().getDisplayName() + " of " + auction.getPlayerName() + ", by" + player.getName());
+                            plugin.getExpireCommandManager().addAuction(a);
+                            plugin.getLogger().info("Modo delete from ah auction : " + a.getId() + ", Item : " + a.getItemStack().getItemMeta().getDisplayName() + " of " + a.getPlayerName() + ", by" + player.getName());
                         } else {
-                            plugin.getLogger().info("Player delete from ah auction : " + auction.getId() + ", Item : " + auction.getItemStack().getItemMeta().getDisplayName() + " of " + auction.getPlayerName() + ", by" + player.getName());
+                            plugin.getLogger().info("Player delete from ah auction : " + a.getId() + ", Item : " + a.getItemStack().getItemMeta().getDisplayName() + " of " + a.getPlayerName() + ", by" + player.getName());
                         }
-                        auctions.remove(auction);
+                        auctions.remove(a);
                         CommandIssuer issuerTarget = plugin.getCommandManager().getCommandIssuer(player);
                         issuerTarget.sendInfo(MessageKeys.REMOVE_AUCTION_SUCCESS);
 
                         plugin.getAuctionAction().remove((Integer)auction.getId());
 
                         player.closeInventory();
-                        AuctionsGui gui = new AuctionsGui(plugin, player, page);
-                        gui.initializeItems();
 
+                        TaskChain<ArrayList<Auction>> chain = FAuction.newChain();
+                        chain.asyncFirst(auctionCommandManager::getAuctions).sync(auctions -> {
+                            AuctionsGui gui = new AuctionsGui(plugin, player, auctions, 1);
+                            gui.initializeItems();
+                            return null;
+                        }).execute();
+                        return null;
                     }).execute();
                 } else if (e.isLeftClick()) {
                     CommandIssuer issuerTarget = plugin.getCommandManager().getCommandIssuer(player);

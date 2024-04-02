@@ -1,6 +1,5 @@
 package fr.florianpal.fauction.managers.commandManagers;
 
-import co.aikar.taskchain.TaskChain;
 import fr.florianpal.fauction.FAuction;
 import fr.florianpal.fauction.objects.Auction;
 import net.milkbowl.vault.permission.Permission;
@@ -12,24 +11,9 @@ import java.util.Map;
 public class LimitationManager {
 
     private final FAuction plugin;
-    private ArrayList<Auction> auctions;
-    private boolean canHaveNewAuction = false;
+
     public LimitationManager(FAuction plugin) {
         this.plugin = plugin;
-    }
-
-    public boolean canHaveNewAuction(Player player) throws InterruptedException {
-        auctions = new ArrayList<>();
-        canHaveNewAuction = false;
-        TaskChain<ArrayList<Auction>> chain = plugin.getAuctionCommandManager().getAuctions(player.getUniqueId());
-        chain.sync(() -> {
-            auctions = chain.getTaskData("auctions");
-            if(getAuctionLimitation(player) <= auctions.size()) {
-                canHaveNewAuction = true;
-            }
-        }).execute();
-        chain.wait();
-        return canHaveNewAuction;
     }
 
     public int getAuctionLimitation(Player player) {
@@ -39,17 +23,13 @@ public class LimitationManager {
         int limit = limitations.get("default");
         if (perms != null) {
             String primaryGroup = perms.getPrimaryGroup(player);
-            if(limitations.containsKey(primaryGroup)) {
-                if(limit < limitations.get(primaryGroup)) {
-                    limit = limitations.get(primaryGroup);
-                }
+            if (limitations.containsKey(primaryGroup) && (limit < limitations.get(primaryGroup))) {
+                limit = limitations.get(primaryGroup);
             }
             playerGroup = perms.getPlayerGroups(player);
-            for(String s : playerGroup) {
-                if(limitations.containsKey(s)) {
-                    if(limit < limitations.get(s)) {
-                        limit = limitations.get(s);
-                    }
+            for (String s : playerGroup) {
+                if (limitations.containsKey(s) && (limit < limitations.get(s))) {
+                    limit = limitations.get(s);
                 }
             }
         }
