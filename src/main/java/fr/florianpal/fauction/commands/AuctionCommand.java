@@ -11,9 +11,11 @@ import fr.florianpal.fauction.gui.subGui.AuctionsGui;
 import fr.florianpal.fauction.gui.subGui.ExpireGui;
 import fr.florianpal.fauction.languages.MessageKeys;
 import fr.florianpal.fauction.managers.commandManagers.AuctionCommandManager;
+import fr.florianpal.fauction.managers.commandManagers.BillCommandManager;
 import fr.florianpal.fauction.managers.commandManagers.CommandManager;
 import fr.florianpal.fauction.managers.commandManagers.ExpireCommandManager;
 import fr.florianpal.fauction.objects.Auction;
+import fr.florianpal.fauction.objects.Bill;
 import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.block.ShulkerBox;
@@ -34,6 +36,8 @@ public class AuctionCommand extends BaseCommand {
     private final CommandManager commandManager;
     private final AuctionCommandManager auctionCommandManager;
 
+    private final BillCommandManager billCommandManager;
+
     private final ExpireCommandManager expireCommandManager;
 
     private final FAuction plugin;
@@ -47,6 +51,7 @@ public class AuctionCommand extends BaseCommand {
         this.commandManager = plugin.getCommandManager();
         this.auctionCommandManager = plugin.getAuctionCommandManager();
         this.expireCommandManager = plugin.getExpireCommandManager();
+        this.billCommandManager = plugin.getBillCommandManager();
         this.globalConfig = plugin.getConfigurationManager().getGlobalConfig();
     }
 
@@ -70,12 +75,11 @@ public class AuctionCommand extends BaseCommand {
 
 
         TaskChain<ArrayList<Auction>> chain = FAuction.newChain();
-        chain.asyncFirst(auctionCommandManager::getAuctions).sync(auctions -> {
+        chain.asyncFirst(auctionCommandManager::getAuctions).syncLast(auctions -> {
             AuctionsGui gui = new AuctionsGui(plugin, playerSender, auctions, 1);
             gui.initializeItems();
             CommandIssuer issuerTarget = commandManager.getCommandIssuer(playerSender);
             issuerTarget.sendInfo(MessageKeys.AUCTION_OPEN);
-            return null;
         }).execute();
     }
 
@@ -99,24 +103,24 @@ public class AuctionCommand extends BaseCommand {
 
         CommandIssuer issuerTarget = commandManager.getCommandIssuer(playerSender);
         TaskChain<ArrayList<Auction>> chain = FAuction.newChain();
-        chain.asyncFirst(() -> plugin.getAuctionCommandManager().getAuctions(playerSender.getUniqueId())).sync(auctions -> {
+        chain.asyncFirst(() -> plugin.getAuctionCommandManager().getAuctions(playerSender.getUniqueId())).syncLast(auctions -> {
             if (plugin.getLimitationManager().getAuctionLimitation(playerSender) <= auctions.size()) {
                 issuerTarget.sendInfo(MessageKeys.MAX_AUCTION);
-                return null;
+                return;
             }
             if (price < 0) {
                 issuerTarget.sendInfo(MessageKeys.NEGATIVE_PRICE);
-                return null;
+                return;
             }
             if (playerSender.getInventory().getItemInMainHand().getType().equals(Material.AIR)) {
                 issuerTarget.sendInfo(MessageKeys.ITEM_AIR);
-                return null;
+                return;
             }
             if(plugin.getConfigurationManager().getGlobalConfig().getMinPrice().containsKey(playerSender.getInventory().getItemInMainHand().getType())) {
                 double minPrice = playerSender.getInventory().getItemInMainHand().getAmount() *  plugin.getConfigurationManager().getGlobalConfig().getMinPrice().get(playerSender.getInventory().getItemInMainHand().getType());
                 if(minPrice > price) {
                     issuerTarget.sendInfo(MessageKeys.MIN_PRICE, "{minPrice}", String.valueOf(ceil(minPrice)));
-                    return null;
+                    return;
                 }
             }
             if(Tag.SHULKER_BOXES.getValues().contains(playerSender.getInventory().getItemInMainHand().getType())) {
@@ -133,7 +137,7 @@ public class AuctionCommand extends BaseCommand {
                         }
                         if (minPrice > price) {
                             issuerTarget.sendInfo(MessageKeys.MIN_PRICE, "{minPrice}", String.valueOf(ceil(minPrice)));
-                            return null;
+                            return;
                         }
                     }
                 }
@@ -144,7 +148,6 @@ public class AuctionCommand extends BaseCommand {
             auctionCommandManager.addAuction(playerSender, playerSender.getInventory().getItemInMainHand(), price);
             playerSender.getInventory().getItemInMainHand().setAmount(0);
             issuerTarget.sendInfo(MessageKeys.AUCTION_ADD_SUCCESS);
-            return null;
         }).execute();
     }
 
@@ -154,14 +157,65 @@ public class AuctionCommand extends BaseCommand {
     public void onExpire(Player playerSender) {
 
         TaskChain<ArrayList<Auction>> chain = FAuction.newChain();
-        chain.asyncFirst(() -> expireCommandManager.getAuctions(playerSender.getUniqueId())).sync(auctions -> {
+        chain.asyncFirst(() -> expireCommandManager.getExpires(playerSender.getUniqueId())).syncLast(auctions -> {
             ExpireGui gui = new ExpireGui(plugin, playerSender, auctions, 1);
             gui.initializeItems();
             CommandIssuer issuerTarget = commandManager.getCommandIssuer(playerSender);
             issuerTarget.sendInfo(MessageKeys.AUCTION_OPEN);
-            return null;
         }).execute();
+    }
 
+    @Subcommand("bid")
+    @CommandPermission("fauction.bid")
+    @Description("{@@fauction.bill_add_help_description}")
+    public void onAddBid(Player playerSender, double price) {
+        CommandIssuer issuerTarget = commandManager.getCommandIssuer(playerSender);
+        TaskChain<ArrayList<Bill>> chain = FAuction.newChain();
+        chain.asyncFirst(() -> billCommandManager.getBills(playerSender.getUniqueId())).syncLast(bills -> {
+            if (plugin.getLimitationManager().getAuctionLimitation(playerSender) <= bills.size()) {
+                issuerTarget.sendInfo(MessageKeys.MAX_BILL);
+                return;
+            }
+            if (price < 0) {
+                issuerTarget.sendInfo(MessageKeys.NEGATIVE_PRICE);
+                return;
+            }
+            if (playerSender.getInventory().getItemInMainHand().getType().equals(Material.AIR)) {
+                issuerTarget.sendInfo(MessageKeys.ITEM_AIR);
+                return;
+            }
+            if(plugin.getConfigurationManager().getGlobalConfig().getMinPrice().containsKey(playerSender.getInventory().getItemInMainHand().getType())) {
+                double minPrice = playerSender.getInventory().getItemInMainHand().getAmount() *  plugin.getConfigurationManager().getGlobalConfig().getMinPrice().get(playerSender.getInventory().getItemInMainHand().getType());
+                if(minPrice > price) {
+                    issuerTarget.sendInfo(MessageKeys.MIN_PRICE);
+                    return;
+                }
+            }
+            if(Tag.SHULKER_BOXES.getValues().contains(playerSender.getInventory().getItemInMainHand().getType())) {
+                ItemStack item = playerSender.getInventory().getItemInMainHand();
+                if(item.getItemMeta() instanceof BlockStateMeta) {
+                    double minPrice = 0;
+                    BlockStateMeta im = (BlockStateMeta)item.getItemMeta();
+                    if(im.getBlockState() instanceof ShulkerBox) {
+                        ShulkerBox shulker = (ShulkerBox) im.getBlockState();
+                        for (ItemStack itemIn : shulker.getInventory().getContents()) {
+                            if (itemIn != null && itemIn.getType() != Material.AIR && plugin.getConfigurationManager().getGlobalConfig().getMinPrice().containsKey(itemIn.getType())) {
+                                minPrice = minPrice + itemIn.getAmount() * plugin.getConfigurationManager().getGlobalConfig().getMinPrice().get(itemIn.getType());
+                            }
+                        }
+                        if (minPrice > price) {
+                            issuerTarget.sendInfo(MessageKeys.MIN_PRICE, "{minPrice}", String.valueOf(ceil(minPrice)));
+                            return;
+                        }
+                    }
+                }
+            }
+
+            billCommandManager.addBill(playerSender, playerSender.getInventory().getItemInMainHand(), price);
+            playerSender.getInventory().getItemInMainHand().setAmount(0);
+            issuerTarget.sendInfo(MessageKeys.BILL_ADD_SUCCESS);
+
+        }).execute();
     }
 
     @Subcommand("admin reload")

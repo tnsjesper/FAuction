@@ -30,7 +30,7 @@ public class DatabaseManager {
 
 
     public Connection getConnection() throws SQLException {
-        if (connection.isClosed()) {
+        if (connection == null || connection.isClosed()) {
             connection = ds.getConnection();
         }
         return connection;

@@ -1,0 +1,146 @@
+gui:
+  size: 27
+  name: "Set the amount of your bid"
+block:
+  '0':
+    utility: barrier
+    material: GRAY_STAINED_GLASS_PANE
+    title: " "
+    description: {}
+  '1':
+    utility: barrier
+    material: GRAY_STAINED_GLASS_PANE
+    title: " "
+    description: {}
+  '2':
+    utility: barrier
+    material: GRAY_STAINED_GLASS_PANE
+    title: " "
+    description: {}
+  '3':
+    utility: barrier
+    material: GRAY_STAINED_GLASS_PANE
+    title: " "
+    description: {}
+  '4':
+    utility: barrier
+    material: GRAY_STAINED_GLASS_PANE
+    title: " "
+    description: {}
+  '5':
+    utility: barrier
+    material: GRAY_STAINED_GLASS_PANE
+    title: " "
+    description: {}
+  '6':
+    utility: barrier
+    material: GRAY_STAINED_GLASS_PANE
+    title: " "
+    description: {}
+  '7':
+    utility: barrier
+    material: GRAY_STAINED_GLASS_PANE
+    title: " "
+    description: {}
+  '8':
+    utility: barrier
+    material: GRAY_STAINED_GLASS_PANE
+    title: " "
+    description: {}
+  '9':
+    utility: barrier
+    material: GRAY_STAINED_GLASS_PANE
+    title: " "
+    description: {}
+  '10':
+    utility: amount
+    material: RED_WOOL
+    title: "To decrease by $1,000"
+    description: { }
+    amount: -1000
+  '11':
+    utility: amount
+    material: RED_WOOL
+    title: "To decrease by 100$"
+    description: { }
+    amount: -100
+  '12':
+    utility: amount
+    material: RED_WOOL
+    title: "To decrease by 10$"
+    description: { }
+    amount: -10
+  '13':
+    utility: barrier
+    material: NETHER_STAR
+    title: "Informations"
+    description:
+      - "&7The current amount of your offer is {Amount}"
+  '14':
+    utility: amount
+    material: GREEN_WOOL
+    title: "To increase by 10$"
+    description: { }
+    amount: 10
+  '15':
+    utility: amount
+    material: GREEN_WOOL
+    title: "To increase by 100$"
+    description: { }
+    amount: 100
+  '16':
+    utility: amount
+    material: GREEN_WOOL
+    title: "To increase by 1000$"
+    description: { }
+    amount: 1000
+  '17':
+    utility: confirm
+    material: GOLD_BLOCK
+    title: "To accept the request"
+    description: {}
+  '18':
+    utility: barrier
+    material: GRAY_STAINED_GLASS_PANE
+    title: " "
+    description: { }
+  '19':
+    utility: barrier
+    material: GRAY_STAINED_GLASS_PANE
+    title: " "
+    description: { }
+  '20':
+    utility: barrier
+    material: GRAY_STAINED_GLASS_PANE
+    title: " "
+    description: { }
+  '21':
+    utility: barrier
+    material: GRAY_STAINED_GLASS_PANE
+    title: " "
+    description: { }
+  '22':
+    utility: barrier
+    material: GRAY_STAINED_GLASS_PANE
+    title: " "
+    description: { }
+  '23':
+    utility: barrier
+    material: GRAY_STAINED_GLASS_PANE
+    title: " "
+    description: { }
+  '24':
+    utility: barrier
+    material: GRAY_STAINED_GLASS_PANE
+    title: " "
+    description: { }
+  '25':
+    utility: barrier
+    material: GRAY_STAINED_GLASS_PANE
+    title: " "
+    description: { }
+  '26':
+    utility: close
+    material: BARRIER
+    title: "Close"
+    description: {}

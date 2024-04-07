@@ -5,6 +5,7 @@ import com.mojang.authlib.properties.Property;
 import fr.florianpal.fauction.FAuction;
 import fr.florianpal.fauction.configurations.GlobalConfig;
 import fr.florianpal.fauction.managers.commandManagers.AuctionCommandManager;
+import fr.florianpal.fauction.managers.commandManagers.BillCommandManager;
 import fr.florianpal.fauction.managers.commandManagers.CommandManager;
 import fr.florianpal.fauction.managers.commandManagers.ExpireCommandManager;
 import fr.florianpal.fauction.objects.Barrier;
@@ -41,6 +42,8 @@ public abstract class AbstractGui implements InventoryHolder, Listener {
 
     protected final AuctionCommandManager auctionCommandManager;
 
+    protected final BillCommandManager billCommandManager;
+
     protected  final ExpireCommandManager expireCommandManager;
 
     protected AbstractGui(FAuction plugin, Player player, int page) {
@@ -52,6 +55,7 @@ public abstract class AbstractGui implements InventoryHolder, Listener {
         this.globalConfig = plugin.getConfigurationManager().getGlobalConfig();
         this.auctionCommandManager = plugin.getAuctionCommandManager();
         this.expireCommandManager = plugin.getExpireCommandManager();
+        this.billCommandManager = plugin.getBillCommandManager();
 
         Bukkit.getPluginManager().registerEvents(this, Bukkit.getPluginManager().getPlugins()[0]);
     }

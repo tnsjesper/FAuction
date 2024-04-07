@@ -4,8 +4,8 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import fr.florianpal.fauction.FAuction;
 import fr.florianpal.fauction.configurations.AbstractGuiWithAuctionsConfig;
-import fr.florianpal.fauction.objects.Auction;
 import fr.florianpal.fauction.objects.Barrier;
+import fr.florianpal.fauction.objects.Bill;
 import fr.florianpal.fauction.utils.FormatUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -21,22 +21,22 @@ import java.util.List;
 
 import static java.util.UUID.randomUUID;
 
-public abstract class AbstractGuiWithAuctions extends AbstractGui  {
+public abstract class AbstractGuiWithBill extends AbstractGui  {
 
-    protected final List<Auction> auctions;
+    protected final List<Bill> bills;
 
     protected AbstractGuiWithAuctionsConfig abstractGuiWithAuctionsConfig;
 
-    protected AbstractGuiWithAuctions(FAuction plugin, Player player, int page, List<Auction> auctions, AbstractGuiWithAuctionsConfig abstractGuiWithAuctionsConfig) {
+    protected AbstractGuiWithBill(FAuction plugin, Player player, int page, List<Bill> bills, AbstractGuiWithAuctionsConfig abstractGuiWithAuctionsConfig) {
         super(plugin, player, page);
-        this.auctions = auctions;
+        this.bills = bills;
         this.abstractGuiWithAuctionsConfig = abstractGuiWithAuctionsConfig;
     }
 
     @Override
     protected void initGui(String title, int size) {
         title = title.replace("{Page}", String.valueOf(this.page));
-        title = title.replace("{TotalPage}", String.valueOf(((this.auctions.size() - 1) / abstractGuiWithAuctionsConfig.getItemBlocks().size()) + 1));
+        title = title.replace("{TotalPage}", String.valueOf(((this.bills.size() - 1) / abstractGuiWithAuctionsConfig.getItemBlocks().size()) + 1));
 
         this.inv = Bukkit.createInventory(this, abstractGuiWithAuctionsConfig.getSize(), FormatUtil.format(title));
     }

@@ -7,7 +7,7 @@ import org.bukkit.configuration.Configuration;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExpireGuiConfig extends AbstractGuiWithAuctionsConfig  {
+public class BidConfig extends AbstractGuiWithAuctionsConfig {
 
     private List<Barrier> barrierBlocks = new ArrayList<>();
 
@@ -15,9 +15,15 @@ public class ExpireGuiConfig extends AbstractGuiWithAuctionsConfig  {
 
     private List<Barrier> nextBlocks = new ArrayList<>();
 
-    private List<Integer> expireBlocks = new ArrayList<>();
+    private List<Barrier> expireBlocks = new ArrayList<>();
 
-    private List<Barrier> auctionGuiBlocks = new ArrayList<>();
+    private List<Barrier> closeBlocks = new ArrayList<>();
+
+    private List<Barrier> playerBlocks = new ArrayList<>();
+
+    private List<Barrier> goToAuctionBlocks = new ArrayList<>();
+
+    protected List<Integer> bidBlocks = new ArrayList<>();
 
     private String title = "";
 
@@ -25,7 +31,7 @@ public class ExpireGuiConfig extends AbstractGuiWithAuctionsConfig  {
 
     private String nameGui = "";
 
-    protected int size;
+    protected int size = 27;
 
 
     public void load(Configuration config) {
@@ -33,8 +39,11 @@ public class ExpireGuiConfig extends AbstractGuiWithAuctionsConfig  {
         previousBlocks = new ArrayList<>();
         nextBlocks = new ArrayList<>();
         expireBlocks = new ArrayList<>();
-        auctionGuiBlocks = new ArrayList<>();
+        bidBlocks = new ArrayList<>();
+        closeBlocks = new ArrayList<>();
+        playerBlocks = new ArrayList<>();
         description = new ArrayList<>();
+        goToAuctionBlocks = new ArrayList<>();
 
         for (String index : config.getConfigurationSection("block").getKeys(false)) {
             if (config.getString("block." + index + ".utility").equalsIgnoreCase("previous")) {
@@ -72,9 +81,36 @@ public class ExpireGuiConfig extends AbstractGuiWithAuctionsConfig  {
                         ),
                         config.getString("block." + index + ".texture", ""),
                         config.getInt("block." + index + ".customModelData", 0)
-
                 );
                 nextBlocks.add(barrier);
+            } else if (config.getString("block." + index + ".utility").equalsIgnoreCase("player")) {
+                Barrier barrier = new Barrier(
+                        Integer.parseInt(index),
+                        Material.getMaterial(config.getString("block." + index + ".material")),
+                        config.getString("block." + index + ".title"),
+                        config.getStringList("block." + index + ".description"),
+                        new Barrier(
+                                Integer.parseInt(index),
+                                Material.getMaterial(config.getString("block." + index + ".replacement.material")),
+                                config.getString("block." + index + ".replacement.title"),
+                                config.getStringList("block." + index + ".replacement.description"),
+                                config.getString("block." + index + ".replacement.texture", ""),
+                                config.getInt("block." + index + ".replacement.customModelData", 0)
+                        ),
+                        config.getString("block." + index + ".texture", ""),
+                        config.getInt("block." + index + ".customModelData", 0)
+                );
+                playerBlocks.add(barrier);
+            } else if (config.getString("block." + index + ".utility").equalsIgnoreCase("expire")) {
+                Barrier barrier = new Barrier(
+                        Integer.parseInt(index),
+                        Material.getMaterial(config.getString("block." + index + ".material")),
+                        config.getString("block." + index + ".title"),
+                        config.getStringList("block." + index + ".description"),
+                        config.getString("block." + index + ".texture", ""),
+                        config.getInt("block." + index + ".customModelData", 0)
+                );
+                expireBlocks.add(barrier);
             } else if (config.getString("block." + index + ".utility").equalsIgnoreCase("barrier")) {
                 Barrier barrier = new Barrier(
                         Integer.parseInt(index),
@@ -85,9 +121,7 @@ public class ExpireGuiConfig extends AbstractGuiWithAuctionsConfig  {
                         config.getInt("block." + index + ".customModelData", 0)
                 );
                 barrierBlocks.add(barrier);
-            } else if (config.getString("block." + index + ".utility").equalsIgnoreCase("expire")) {
-                expireBlocks.add(Integer.valueOf(index));
-            } else if (config.getString("block." + index + ".utility").equalsIgnoreCase("auctionGui")) {
+            } else if (config.getString("block." + index + ".utility").equalsIgnoreCase("goToAuction")) {
                 Barrier barrier = new Barrier(
                         Integer.parseInt(index),
                         Material.getMaterial(config.getString("block." + index + ".material")),
@@ -96,8 +130,20 @@ public class ExpireGuiConfig extends AbstractGuiWithAuctionsConfig  {
                         config.getString("block." + index + ".texture", ""),
                         config.getInt("block." + index + ".customModelData", 0)
                 );
-                auctionGuiBlocks.add(barrier);
-         }
+                goToAuctionBlocks.add(barrier);
+            } else if (config.getString("block." + index + ".utility").equalsIgnoreCase("bid")) {
+                bidBlocks.add(Integer.valueOf(index));
+            } else if (config.getString("block." + index + ".utility").equalsIgnoreCase("close")) {
+                Barrier barrier = new Barrier(
+                        Integer.parseInt(index),
+                        Material.getMaterial(config.getString("block." + index + ".material")),
+                        config.getString("block." + index + ".title"),
+                        config.getStringList("block." + index + ".description"),
+                        config.getString("block." + index + ".texture", ""),
+                        config.getInt("block." + index + ".customModelData", 0)
+                );
+                closeBlocks.add(barrier);
+            }
         }
         size = config.getInt("gui.size");
         nameGui = config.getString("gui.name");
@@ -126,13 +172,25 @@ public class ExpireGuiConfig extends AbstractGuiWithAuctionsConfig  {
         return previousBlocks;
     }
 
+    public List<Barrier> getExpireBlocks() {
+        return expireBlocks;
+    }
+
     public List<Barrier> getNextBlocks() {
         return nextBlocks;
     }
 
+    public List<Barrier> getCloseBlocks() {
+        return closeBlocks;
+    }
+
+    public List<Barrier> getPlayerBlocks() {
+        return playerBlocks;
+    }
+
     @Override
     public List<Integer> getItemBlocks() {
-        return expireBlocks;
+        return bidBlocks;
     }
 
     @Override
@@ -140,11 +198,7 @@ public class ExpireGuiConfig extends AbstractGuiWithAuctionsConfig  {
         return size;
     }
 
-    public List<Integer> getExpireBlocks() {
-        return expireBlocks;
-    }
-
-    public List<Barrier> getAuctionGuiBlocks() {
-        return auctionGuiBlocks;
+    public List<Barrier> getGoToAuctionBlocks() {
+        return goToAuctionBlocks;
     }
 }

@@ -3,12 +3,13 @@ package fr.florianpal.fauction.gui.subGui;
 import co.aikar.commands.CommandIssuer;
 import co.aikar.taskchain.TaskChain;
 import fr.florianpal.fauction.FAuction;
-import fr.florianpal.fauction.configurations.AuctionConfirmGuiConfig;
+import fr.florianpal.fauction.configurations.BidConfirmGuiConfig;
 import fr.florianpal.fauction.gui.AbstractGui;
 import fr.florianpal.fauction.gui.GuiInterface;
 import fr.florianpal.fauction.languages.MessageKeys;
 import fr.florianpal.fauction.objects.Auction;
 import fr.florianpal.fauction.objects.Barrier;
+import fr.florianpal.fauction.objects.Bill;
 import fr.florianpal.fauction.objects.Confirm;
 import fr.florianpal.fauction.utils.FormatUtil;
 import net.milkbowl.vault.economy.EconomyResponse;
@@ -31,35 +32,38 @@ import java.util.Map;
 
 import static org.bukkit.Bukkit.getServer;
 
-public class AuctionConfirmGui extends AbstractGui implements GuiInterface {
+public class BidConfirmGui extends AbstractGui implements GuiInterface {
 
-    private final Auction auction;
-    protected final AuctionConfirmGuiConfig auctionConfirmConfig;
+    private final Bill bill;
+    protected final BidConfirmGuiConfig bidConfirmGuiConfig;
 
     private final Map<Integer, Confirm> confirmList = new HashMap<>();
 
     private final List<LocalDateTime> spamTest = new ArrayList<>();
 
-    AuctionConfirmGui(FAuction plugin, Player player, int page, Auction auction) {
+    private final double amount;
+
+    BidConfirmGui(FAuction plugin, Player player, int page, Bill bill, double amount) {
         super(plugin, player, page);
-        this.auction = auction;
-        this.auctionConfirmConfig = plugin.getConfigurationManager().getAuctionConfirmConfig();
-        initGui(auctionConfirmConfig.getNameGui(), auctionConfirmConfig.getSize());
+        this.bill = bill;
+        this.amount = amount;
+        this.bidConfirmGuiConfig = plugin.getConfigurationManager().getBidConfirmConfig();
+        initGui(bidConfirmGuiConfig.getNameGui(), bidConfirmGuiConfig.getSize());
     }
 
     public void initializeItems() {
 
-        for (Barrier barrier : auctionConfirmConfig.getBarrierBlocks()) {
+        for (Barrier barrier : bidConfirmGuiConfig.getBarrierBlocks()) {
             inv.setItem(barrier.getIndex(), getItemStack(barrier, false));
         }
 
         int id = 0;
-        for (Map.Entry<Integer, Confirm> entry : auctionConfirmConfig.getConfirmBlocks().entrySet()) {
-            Confirm confirm = new Confirm(this.auction, entry.getValue().getMaterial(), entry.getValue().isValue());
+        for (Map.Entry<Integer, Confirm> entry : bidConfirmGuiConfig.getConfirmBlocks().entrySet()) {
+            Confirm confirm = new Confirm(this.bill, entry.getValue().getMaterial(), entry.getValue().isValue());
             confirmList.put(entry.getKey(), confirm);
             inv.setItem(entry.getKey(), createGuiItem(confirm));
             id++;
-            if (id >= (auctionConfirmConfig.getConfirmBlocks().size())) break;
+            if (id >= (bidConfirmGuiConfig.getConfirmBlocks().size())) break;
         }
         openInventory(player);
     }
@@ -69,9 +73,9 @@ public class AuctionConfirmGui extends AbstractGui implements GuiInterface {
         ItemMeta meta = item.getItemMeta();
         String title = "";
         if (confirm.isValue()) {
-            title = auctionConfirmConfig.getTitle_true();
+            title = bidConfirmGuiConfig.getTitle_true();
         } else {
-            title = auctionConfirmConfig.getTitle_false();
+            title = bidConfirmGuiConfig.getTitle_false();
         }
 
         DecimalFormat df = new DecimalFormat();
@@ -87,7 +91,7 @@ public class AuctionConfirmGui extends AbstractGui implements GuiInterface {
 
         title = FormatUtil.format(title);
         List<String> listDescription = new ArrayList<>();
-        for (String desc : auctionConfirmConfig.getDescription()) {
+        for (String desc : bidConfirmGuiConfig.getDescription()) {
             desc = desc.replace("{Price}", df.format(confirm.getAuction().getPrice()));
             if (confirm.getAuction().getItemStack().getItemMeta().getDisplayName().equalsIgnoreCase("")) {
                 desc = desc.replace("{Item}", confirm.getAuction().getItemStack().getType().toString());
@@ -131,7 +135,7 @@ public class AuctionConfirmGui extends AbstractGui implements GuiInterface {
             return;
         }
 
-        plugin.getAuctionAction().remove((Integer)auction.getId());
+        plugin.getAuctionAction().remove((Integer) bill.getId());
     }
 
     @EventHandler
@@ -157,7 +161,7 @@ public class AuctionConfirmGui extends AbstractGui implements GuiInterface {
         ItemStack clickedItem = e.getCurrentItem();
         if (clickedItem == null || clickedItem.getType() == Material.AIR) return;
 
-        for (Map.Entry<Integer, Confirm> entry : auctionConfirmConfig.getConfirmBlocks().entrySet()) {
+        for (Map.Entry<Integer, Confirm> entry : bidConfirmGuiConfig.getConfirmBlocks().entrySet()) {
             if (entry.getKey() == e.getRawSlot()) {
                 CommandIssuer issuerTarget = commandManager.getCommandIssuer(player);
                 Confirm confirm = confirmList.get(e.getRawSlot());
@@ -174,74 +178,63 @@ public class AuctionConfirmGui extends AbstractGui implements GuiInterface {
                 }
 
                 TaskChain<Auction> chainAuction = FAuction.newChain();
-                chainAuction.asyncFirst(() -> auctionCommandManager.auctionExist(this.auction.getId())).sync(a -> {
+                chainAuction.asyncFirst(() -> billCommandManager.billExist(this.bill.getId())).syncLast(a -> {
                     if (a == null) {
                         issuerTarget.sendInfo(MessageKeys.NO_AUCTION);
-                        plugin.getAuctionAction().remove((Integer)auction.getId());
-                        return null;
+                        plugin.getAuctionAction().remove((Integer) bill.getId());
+                        return ;
                     }
                     TaskChain<Auction> chainAuction2 = FAuction.newChain();
-                    chainAuction2.asyncFirst(() -> auctionCommandManager.auctionExist(this.auction.getId())).sync(auctionGood -> {
-                        if (auctionGood == null) {
-                            issuerTarget.sendInfo(MessageKeys.AUCTION_ALREADY_SELL);
-                            plugin.getAuctionAction().remove((Integer)auction.getId());
-                            return null;
+                    chainAuction2.asyncFirst(() -> auctionCommandManager.auctionExist(this.bill.getId())).syncLast(billGood -> {
+                        if (billGood == null) {
+                            issuerTarget.sendInfo(MessageKeys.NO_BILL);
+                            plugin.getAuctionAction().remove((Integer) bill.getId());
+                            return;
                         }
 
-                        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(auctionGood.getPlayerUuid());
+                        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(billGood.getPlayerUuid());
                         if (offlinePlayer == null) {
-                            return null;
+                            return;
                         }
 
-                        EconomyResponse economyResponse4 = plugin.getVaultIntegrationManager().getEconomy().depositPlayer(offlinePlayer, auctionGood.getPrice());
+                        EconomyResponse economyResponse4 = plugin.getVaultIntegrationManager().getEconomy().depositPlayer(offlinePlayer, billGood.getPrice());
                         if (!economyResponse4.transactionSuccess()) {
-                            plugin.getAuctionAction().remove((Integer)auctionGood.getId());
-                            return null;
+                            plugin.getAuctionAction().remove((Integer)billGood.getId());
+                            return;
                         }
 
-                        EconomyResponse economyResponse5 = plugin.getVaultIntegrationManager().getEconomy().withdrawPlayer(player, auctionGood.getPrice());
+                        EconomyResponse economyResponse5 = plugin.getVaultIntegrationManager().getEconomy().withdrawPlayer(player, billGood.getPrice());
                         if (!economyResponse5.transactionSuccess()) {
-                            plugin.getAuctionAction().remove((Integer)auctionGood.getId());
-                            return null;
+                            plugin.getAuctionAction().remove((Integer)billGood.getId());
+                            return;
                         }
 
-                        issuerTarget.sendInfo(MessageKeys.BUY_AUCTION_SUCCESS);
-                        auctionCommandManager.deleteAuction(auctionGood.getId());
-
-                        if (player.getInventory().firstEmpty() == -1) {
-                            player.getWorld().dropItem(player.getLocation(), auctionGood.getItemStack());
-                        } else {
-                            player.getInventory().addItem(auctionGood.getItemStack());
-                        }
+                        issuerTarget.sendInfo(MessageKeys.MAKE_OFFER_BILL_SUCCESS, "{Offer}", String.valueOf(amount));
+                        billCommandManager.makeOffer(billGood.getId(), player, amount);
 
                         if (plugin.getConfigurationManager().getGlobalConfig().isOnBidBuyCommandUse()) {
                             String command = plugin.getConfigurationManager().getGlobalConfig().getOnBidBuyCommand();
-                            command = command.replace("{OwnerName}", auctionGood.getPlayerName());
-                            command = command.replace("{Amount}", String.valueOf(auctionGood.getItemStack().getAmount()));
-                            if (!auctionGood.getItemStack().getItemMeta().getDisplayName().equalsIgnoreCase("")) {
-                                command = command.replace("{ItemName}", auctionGood.getItemStack().getItemMeta().getDisplayName());
+                            command = command.replace("{OwnerName}", billGood.getPlayerName());
+                            command = command.replace("{Amount}", String.valueOf(billGood.getItemStack().getAmount()));
+                            if (!billGood.getItemStack().getItemMeta().getDisplayName().equalsIgnoreCase("")) {
+                                command = command.replace("{ItemName}", billGood.getItemStack().getItemMeta().getDisplayName());
                             } else {
-                                command = command.replace("{ItemName}", auctionGood.getItemStack().getType().name().replace('_', ' ').toLowerCase());
+                                command = command.replace("{ItemName}", billGood.getItemStack().getType().name().replace('_', ' ').toLowerCase());
                             }
                             command = command.replace("{BuyerName}", player.getName());
-                            command = command.replace("{ItemPrice}", String.valueOf(auctionGood.getPrice()));
+                            command = command.replace("{ItemPrice}", String.valueOf(billGood.getPrice()));
                             getServer().dispatchCommand(getServer().getConsoleSender(), command);
                         }
 
-                        plugin.getLogger().info("Player : " + player.getName() + " buy " + auctionGood.getItemStack().getItemMeta().getDisplayName() + " at " + auctionGood.getPlayerName());
-
-                        plugin.getAuctionAction().remove((Integer)auctionGood.getId());
+                        plugin.getLogger().info("Player : " + player.getName() + " buy " + billGood.getItemStack().getItemMeta().getDisplayName() + " at " + billGood.getPlayerName());
 
                         player.getOpenInventory().close();
                         TaskChain<ArrayList<Auction>> chain = FAuction.newChain();
-                        chain.asyncFirst(auctionCommandManager::getAuctions).sync(auctions -> {
-                            AuctionsGui gui = new AuctionsGui(plugin, player, auctions, 1);
+                        chain.asyncFirst(billCommandManager::getBills).syncLast(bills -> {
+                            BidGui gui = new BidGui(plugin, player, bills, 1);
                             gui.initializeItems();
-                            return null;
                         }).execute();
-                        return null;
                     }).execute();
-                    return null;
                 }).execute();
                 break;
             }

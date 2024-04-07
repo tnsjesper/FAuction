@@ -1,11 +1,14 @@
 gui:
   size: 54
-  name: "Auction house {Page}/{TotalPage}"
+  name: "Bid house {Page}/{TotalPage}"
   title: "&eItem : &6{ItemName}"
   description:
     - "&5Sold by : &6{OwnerName}"
     - "&5Price : &6{Price}"
     - "&5Expires on : &6{ExpireTime}"
+    - "&5Last bidder : &6{BidderName}"
+    - "&5Last bid : &6{Bet}"
+    - "&5Date of last bid : &6{BetDate}"
     - "&5Lore :"
     - "{lore}"
 block:
@@ -60,19 +63,19 @@ block:
     title: "-"
     description: {}
   '10':
-    utility: auction
+    utility: bid
   '11':
-    utility: auction
+    utility: bid
   '12':
-    utility: auction
+    utility: bid
   '13':
-    utility: auction
+    utility: bid
   '14':
-    utility: auction
+    utility: bid
   '15':
-    utility: auction
+    utility: bid
   '16':
-    utility: auction
+    utility: bid
   '17':
     utility: barrier
     material: GRAY_STAINED_GLASS_PANE
@@ -84,19 +87,19 @@ block:
     title: "-"
     description: {}
   '19':
-    utility: auction
+    utility: bid
   '20':
-    utility: auction
+    utility: bid
   '21':
-    utility: auction
+    utility: bid
   '22':
-    utility: auction
+    utility: bid
   '23':
-    utility: auction
+    utility: bid
   '24':
-    utility: auction
+    utility: bid
   '25':
-    utility: auction
+    utility: bid
   '26':
     utility: barrier
     material: GRAY_STAINED_GLASS_PANE
@@ -108,19 +111,19 @@ block:
     title: "-"
     description: {}
   '28':
-    utility: auction
+    utility: bid
   '29':
-    utility: auction
+    utility: bid
   '30':
-    utility: auction
+    utility: bid
   '31':
-    utility: auction
+    utility: bid
   '32':
-    utility: auction
+    utility: bid
   '33':
-    utility: auction
+    utility: bid
   '34':
-    utility: auction
+    utility: bid
   '35':
     utility: barrier
     material: GRAY_STAINED_GLASS_PANE
@@ -132,19 +135,19 @@ block:
     title: "-"
     description: {}
   '37':
-    utility: auction
+    utility: bid
   '38':
-    utility: auction
+    utility: bid
   '39':
-    utility: auction
+    utility: bid
   '40':
-    utility: auction
+    utility: bid
   '41':
-    utility: auction
+    utility: bid
   '42':
-    utility: auction
+    utility: bid
   '43':
-    utility: auction
+    utility: bid
   '44':
     utility: barrier
     material: GRAY_STAINED_GLASS_PANE
@@ -185,8 +188,8 @@ block:
       - "&7Here, all players can sell"
       - "&7and buy things."
       - ""
-      - "&7To sell an item, you must:"
-      - "&a/ah sell &7<&aprice&7>"
+      - "&7To Bid an item, you must:"
+      - "&a/ah bid &7<&aprice&7>"
       - "&7Number of sales in progress: &b{TotalSale}"
   '50':
     utility: next
@@ -199,17 +202,17 @@ block:
       title: "-"
       description: {}
   '51':
-    utility: goToBid
+    utility: goToAuction
     material: GOLD_INGOT
-    title: "&5Go to the bid house"
+    title: "&5Go to the auction house"
     description:
-      - "&eClick here to go to the bid house"
+      - "&eClick here to go to the auction house"
   '52':
     utility: player
     material: NETHER_STAR
-    title: "&5Back to the auction house"
+    title: "&5Back to the bid house"
     description:
-      - "&eClick here to return to the auction house"
+      - "&eClick here to return to the bid house"
   '53':
     utility: close
     material: BARRIER

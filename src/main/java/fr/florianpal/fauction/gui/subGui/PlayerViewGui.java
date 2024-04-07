@@ -46,8 +46,8 @@ public class PlayerViewGui extends AbstractGuiWithAuctions implements GuiInterfa
             return;
         }
 
-        int id = (this.playerViewConfig.getAuctionBlocks().size() * this.page) - this.playerViewConfig.getAuctionBlocks().size();
-        for (int index : playerViewConfig.getAuctionBlocks()) {
+        int id = (this.playerViewConfig.getItemBlocks().size() * this.page) - this.playerViewConfig.getItemBlocks().size();
+        for (int index : playerViewConfig.getItemBlocks()) {
             inv.setItem(index, createGuiItem(auctions.get(id)));
             id++;
             if (id >= (auctions.size())) break;
@@ -65,6 +65,10 @@ public class PlayerViewGui extends AbstractGuiWithAuctions implements GuiInterfa
             inv.setItem(barrier.getIndex(), createGuiItem(getItemStack(barrier, false)));
         }
 
+        for (Barrier barrier : playerViewConfig.getGoToBidBlocks()) {
+            inv.setItem(barrier.getIndex(), createGuiItem(getItemStack(barrier, false)));
+        }
+
         for (Barrier previous : playerViewConfig.getPreviousBlocks()) {
             if (page > 1) {
                 inv.setItem(previous.getIndex(), createGuiItem(getItemStack(previous, false)));
@@ -74,7 +78,7 @@ public class PlayerViewGui extends AbstractGuiWithAuctions implements GuiInterfa
         }
 
         for (Barrier next : playerViewConfig.getNextBlocks()) {
-            if ((this.playerViewConfig.getAuctionBlocks().size() * this.page) - this.playerViewConfig.getAuctionBlocks().size() < auctions.size() - this.playerViewConfig.getAuctionBlocks().size()) {
+            if ((this.playerViewConfig.getItemBlocks().size() * this.page) - this.playerViewConfig.getItemBlocks().size() < auctions.size() - this.playerViewConfig.getItemBlocks().size()) {
                 inv.setItem(next.getIndex(), createGuiItem(getItemStack(next, false)));
             } else {
                 inv.setItem(next.getRemplacement().getIndex(), createGuiItem(getItemStack(next, true)));
@@ -116,7 +120,7 @@ public class PlayerViewGui extends AbstractGuiWithAuctions implements GuiInterfa
             desc = desc.replace("{TotalSale}", String.valueOf(this.auctions.size()));
             desc = desc.replace("{OwnerName}", auction.getPlayerName());
             desc = desc.replace("{Price}", String.valueOf(auction.getPrice()));
-            Date expireDate = new Date((auction.getDate().getTime() + globalConfig.getTime() * 1000L));
+            Date expireDate = new Date((auction.getDate().getTime() + globalConfig.getBidTime() * 1000L));
             SimpleDateFormat formater = new SimpleDateFormat(globalConfig.getDateFormat());
             desc = desc.replace("{ExpireTime}", formater.format(expireDate));
             if (desc.contains("lore")) {
@@ -214,7 +218,7 @@ public class PlayerViewGui extends AbstractGuiWithAuctions implements GuiInterfa
             }
         }
         for (Barrier next : playerViewConfig.getNextBlocks()) {
-            if (e.getRawSlot() == next.getIndex() && ((this.playerViewConfig.getAuctionBlocks().size() * this.page) - this.playerViewConfig.getAuctionBlocks().size() < auctions.size() - this.playerViewConfig.getAuctionBlocks().size()) && next.getMaterial() != next.getRemplacement().getMaterial()) {
+            if (e.getRawSlot() == next.getIndex() && ((this.playerViewConfig.getItemBlocks().size() * this.page) - this.playerViewConfig.getItemBlocks().size() < auctions.size() - this.playerViewConfig.getItemBlocks().size()) && next.getMaterial() != next.getRemplacement().getMaterial()) {
                 TaskChain<ArrayList<Auction>> chain = FAuction.newChain();
                 chain.asyncFirst(auctionCommandManager::getAuctions).sync(auctions -> {
                     PlayerViewGui gui = new PlayerViewGui(plugin, player, auctions,this.page + 1);
@@ -224,19 +228,32 @@ public class PlayerViewGui extends AbstractGuiWithAuctions implements GuiInterfa
                 return;
             }
         }
+
         for (Barrier expire : playerViewConfig.getExpireBlocks()) {
             if (e.getRawSlot() == expire.getIndex()) {
                 TaskChain<ArrayList<Auction>> chain = FAuction.newChain();
-                chain.asyncFirst(() -> expireCommandManager.getAuctions(player.getUniqueId())).sync(auctions -> {
+                chain.asyncFirst(() -> expireCommandManager.getExpires(player.getUniqueId())).sync(auctions -> {
                     ExpireGui gui = new ExpireGui(plugin, player, auctions, 1);
                     gui.initializeItems();
                     return null;
                 }).execute();
             }
         }
+
         for (Barrier close : playerViewConfig.getCloseBlocks()) {
             if (e.getRawSlot() == close.getIndex()) {
                 player.closeInventory();
+                return;
+            }
+        }
+
+        for (Barrier goToAuction : playerViewConfig.getGoToBidBlocks()) {
+            if (e.getRawSlot() == goToAuction.getIndex()) {
+                TaskChain<ArrayList<Auction>> chain = FAuction.newChain();
+                chain.asyncFirst(billCommandManager::getBills).syncLast(bills -> {
+                    BidGui gui = new BidGui(plugin, player, bills, 1);
+                    gui.initializeItems();
+                }).execute();
                 return;
             }
         }
@@ -255,11 +272,11 @@ public class PlayerViewGui extends AbstractGuiWithAuctions implements GuiInterfa
             }
         }
 
-        for (int index : playerViewConfig.getAuctionBlocks()) {
+        for (int index : playerViewConfig.getItemBlocks()) {
             if (index == e.getRawSlot()) {
-                int nb0 = playerViewConfig.getAuctionBlocks().get(0);
+                int nb0 = playerViewConfig.getItemBlocks().get(0);
                 int nb = ((e.getRawSlot() - nb0)) / 9;
-                Auction auction = auctions.get((e.getRawSlot() - nb0) + ((this.playerViewConfig.getAuctionBlocks().size() * this.page) - this.playerViewConfig.getAuctionBlocks().size()) - nb * 2);
+                Auction auction = auctions.get((e.getRawSlot() - nb0) + ((this.playerViewConfig.getItemBlocks().size() * this.page) - this.playerViewConfig.getItemBlocks().size()) - nb * 2);
 
                 if(plugin.getAuctionAction().contains((Integer)auction.getId())) {
                     return;
@@ -290,7 +307,7 @@ public class PlayerViewGui extends AbstractGuiWithAuctions implements GuiInterfa
 
                         auctionCommandManager.deleteAuction(a.getId());
                         if (isModCanCancel) {
-                            plugin.getExpireCommandManager().addAuction(a);
+                            plugin.getExpireCommandManager().addExpire(a);
                             plugin.getLogger().info("Modo delete from ah auction : " + a.getId() + ", Item : " + a.getItemStack().getItemMeta().getDisplayName() + " of " + a.getPlayerName() + ", by" + player.getName());
                         } else {
                             plugin.getLogger().info("Player delete from ah auction : " + a.getId() + ", Item : " + a.getItemStack().getItemMeta().getDisplayName() + " of " + a.getPlayerName() + ", by" + player.getName());

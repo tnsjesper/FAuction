@@ -27,6 +27,8 @@ public class PlayerViewConfig extends AbstractGuiWithAuctionsConfig {
 
     private List<String> description = new ArrayList<>();
 
+    private List<Barrier> goToBidBlocks = new ArrayList<>();
+
     private String nameGui = "";
 
     protected int size;
@@ -40,6 +42,7 @@ public class PlayerViewConfig extends AbstractGuiWithAuctionsConfig {
         closeBlocks = new ArrayList<>();
         playerBlocks = new ArrayList<>();
         description = new ArrayList<>();
+        goToBidBlocks = new ArrayList<>();
 
         for (String index : config.getConfigurationSection("block").getKeys(false)) {
             if (config.getString("block." + index + ".utility").equalsIgnoreCase("previous")) {
@@ -119,6 +122,16 @@ public class PlayerViewConfig extends AbstractGuiWithAuctionsConfig {
                 barrierBlocks.add(barrier);
             } else if (config.getString("block." + index + ".utility").equalsIgnoreCase("auction")) {
                 auctionBlocks.add(Integer.valueOf(index));
+            } else if (config.getString("block." + index + ".utility").equalsIgnoreCase("goToBid")) {
+                Barrier barrier = new Barrier(
+                        Integer.parseInt(index),
+                        Material.getMaterial(config.getString("block." + index + ".material")),
+                        config.getString("block." + index + ".title"),
+                        config.getStringList("block." + index + ".description"),
+                        config.getString("block." + index + ".texture", ""),
+                        config.getInt("block." + index + ".customModelData", 0)
+                );
+                goToBidBlocks.add(barrier);
             } else if (config.getString("block." + index + ".utility").equalsIgnoreCase("close")) {
                 Barrier barrier = new Barrier(
                         Integer.parseInt(index),
@@ -175,11 +188,15 @@ public class PlayerViewConfig extends AbstractGuiWithAuctionsConfig {
     }
 
     @Override
-    public List<Integer> getAuctionBlocks() {
+    public List<Integer> getItemBlocks() {
         return auctionBlocks;
     }
 
     public int getSize() {
         return size;
+    }
+
+    public List<Barrier> getGoToBidBlocks() {
+        return goToBidBlocks;
     }
 }

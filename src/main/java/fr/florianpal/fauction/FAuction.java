@@ -4,14 +4,12 @@ import co.aikar.taskchain.BukkitTaskChainFactory;
 import co.aikar.taskchain.TaskChain;
 import co.aikar.taskchain.TaskChainFactory;
 import fr.florianpal.fauction.commands.AuctionCommand;
+import fr.florianpal.fauction.managers.commandManagers.*;
+import fr.florianpal.fauction.queries.BillQueries;
 import fr.florianpal.fauction.schedules.ExpireSchedule;
 import fr.florianpal.fauction.managers.ConfigurationManager;
 import fr.florianpal.fauction.managers.DatabaseManager;
 import fr.florianpal.fauction.managers.VaultIntegrationManager;
-import fr.florianpal.fauction.managers.commandManagers.AuctionCommandManager;
-import fr.florianpal.fauction.managers.commandManagers.CommandManager;
-import fr.florianpal.fauction.managers.commandManagers.ExpireCommandManager;
-import fr.florianpal.fauction.managers.commandManagers.LimitationManager;
 import fr.florianpal.fauction.queries.AuctionQueries;
 import fr.florianpal.fauction.queries.ExpireQueries;
 import fr.florianpal.fauction.utils.SerializationUtil;
@@ -36,12 +34,17 @@ public class FAuction extends JavaPlugin {
     private AuctionQueries auctionQueries;
     private ExpireQueries expireQueries;
 
+    private BillQueries billQueries;
+
     private CommandManager commandManager;
     private VaultIntegrationManager vaultIntegrationManager;
     private DatabaseManager databaseManager;
     private LimitationManager limitationManager;
 
     private AuctionCommandManager auctionCommandManager;
+
+    private BillCommandManager billCommandManager;
+
     private ExpireCommandManager expireCommandManager;
 
     public static <T> TaskChain<T> newChain() {
@@ -80,12 +83,15 @@ public class FAuction extends JavaPlugin {
         }
         auctionQueries = new AuctionQueries(this);
         expireQueries = new ExpireQueries(this);
+        billQueries = new BillQueries(this);
 
         databaseManager.addRepository(expireQueries);
         databaseManager.addRepository(auctionQueries);
+        databaseManager.addRepository(billQueries);
         databaseManager.initializeTables();
 
         auctionCommandManager = new AuctionCommandManager(this);
+        billCommandManager = new BillCommandManager(this);
         expireCommandManager = new ExpireCommandManager(this);
 
         commandManager.registerCommand(new AuctionCommand(this));
@@ -230,5 +236,13 @@ public class FAuction extends JavaPlugin {
             }
             return null;
         }).execute();
+    }
+
+    public BillCommandManager getBillCommandManager() {
+        return billCommandManager;
+    }
+
+    public BillQueries getBillQueries() {
+        return billQueries;
     }
 }

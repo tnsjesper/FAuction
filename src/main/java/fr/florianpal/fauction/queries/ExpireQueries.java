@@ -35,7 +35,7 @@ public class ExpireQueries implements IDatabaseTable {
         }
     }
 
-    public void addAuction(UUID playerUUID, String playerName, byte[] item, double price, Date date) {
+    public void addExpire(UUID playerUUID, String playerName, byte[] item, double price, Date date) {
         PreparedStatement statement = null;
         try (Connection connection = databaseManager.getConnection()) {
             statement = connection.prepareStatement(ADD_AUCTION);

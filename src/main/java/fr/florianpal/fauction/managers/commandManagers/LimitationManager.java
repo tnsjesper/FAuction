@@ -1,11 +1,9 @@
 package fr.florianpal.fauction.managers.commandManagers;
 
 import fr.florianpal.fauction.FAuction;
-import fr.florianpal.fauction.objects.Auction;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 public class LimitationManager {
@@ -18,7 +16,7 @@ public class LimitationManager {
 
     public int getAuctionLimitation(Player player) {
         Permission perms = plugin.getVaultIntegrationManager().getPerms();
-        Map<String, Integer> limitations = plugin.getConfigurationManager().getGlobalConfig().getLimitations();
+        Map<String, Integer> limitations = plugin.getConfigurationManager().getGlobalConfig().getAuctionLimitations();
         String[] playerGroup;
         int limit = limitations.get("default");
         if (perms != null) {
