@@ -13,8 +13,7 @@ auction:
       use: false
       command: ""
   expiration:
-    time: 3600 #In seconds
-    checkEvery: 72000 #In ticks
+    time: 86400 #In seconds
   limitations: # Number of auction per rank
     default: 5
 bid:
@@ -23,6 +22,6 @@ bid:
       use: false
       command: ""
   expiration:
-    time: 3600 #In seconds
+    time: 86400 #In seconds
   limitations: # Number of auction per rank
     default: 5
