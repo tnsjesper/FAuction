@@ -1,7 +1,6 @@
 package fr.florianpal.fauction.objects;
 
 import fr.florianpal.fauction.utils.SerializationUtil;
-import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.IOException;

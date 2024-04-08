@@ -1,7 +1,6 @@
 package fr.florianpal.fauction.utils;
 
 import io.papermc.lib.PaperLib;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;

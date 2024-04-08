@@ -165,44 +165,43 @@ public class AuctionConfirmGui extends AbstractGui implements GuiInterface {
                     issuerTarget.sendInfo(MessageKeys.BUY_AUCTION_CANCELLED);
                     player.getOpenInventory().close();
                     TaskChain<ArrayList<Auction>> chain = FAuction.newChain();
-                    chain.asyncFirst(auctionCommandManager::getAuctions).sync(auctions -> {
+                    chain.asyncFirst(auctionCommandManager::getAuctions).syncLast(auctions -> {
                         AuctionsGui gui = new AuctionsGui(plugin, player, auctions, 1);
                         gui.initializeItems();
-                        return null;
                     }).execute();
                     return;
                 }
 
                 TaskChain<Auction> chainAuction = FAuction.newChain();
-                chainAuction.asyncFirst(() -> auctionCommandManager.auctionExist(this.auction.getId())).sync(a -> {
+                chainAuction.asyncFirst(() -> auctionCommandManager.auctionExist(this.auction.getId())).syncLast(a -> {
                     if (a == null) {
                         issuerTarget.sendInfo(MessageKeys.NO_AUCTION);
                         plugin.getAuctionAction().remove((Integer)auction.getId());
-                        return null;
+                        return;
                     }
                     TaskChain<Auction> chainAuction2 = FAuction.newChain();
-                    chainAuction2.asyncFirst(() -> auctionCommandManager.auctionExist(this.auction.getId())).sync(auctionGood -> {
+                    chainAuction2.asyncFirst(() -> auctionCommandManager.auctionExist(this.auction.getId())).syncLast(auctionGood -> {
                         if (auctionGood == null) {
                             issuerTarget.sendInfo(MessageKeys.AUCTION_ALREADY_SELL);
                             plugin.getAuctionAction().remove((Integer)auction.getId());
-                            return null;
+                            return;
                         }
 
                         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(auctionGood.getPlayerUuid());
                         if (offlinePlayer == null) {
-                            return null;
+                            return;
                         }
 
                         EconomyResponse economyResponse4 = plugin.getVaultIntegrationManager().getEconomy().depositPlayer(offlinePlayer, auctionGood.getPrice());
                         if (!economyResponse4.transactionSuccess()) {
                             plugin.getAuctionAction().remove((Integer)auctionGood.getId());
-                            return null;
+                            return;
                         }
 
                         EconomyResponse economyResponse5 = plugin.getVaultIntegrationManager().getEconomy().withdrawPlayer(player, auctionGood.getPrice());
                         if (!economyResponse5.transactionSuccess()) {
                             plugin.getAuctionAction().remove((Integer)auctionGood.getId());
-                            return null;
+                            return;
                         }
 
                         issuerTarget.sendInfo(MessageKeys.BUY_AUCTION_SUCCESS);
@@ -234,14 +233,11 @@ public class AuctionConfirmGui extends AbstractGui implements GuiInterface {
 
                         player.getOpenInventory().close();
                         TaskChain<ArrayList<Auction>> chain = FAuction.newChain();
-                        chain.asyncFirst(auctionCommandManager::getAuctions).sync(auctions -> {
+                        chain.asyncFirst(auctionCommandManager::getAuctions).syncLast(auctions -> {
                             AuctionsGui gui = new AuctionsGui(plugin, player, auctions, 1);
                             gui.initializeItems();
-                            return null;
                         }).execute();
-                        return null;
                     }).execute();
-                    return null;
                 }).execute();
                 break;
             }

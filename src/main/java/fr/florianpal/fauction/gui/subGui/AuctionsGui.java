@@ -207,20 +207,18 @@ public class AuctionsGui extends AbstractGuiWithAuctions implements GuiInterface
         for (Barrier previous : auctionConfig.getPreviousBlocks()) {
             if (e.getRawSlot() == previous.getIndex() && this.page > 1) {
                 TaskChain<ArrayList<Auction>> chain = FAuction.newChain();
-                chain.asyncFirst(auctionCommandManager::getAuctions).sync((auctions) -> {
+                chain.asyncFirst(auctionCommandManager::getAuctions).syncLast(auctions -> {
                     AuctionsGui gui = new AuctionsGui(plugin, player, auctions, this.page - 1);
                     gui.initializeItems();
-                    return null;
                 }).execute();
             }
         }
         for (Barrier next : auctionConfig.getNextBlocks()) {
             if (e.getRawSlot() == next.getIndex() && ((this.auctionConfig.getItemBlocks().size() * this.page) - this.auctionConfig.getItemBlocks().size() < auctions.size() - this.auctionConfig.getItemBlocks().size()) && next.getMaterial() != next.getRemplacement().getMaterial()) {
                 TaskChain<ArrayList<Auction>> chain = FAuction.newChain();
-                chain.asyncFirst(auctionCommandManager::getAuctions).sync(auctions -> {
+                chain.asyncFirst(auctionCommandManager::getAuctions).syncLast(auctions -> {
                     AuctionsGui gui = new AuctionsGui(plugin, player, auctions, this.page + 1);
                     gui.initializeItems();
-                    return null;
                 }).execute();
                 return;
             }
@@ -228,10 +226,9 @@ public class AuctionsGui extends AbstractGuiWithAuctions implements GuiInterface
         for (Barrier expire : auctionConfig.getExpireBlocks()) {
             if (e.getRawSlot() == expire.getIndex()) {
                 TaskChain<ArrayList<Auction>> chain = FAuction.newChain();
-                chain.asyncFirst(() -> expireCommandManager.getExpires(player.getUniqueId())).sync(auctions -> {
+                chain.asyncFirst(() -> expireCommandManager.getExpires(player.getUniqueId())).syncLast(auctions -> {
                     ExpireGui gui = new ExpireGui(plugin, player, auctions, 1);
                     gui.initializeItems();
-                    return null;
                 }).execute();
 
                 return;
@@ -260,10 +257,9 @@ public class AuctionsGui extends AbstractGuiWithAuctions implements GuiInterface
             if (e.getRawSlot() == expire.getIndex()) {
 
                 TaskChain<ArrayList<Auction>> chain = FAuction.newChain();
-                chain.asyncFirst(auctionCommandManager::getAuctions).sync(auctions -> {
+                chain.asyncFirst(auctionCommandManager::getAuctions).syncLast(auctions -> {
                     PlayerViewGui gui = new PlayerViewGui(plugin, player, auctions, 1);
                     gui.initializeItems();
-                    return null;
                 }).execute();
 
                 return;

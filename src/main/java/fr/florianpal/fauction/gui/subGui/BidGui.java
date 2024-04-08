@@ -228,10 +228,9 @@ public class BidGui extends AbstractGuiWithBill implements GuiInterface {
         for (Barrier previous : bidConfig.getPreviousBlocks()) {
             if (e.getRawSlot() == previous.getIndex() && this.page > 1) {
                 TaskChain<ArrayList<Auction>> chain = FAuction.newChain();
-                chain.asyncFirst(billCommandManager::getBills).sync(bills -> {
+                chain.asyncFirst(billCommandManager::getBills).syncLast(bills -> {
                     BidGui gui = new BidGui(plugin, player, bills, this.page - 1);
                     gui.initializeItems();
-                    return null;
                 }).execute();
             }
         }
@@ -239,10 +238,9 @@ public class BidGui extends AbstractGuiWithBill implements GuiInterface {
         for (Barrier next : bidConfig.getNextBlocks()) {
             if (e.getRawSlot() == next.getIndex() && ((this.bidConfig.getItemBlocks().size() * this.page) - this.bidConfig.getItemBlocks().size() < bills.size() - this.bidConfig.getItemBlocks().size()) && next.getMaterial() != next.getRemplacement().getMaterial()) {
                 TaskChain<ArrayList<Auction>> chain = FAuction.newChain();
-                chain.asyncFirst(billCommandManager::getBills).sync(bills -> {
+                chain.asyncFirst(billCommandManager::getBills).syncLast(bills -> {
                     BidGui gui = new BidGui(plugin, player, bills, this.page + 1);
                     gui.initializeItems();
-                    return null;
                 }).execute();
                 return;
             }
@@ -251,10 +249,9 @@ public class BidGui extends AbstractGuiWithBill implements GuiInterface {
         for (Barrier expire : bidConfig.getExpireBlocks()) {
             if (e.getRawSlot() == expire.getIndex()) {
                 TaskChain<ArrayList<Auction>> chain = FAuction.newChain();
-                chain.asyncFirst(() -> expireCommandManager.getExpires(player.getUniqueId())).sync(auctions -> {
+                chain.asyncFirst(() -> expireCommandManager.getExpires(player.getUniqueId())).syncLast(auctions -> {
                     ExpireGui gui = new ExpireGui(plugin, player, auctions, 1);
                     gui.initializeItems();
-                    return null;
                 }).execute();
 
                 return;

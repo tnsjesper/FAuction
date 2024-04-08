@@ -60,6 +60,7 @@ public class AuctionCommand extends BaseCommand {
     @CommandPermission("fauction.list")
     @Description("{@@fauction.auction_list_help_description}")
     public void onList(Player playerSender) {
+
         if (globalConfig.isSecurityForSpammingPacket()) {
             LocalDateTime clickTest = LocalDateTime.now();
             boolean isSpamming = spamTest.stream().anyMatch(d -> d.getHour() == clickTest.getHour() && d.getMinute() == clickTest.getMinute() && (d.getSecond() == clickTest.getSecond() || d.getSecond() == clickTest.getSecond() + 1 || d.getSecond() == clickTest.getSecond() - 1));
@@ -72,7 +73,6 @@ public class AuctionCommand extends BaseCommand {
                 spamTest.add(clickTest);
             }
         }
-
 
         TaskChain<ArrayList<Auction>> chain = FAuction.newChain();
         chain.asyncFirst(auctionCommandManager::getAuctions).syncLast(auctions -> {

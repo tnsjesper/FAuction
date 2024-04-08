@@ -12,7 +12,6 @@ import fr.florianpal.fauction.objects.Barrier;
 import fr.florianpal.fauction.objects.Bill;
 import fr.florianpal.fauction.objects.Confirm;
 import fr.florianpal.fauction.utils.FormatUtil;
-import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -169,10 +168,9 @@ public class BidConfirmGui extends AbstractGui implements GuiInterface {
                     issuerTarget.sendInfo(MessageKeys.BUY_AUCTION_CANCELLED);
                     player.getOpenInventory().close();
                     TaskChain<ArrayList<Auction>> chain = FAuction.newChain();
-                    chain.asyncFirst(auctionCommandManager::getAuctions).sync(auctions -> {
+                    chain.asyncFirst(auctionCommandManager::getAuctions).syncLast(auctions -> {
                         AuctionsGui gui = new AuctionsGui(plugin, player, auctions, 1);
                         gui.initializeItems();
-                        return null;
                     }).execute();
                     return;
                 }
@@ -197,14 +195,8 @@ public class BidConfirmGui extends AbstractGui implements GuiInterface {
                             return;
                         }
 
-                        EconomyResponse economyResponse4 = plugin.getVaultIntegrationManager().getEconomy().depositPlayer(offlinePlayer, billGood.getPrice());
-                        if (!economyResponse4.transactionSuccess()) {
-                            plugin.getAuctionAction().remove((Integer)billGood.getId());
-                            return;
-                        }
-
-                        EconomyResponse economyResponse5 = plugin.getVaultIntegrationManager().getEconomy().withdrawPlayer(player, billGood.getPrice());
-                        if (!economyResponse5.transactionSuccess()) {
+                        if (plugin.getVaultIntegrationManager().getEconomy().has(player, billGood.getPrice())) {
+                            issuerTarget.sendInfo(MessageKeys.NO_HAVE_MONEY);
                             plugin.getAuctionAction().remove((Integer)billGood.getId());
                             return;
                         }

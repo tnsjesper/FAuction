@@ -16,7 +16,7 @@ public class DatabaseManager {
 
     private Connection connection;
 
-    private DatabaseConfig databaseConfig;
+    private final DatabaseConfig databaseConfig;
 
     private final FAuction plugin;
     private final ArrayList<IDatabaseTable> repositories = new ArrayList<>();
