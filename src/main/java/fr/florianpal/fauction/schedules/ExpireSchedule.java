@@ -23,7 +23,7 @@ public class ExpireSchedule implements Runnable {
     @Override
     public void run() {
         TaskChain<ArrayList<Auction>> chain = FAuction.newChain();
-        chain.asyncFirst(() -> Pair.of(plugin.getAuctionCommandManager().getAuctions(), plugin.getBillCommandManager().getBills())).syncLast(pair -> {
+        chain.asyncFirst(() -> Pair.of(plugin.getAuctionCommandManager().getAuctions(), plugin.getBillCommandManager().getBids())).syncLast(pair -> {
 
             for (Auction auction : pair.first()) {
                 Calendar cal = Calendar.getInstance();

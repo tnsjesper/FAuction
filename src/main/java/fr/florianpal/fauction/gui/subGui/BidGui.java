@@ -228,7 +228,7 @@ public class BidGui extends AbstractGuiWithBill implements GuiInterface {
         for (Barrier previous : bidConfig.getPreviousBlocks()) {
             if (e.getRawSlot() == previous.getIndex() && this.page > 1) {
                 TaskChain<ArrayList<Auction>> chain = FAuction.newChain();
-                chain.asyncFirst(billCommandManager::getBills).syncLast(bills -> {
+                chain.asyncFirst(bidCommandManager::getBids).syncLast(bills -> {
                     BidGui gui = new BidGui(plugin, player, bills, this.page - 1);
                     gui.initializeItems();
                 }).execute();
@@ -238,7 +238,7 @@ public class BidGui extends AbstractGuiWithBill implements GuiInterface {
         for (Barrier next : bidConfig.getNextBlocks()) {
             if (e.getRawSlot() == next.getIndex() && ((this.bidConfig.getItemBlocks().size() * this.page) - this.bidConfig.getItemBlocks().size() < bills.size() - this.bidConfig.getItemBlocks().size()) && next.getMaterial() != next.getRemplacement().getMaterial()) {
                 TaskChain<ArrayList<Auction>> chain = FAuction.newChain();
-                chain.asyncFirst(billCommandManager::getBills).syncLast(bills -> {
+                chain.asyncFirst(bidCommandManager::getBids).syncLast(bills -> {
                     BidGui gui = new BidGui(plugin, player, bills, this.page + 1);
                     gui.initializeItems();
                 }).execute();
@@ -280,7 +280,7 @@ public class BidGui extends AbstractGuiWithBill implements GuiInterface {
             if (e.getRawSlot() == expire.getIndex()) {
 
                 TaskChain<ArrayList<Auction>> chain = FAuction.newChain();
-                chain.asyncFirst(billCommandManager::getBills).syncLast(bills -> {
+                chain.asyncFirst(bidCommandManager::getBids).syncLast(bills -> {
                     PlayerViewBidGui gui = new PlayerViewBidGui(plugin, player, bills, 1);
                     gui.initializeItems();
                 }).execute();
@@ -297,7 +297,7 @@ public class BidGui extends AbstractGuiWithBill implements GuiInterface {
 
                 if (e.isRightClick()) {
                     TaskChain<Bill> chainBill = FAuction.newChain();
-                    chainBill.asyncFirst(() -> billCommandManager.billExist(bill.getId())).syncLast(billA -> {
+                    chainBill.asyncFirst(() -> bidCommandManager.billExist(bill.getId())).syncLast(billA -> {
                         if (billA == null) {
                             return;
                         }
@@ -312,14 +312,14 @@ public class BidGui extends AbstractGuiWithBill implements GuiInterface {
                             player.getInventory().addItem(bill.getItemStack());
                         }
 
-                        billCommandManager.deleteBill(bill.getId());
+                        bidCommandManager.deleteBill(bill.getId());
                         bills.remove(bill);
                         CommandIssuer issuerTarget = plugin.getCommandManager().getCommandIssuer(player);
                         issuerTarget.sendInfo(MessageKeys.REMOVE_BILL_SUCCESS);
                         inv.close();
 
                         TaskChain<ArrayList<Auction>> chain = FAuction.newChain();
-                        chain.asyncFirst(billCommandManager::getBills).syncLast(bills -> {
+                        chain.asyncFirst(bidCommandManager::getBids).syncLast(bills -> {
                             BidGui gui = new BidGui(plugin, player, bills, 1);
                             gui.initializeItems();
                         }).execute();

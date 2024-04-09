@@ -18,7 +18,7 @@ package fr.florianpal.fauction.managers.commandManagers;
 
 import fr.florianpal.fauction.FAuction;
 import fr.florianpal.fauction.objects.Bill;
-import fr.florianpal.fauction.queries.BillQueries;
+import fr.florianpal.fauction.queries.BidQueries;
 import fr.florianpal.fauction.utils.SerializationUtil;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -28,35 +28,35 @@ import java.util.List;
 import java.util.UUID;
 
 
-public class BillCommandManager {
-    private final BillQueries billQueries;
+public class BidCommandManager {
+    private final BidQueries bidQueries;
 
-    public BillCommandManager(FAuction plugin) {
-        this.billQueries = plugin.getBillQueries();
+    public BidCommandManager(FAuction plugin) {
+        this.bidQueries = plugin.getBillQueries();
     }
 
-    public List<Bill> getBills() {
-        return billQueries.getBills();
+    public List<Bill> getBids() {
+        return bidQueries.getBids();
     }
 
-    public List<Bill> getBills(UUID uuid) {
-        return billQueries.getBills(uuid);
+    public List<Bill> getBids(UUID uuid) {
+        return bidQueries.getBids(uuid);
     }
 
     public void addBill(Player player, ItemStack item, double price)  {
-        billQueries.addBill(player.getUniqueId(), player.getName(), SerializationUtil.serialize(item), price, Calendar.getInstance().getTime());
+        bidQueries.addBid(player.getUniqueId(), player.getName(), SerializationUtil.serialize(item), price, Calendar.getInstance().getTime());
     }
 
     public void makeOffer(int id, Player player, double newBet) {
-        billQueries.updateBidder(id, player.getUniqueId(), player.getName(), newBet);
+        bidQueries.updateBidder(id, player.getUniqueId(), player.getName(), newBet);
     }
 
 
     public void deleteBill(int id) {
-        billQueries.deleteBill(id);
+        bidQueries.deleteBid(id);
     }
 
     public Bill billExist(int id) {
-        return billQueries.getBill(id);
+        return bidQueries.getBid(id);
     }
 }
