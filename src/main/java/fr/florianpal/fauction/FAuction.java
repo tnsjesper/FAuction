@@ -5,7 +5,7 @@ import co.aikar.taskchain.TaskChain;
 import co.aikar.taskchain.TaskChainFactory;
 import fr.florianpal.fauction.commands.AuctionCommand;
 import fr.florianpal.fauction.managers.commandManagers.*;
-import fr.florianpal.fauction.queries.BillQueries;
+import fr.florianpal.fauction.queries.BidQueries;
 import fr.florianpal.fauction.schedules.ExpireSchedule;
 import fr.florianpal.fauction.managers.ConfigurationManager;
 import fr.florianpal.fauction.managers.DatabaseManager;
@@ -34,7 +34,7 @@ public class FAuction extends JavaPlugin {
     private AuctionQueries auctionQueries;
     private ExpireQueries expireQueries;
 
-    private BillQueries billQueries;
+    private BidQueries bidQueries;
 
     private CommandManager commandManager;
     private VaultIntegrationManager vaultIntegrationManager;
@@ -43,7 +43,7 @@ public class FAuction extends JavaPlugin {
 
     private AuctionCommandManager auctionCommandManager;
 
-    private BillCommandManager billCommandManager;
+    private BidCommandManager bidCommandManager;
 
     private ExpireCommandManager expireCommandManager;
 
@@ -83,15 +83,15 @@ public class FAuction extends JavaPlugin {
         }
         auctionQueries = new AuctionQueries(this);
         expireQueries = new ExpireQueries(this);
-        billQueries = new BillQueries(this);
+        bidQueries = new BidQueries(this);
 
         databaseManager.addRepository(expireQueries);
         databaseManager.addRepository(auctionQueries);
-        databaseManager.addRepository(billQueries);
+        databaseManager.addRepository(bidQueries);
         databaseManager.initializeTables();
 
         auctionCommandManager = new AuctionCommandManager(this);
-        billCommandManager = new BillCommandManager(this);
+        bidCommandManager = new BidCommandManager(this);
         expireCommandManager = new ExpireCommandManager(this);
 
         commandManager.registerCommand(new AuctionCommand(this));
@@ -236,11 +236,11 @@ public class FAuction extends JavaPlugin {
         }).execute();
     }
 
-    public BillCommandManager getBillCommandManager() {
-        return billCommandManager;
+    public BidCommandManager getBillCommandManager() {
+        return bidCommandManager;
     }
 
-    public BillQueries getBillQueries() {
-        return billQueries;
+    public BidQueries getBillQueries() {
+        return bidQueries;
     }
 }

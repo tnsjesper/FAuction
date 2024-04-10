@@ -247,7 +247,7 @@ public class PlayerViewGui extends AbstractGuiWithAuctions implements GuiInterfa
         for (Barrier goToAuction : playerViewConfig.getGoToBidBlocks()) {
             if (e.getRawSlot() == goToAuction.getIndex()) {
                 TaskChain<ArrayList<Auction>> chain = FAuction.newChain();
-                chain.asyncFirst(billCommandManager::getBills).syncLast(bills -> {
+                chain.asyncFirst(bidCommandManager::getBids).syncLast(bills -> {
                     BidGui gui = new BidGui(plugin, player, bills, 1);
                     gui.initializeItems();
                 }).execute();

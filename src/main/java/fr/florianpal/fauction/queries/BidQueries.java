@@ -1,19 +1,4 @@
 
-/*
- * Copyright (C) 2022 Florianpal
- *
- * This program is free software;
- * you can redistribute it and/or modify it under the terms of the GNU General
- * Public License as published by the Free Software Foundation; either version 3
- * of the License, or (at your option) any later version.
- * You should have received a copy of the GNU General Public License along with
- * this program; if not, see <http://www.gnu.org/licenses/>.
- *
- * Last modification : 07/01/2022 23:07
- *
- *  @author Florianpal.
- */
-
 package fr.florianpal.fauction.queries;
 
 import fr.florianpal.fauction.FAuction;
@@ -28,7 +13,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
-public class BillQueries implements IDatabaseTable {
+public class BidQueries implements IDatabaseTable {
 
     private static final String GET_BILLS = "SELECT * FROM bills ORDER BY id ";
     private static final String GET_BILL_WITH_ID = "SELECT * FROM bills WHERE id=?";
@@ -41,12 +26,12 @@ public class BillQueries implements IDatabaseTable {
     private final DatabaseManager databaseManager;
     private final GlobalConfig globalConfig;
 
-    public BillQueries(FAuction plugin) {
+    public BidQueries(FAuction plugin) {
         this.databaseManager = plugin.getDatabaseManager();
         this.globalConfig = plugin.getConfigurationManager().getGlobalConfig();
     }
 
-    public void addBill(UUID playerUUID, String playerName, byte[] item, double price, Date date) {
+    public void addBid(UUID playerUUID, String playerName, byte[] item, double price, Date date) {
 
         PreparedStatement statement = null;
         try (Connection connection = databaseManager.getConnection()) {
@@ -70,7 +55,7 @@ public class BillQueries implements IDatabaseTable {
         }
     }
 
-    public void deleteBill(int id) {
+    public void deleteBid(int id) {
 
         PreparedStatement statement = null;
         try (Connection connection = databaseManager.getConnection()) {
@@ -114,7 +99,7 @@ public class BillQueries implements IDatabaseTable {
         }
     }
 
-    public List<Bill> getBills() {
+    public List<Bill> getBids() {
 
         PreparedStatement statement = null;
         ResultSet result = null;
@@ -159,7 +144,7 @@ public class BillQueries implements IDatabaseTable {
         return bills;
     }
 
-    public ArrayList<Bill> getBills(UUID playerUuid) {
+    public List<Bill> getBids(UUID playerUuid) {
 
         PreparedStatement statement = null;
         ResultSet result = null;
@@ -203,10 +188,10 @@ public class BillQueries implements IDatabaseTable {
                 e.printStackTrace();
             }
         }
-        return null;
+        return Collections.emptyList();
     }
 
-    public Bill getBill(int id) {
+    public Bill getBid(int id) {
         PreparedStatement statement = null;
         ResultSet result = null;
         Bill bill = null;
@@ -251,7 +236,7 @@ public class BillQueries implements IDatabaseTable {
 
     @Override
     public String[] getTable() {
-        return new String[]{"bills",
+        return new String[]{"fauction_bid",
                 "`id` INTEGER NOT NULL AUTO_INCREMENT, " +
                         "`playerOwnerUuid` VARCHAR(36) NOT NULL, " +
                         "`playerOwnerName` VARCHAR(36) NOT NULL, " +

@@ -176,7 +176,7 @@ public class BidConfirmGui extends AbstractGui implements GuiInterface {
                 }
 
                 TaskChain<Auction> chainAuction = FAuction.newChain();
-                chainAuction.asyncFirst(() -> billCommandManager.billExist(this.bill.getId())).syncLast(a -> {
+                chainAuction.asyncFirst(() -> bidCommandManager.billExist(this.bill.getId())).syncLast(a -> {
                     if (a == null) {
                         issuerTarget.sendInfo(MessageKeys.NO_AUCTION);
                         plugin.getAuctionAction().remove((Integer) bill.getId());
@@ -202,7 +202,7 @@ public class BidConfirmGui extends AbstractGui implements GuiInterface {
                         }
 
                         issuerTarget.sendInfo(MessageKeys.MAKE_OFFER_BILL_SUCCESS, "{Offer}", String.valueOf(amount));
-                        billCommandManager.makeOffer(billGood.getId(), player, amount);
+                        bidCommandManager.makeOffer(billGood.getId(), player, amount);
 
                         if (plugin.getConfigurationManager().getGlobalConfig().isOnBidBuyCommandUse()) {
                             String command = plugin.getConfigurationManager().getGlobalConfig().getOnBidBuyCommand();
@@ -222,7 +222,7 @@ public class BidConfirmGui extends AbstractGui implements GuiInterface {
 
                         player.getOpenInventory().close();
                         TaskChain<ArrayList<Auction>> chain = FAuction.newChain();
-                        chain.asyncFirst(billCommandManager::getBills).syncLast(bills -> {
+                        chain.asyncFirst(bidCommandManager::getBids).syncLast(bills -> {
                             BidGui gui = new BidGui(plugin, player, bills, 1);
                             gui.initializeItems();
                         }).execute();
